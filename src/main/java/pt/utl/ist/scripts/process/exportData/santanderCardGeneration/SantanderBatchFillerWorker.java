@@ -69,7 +69,7 @@ public class SantanderBatchFillerWorker {
             final Set<Object[]> lines = new HashSet<Object[]>();
             final Role personRole = Role.getRoleByRoleType(RoleType.PERSON);
             for (final Person person : personRole.getAssociatedPersonsSet()) {
-                if (person.getIstUsername() != null && person.namesCorrectlyPartitioned()) {
+                if (person.getUsername() != null && person.namesCorrectlyPartitioned()) {
                     generateLine(lines, batch, person);
                 }
             }
@@ -420,7 +420,7 @@ public class SantanderBatchFillerWorker {
         StringBuilder strBuilder = new StringBuilder(1505);
         String recordType = "2";
 
-        String idNumber = makeStringBlock(person.getIstUsername(), 10);
+        String idNumber = makeStringBlock(person.getUsername(), 10);
 
         String[] names = harvestNames(person.getName());
         String name = makeStringBlock(names[0], 15);
@@ -443,7 +443,7 @@ public class SantanderBatchFillerWorker {
 
         String homeCountry = makeStringBlock("", 10);
 
-        String residenceCountry = makeStringBlock(person.getIstUsername(), 10); // As stipulated this field will carry the istId instead.
+        String residenceCountry = makeStringBlock(person.getUsername(), 10); // As stipulated this field will carry the istId instead.
 
         String expireDate = getExpireDate(batch.getExecutionYear());
 
@@ -464,7 +464,7 @@ public class SantanderBatchFillerWorker {
 //            degreeCode = makeStringBlock("", 16);
 //        }
 
-        String backNumber = makeZeroPaddedNumber(Integer.parseInt(person.getIstUsername().substring(3)), 10);
+        String backNumber = makeZeroPaddedNumber(Integer.parseInt(person.getUsername().substring(3)), 10);
 
         String chip1 = buildChip1Block(batch, person, role);
 
@@ -560,7 +560,7 @@ public class SantanderBatchFillerWorker {
     private String buildChip1Block(SantanderBatch batch, Person person, RoleType role) {
         StringBuilder chip1String = new StringBuilder(185);
 
-        String idNumber = makeZeroPaddedNumber(Integer.parseInt(person.getIstUsername().substring(3)), 10);
+        String idNumber = makeZeroPaddedNumber(Integer.parseInt(person.getUsername().substring(3)), 10);
 
         String roleCode = "7";
 
