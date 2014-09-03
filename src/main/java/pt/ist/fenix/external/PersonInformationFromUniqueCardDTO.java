@@ -29,7 +29,6 @@ import net.sourceforge.fenixedu.domain.PhotoType;
 import net.sourceforge.fenixedu.domain.Photograph;
 import net.sourceforge.fenixedu.domain.contacts.PhysicalAddressData;
 import net.sourceforge.fenixedu.domain.person.Gender;
-import net.sourceforge.fenixedu.util.ByteArray;
 import net.sourceforge.fenixedu.util.ContentType;
 import net.sourceforge.fenixedu.util.StringFormatter;
 
@@ -313,7 +312,6 @@ public class PersonInformationFromUniqueCardDTO {
     public void edit(Person person) throws ParseException {
         final String dateFormat = "dd MM yyyy";
 
-        person.ensureUserProfile();
         person.getProfile().changeName(StringFormatter.prettyPrint(getGivenNames()),
                 StringFormatter.prettyPrint(getFamilyNames()), null);
 
@@ -356,8 +354,8 @@ public class PersonInformationFromUniqueCardDTO {
         }
 
         if (getPhoto() != null) {
-            person.setPersonalPhoto(new Photograph(PhotoType.INSTITUTIONAL, ContentType.JPG, new ByteArray(BaseEncoding.base64()
-                    .decode(getPhoto()))));
+            person.setPersonalPhoto(new Photograph(PhotoType.INSTITUTIONAL, ContentType.JPG, BaseEncoding.base64().decode(
+                    getPhoto())));
         }
 
         final PhysicalAddressData physicalAddress = new PhysicalAddressData();
@@ -374,5 +372,4 @@ public class PersonInformationFromUniqueCardDTO {
             person.setDefaultPhysicalAddressData(physicalAddress, true);
         }
     }
-
 }

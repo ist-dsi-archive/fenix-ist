@@ -8,7 +8,7 @@ import net.sourceforge.fenixedu.domain.ExecutionYear;
 import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
 import net.sourceforge.fenixedu.domain.student.Registration;
 import net.sourceforge.fenixedu.domain.student.Student;
-import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState.RegistrationStateCreator;
+import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState;
 import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationStateType;
 import net.sourceforge.fenixedu.domain.studentCurriculum.CurriculumGroup;
 import net.sourceforge.fenixedu.domain.studentCurriculum.CurriculumModule;
@@ -173,8 +173,8 @@ public class UpdateFlunkedState extends CustomTask {
             if (!executionYear.containsDate(date)) {
                 date = executionYear.getBeginDateYearMonthDay().toLocalDate();
             }
-            RegistrationStateCreator
-                    .createState(registration, null, date.toDateTimeAtStartOfDay(), RegistrationStateType.FLUNKED);
+            RegistrationState.createRegistrationState(registration, null, date.toDateTimeAtStartOfDay(),
+                    RegistrationStateType.FLUNKED);
         }
     }
 }

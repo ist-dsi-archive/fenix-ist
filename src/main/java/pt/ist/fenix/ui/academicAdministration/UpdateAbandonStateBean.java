@@ -13,7 +13,6 @@ import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
 import net.sourceforge.fenixedu.domain.administrativeOffice.AdministrativeOfficeType;
 import net.sourceforge.fenixedu.domain.student.Registration;
 import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState;
-import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState.RegistrationStateCreator;
 import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationStateType;
 import net.sourceforge.fenixedu.domain.studentCurriculum.CurriculumLine;
 import net.sourceforge.fenixedu.domain.studentCurriculum.CurriculumModule;
@@ -101,7 +100,7 @@ public class UpdateAbandonStateBean implements Serializable {
                 }
                 final YearMonthDay now = new YearMonthDay();
                 final RegistrationState state =
-                        RegistrationStateCreator.createState(registration, null, (now.isBefore(getWhenToAbandon()
+                        RegistrationState.createRegistrationState(registration, null, (now.isBefore(getWhenToAbandon()
                                 .getBeginDateYearMonthDay()) ? getWhenToAbandon().getBeginDateYearMonthDay() : now)
                                 .toDateTimeAtMidnight(), RegistrationStateType.EXTERNAL_ABANDON);
 
