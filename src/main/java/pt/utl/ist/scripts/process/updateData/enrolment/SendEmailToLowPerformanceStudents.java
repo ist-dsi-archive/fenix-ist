@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.FileContent;
 import net.sourceforge.fenixedu.domain.Person;
 import net.sourceforge.fenixedu.domain.student.Student;
 import net.sourceforge.fenixedu.domain.util.email.Message;
@@ -15,6 +14,7 @@ import net.sourceforge.fenixedu.domain.util.email.Sender;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.io.domain.GenericFile;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 
 import pt.ist.fenixframework.FenixFramework;
@@ -26,7 +26,7 @@ public class SendEmailToLowPerformanceStudents extends CustomTask {
         User user = User.findByUsername("ist24616");
         Authenticate.mock(user);
 
-        FileContent file = FenixFramework.getDomainObject("566729524642563"); //file with the students numbers, one in each line
+        GenericFile file = FenixFramework.getDomainObject("566729524642563"); //file with the students numbers, one in each line
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(file.getContent())));
         String line;
