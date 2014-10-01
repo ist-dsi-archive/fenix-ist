@@ -23,7 +23,7 @@ import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContract
 import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
 import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcessState;
 import net.sourceforge.fenixedu.domain.student.Registration;
-import net.sourceforge.fenixedu.domain.student.RegistrationAgreement;
+import net.sourceforge.fenixedu.domain.student.RegistrationProtocol;
 import net.sourceforge.fenixedu.domain.student.Student;
 import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState;
 import net.sourceforge.fenixedu.domain.teacher.CategoryType;
@@ -287,7 +287,7 @@ public class SantanderBatchFillerWorker {
             if (registration.getDegree().isEmpty()) {
                 continue;
             }
-            final RegistrationAgreement registrationAgreement = registration.getRegistrationAgreement();
+            final RegistrationProtocol registrationAgreement = registration.getRegistrationProtocol();
             if (!registrationAgreement.allowsIDCard()) {
                 continue;
             }

@@ -116,7 +116,7 @@ public class UpdateAbandonStateBean implements Serializable {
     }
 
     private boolean hasValidRegistrationAgreement(final Registration registration) {
-        return registration.getRegistrationAgreement() == null || registration.getRegistrationAgreement().isNormal();
+        return registration.getRegistrationProtocol() == null || registration.getRegistrationProtocol().isAlien();
     }
 
     private boolean hasAnyEnrolmentInPeriodOrPrevious(final Registration registration, final ExecutionSemester executionSemester) {
