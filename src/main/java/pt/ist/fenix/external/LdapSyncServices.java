@@ -21,19 +21,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import net.sourceforge.fenixedu.FenixIstConfiguration;
-import net.sourceforge.fenixedu.applicationTier.Servico.candidacy.LogFirstTimeCandidacyTimestamp;
-import net.sourceforge.fenixedu.domain.AlumniIdentityCheckRequest;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.candidacy.CandidacySummaryFile;
-import net.sourceforge.fenixedu.domain.candidacy.FirstTimeCandidacyStage;
-import net.sourceforge.fenixedu.domain.candidacy.StudentCandidacy;
-import net.sourceforge.fenixedu.domain.person.IDDocumentType;
-import net.sourceforge.fenixedu.util.FenixConfigurationManager;
 
+import org.fenixedu.academic.domain.AlumniIdentityCheckRequest;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.candidacy.CandidacySummaryFile;
+import org.fenixedu.academic.domain.candidacy.FirstTimeCandidacyStage;
+import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
+import org.fenixedu.academic.domain.person.IDDocumentType;
+import org.fenixedu.academic.service.services.candidacy.LogFirstTimeCandidacyTimestamp;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.rest.BennuRestResource;
 import org.fenixedu.idcards.ui.candidacydocfiller.CGDPdfFiller;
 
+import pt.ist.fenixedu.academic.FenixEduLegacyConfiguration;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.gson.Gson;
@@ -140,7 +140,7 @@ public class LdapSyncServices extends BennuRestResource {
 
     private void checkAccessControl() {
         boolean authorized =
-                FenixConfigurationManager.getHostAccessControl().isAllowed(LdapSyncServices.class.getName(), request);
+                FenixEduLegacyConfiguration.getHostAccessControl().isAllowed(LdapSyncServices.class.getName(), request);
         authorized &=
                 Objects.equals(request.getHeader("__username__"), FenixIstConfiguration.getConfiguration()
                         .ldapSyncServicesUsername());

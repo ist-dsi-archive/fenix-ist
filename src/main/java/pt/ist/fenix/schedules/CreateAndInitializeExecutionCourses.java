@@ -18,33 +18,30 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.sourceforge.fenixedu.applicationTier.Servico.teacher.professorship.ResponsibleForValidator.InvalidCategory;
-import net.sourceforge.fenixedu.applicationTier.Servico.teacher.professorship.ResponsibleForValidator.MaxResponsibleForExceed;
-import net.sourceforge.fenixedu.dataTransferObject.GenericPair;
-import net.sourceforge.fenixedu.domain.CompetenceCourse;
-import net.sourceforge.fenixedu.domain.CourseLoad;
-import net.sourceforge.fenixedu.domain.CurricularCourse;
-import net.sourceforge.fenixedu.domain.Degree;
-import net.sourceforge.fenixedu.domain.DegreeCurricularPlan;
-import net.sourceforge.fenixedu.domain.EntryPhase;
-import net.sourceforge.fenixedu.domain.ExecutionCourse;
-import net.sourceforge.fenixedu.domain.ExecutionDegree;
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.ExecutionYear;
-import net.sourceforge.fenixedu.domain.FrequencyType;
-import net.sourceforge.fenixedu.domain.Holiday;
-import net.sourceforge.fenixedu.domain.Lesson;
-import net.sourceforge.fenixedu.domain.LessonInstance;
-import net.sourceforge.fenixedu.domain.OccupationPeriod;
-import net.sourceforge.fenixedu.domain.Professorship;
-import net.sourceforge.fenixedu.domain.SchoolClass;
-import net.sourceforge.fenixedu.domain.Shift;
-import net.sourceforge.fenixedu.domain.ShiftType;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.exceptions.DomainException;
-import net.sourceforge.fenixedu.util.DiaSemana;
-import net.sourceforge.fenixedu.util.HourMinuteSecond;
-
+import org.fenixedu.academic.domain.CompetenceCourse;
+import org.fenixedu.academic.domain.CourseLoad;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.Degree;
+import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.EntryPhase;
+import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionDegree;
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.FrequencyType;
+import org.fenixedu.academic.domain.Holiday;
+import org.fenixedu.academic.domain.Lesson;
+import org.fenixedu.academic.domain.LessonInstance;
+import org.fenixedu.academic.domain.OccupationPeriod;
+import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.SchoolClass;
+import org.fenixedu.academic.domain.Shift;
+import org.fenixedu.academic.domain.ShiftType;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.dto.GenericPair;
+import org.fenixedu.academic.util.DiaSemana;
+import org.fenixedu.academic.util.HourMinuteSecond;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
@@ -144,7 +141,7 @@ public class CreateAndInitializeExecutionCourses extends CustomTask {
     int copiedCourseLoads = 0;
     int notCopiedCourseLoads = 0;
 
-    protected void createFromPreviouse(final ExecutionCourse executionCourse) throws MaxResponsibleForExceed, InvalidCategory {
+    protected void createFromPreviouse(final ExecutionCourse executionCourse) {
         final Set<CurricularCourse> curricularCoursesToAssociate = getActiveCurricularCourses(executionCourse);
 
         if (!curricularCoursesToAssociate.isEmpty()) {
@@ -178,8 +175,7 @@ public class CreateAndInitializeExecutionCourses extends CustomTask {
                 final ExecutionCourse firstSemesterExecutionCourse = findFirstSemesterExecutionCourse(executionCourse);
                 if (firstSemesterExecutionCourse != null) {
                     for (final Professorship professorship : firstSemesterExecutionCourse.getProfessorshipsSet()) {
-                        Professorship.create(professorship.getResponsibleFor(), newExecutionCourse, professorship.getPerson(),
-                                null);
+                        Professorship.create(professorship.getResponsibleFor(), newExecutionCourse, professorship.getPerson());
                     }
                 }
             }
@@ -282,19 +278,20 @@ public class CreateAndInitializeExecutionCourses extends CustomTask {
             try {
                 if (occupationPeriod == null) {
                     new Lesson(oldLesson.getDiaSemana(), oldLesson.getInicio(), oldLesson.getFim(), newShift,
-                            oldLesson.getFrequency(), destinationExecutionSemester, maxLessonsPeriod.getLeft().plusDays(7 * offset),
-                            maxLessonsPeriod.getRight(), allocatableSpaceToSet);
+                            oldLesson.getFrequency(), destinationExecutionSemester, maxLessonsPeriod.getLeft().plusDays(
+                                    7 * offset), maxLessonsPeriod.getRight(), allocatableSpaceToSet);
                 } else {
                     if (offset == 0) {
                         new Lesson(oldLesson.getDiaSemana(), oldLesson.getInicio(), oldLesson.getFim(), newShift,
-                                oldLesson.getFrequency(), destinationExecutionSemester, occupationPeriod, allocatableSpaceToSet);                        
+                                oldLesson.getFrequency(), destinationExecutionSemester, occupationPeriod, allocatableSpaceToSet);
                     } else {
-                        final OccupationPeriod lessonOP = new OccupationPeriod(getWeeks(oldLesson).sorted()
-                                .map(w -> map(occupationPeriod, w)).filter(i -> i != null).collect(Collectors.toList()).iterator());
+                        final OccupationPeriod lessonOP =
+                                new OccupationPeriod(getWeeks(oldLesson).sorted().map(w -> map(occupationPeriod, w))
+                                        .filter(i -> i != null).collect(Collectors.toList()).iterator());
                         print("   op: ", lessonOP);
                         new Lesson(oldLesson.getDiaSemana(), oldLesson.getInicio(), oldLesson.getFim(), newShift,
-                                oldLesson.getFrequency(), destinationExecutionSemester, lessonOP == null ? occupationPeriod : lessonOP,
-                                        allocatableSpaceToSet);
+                                oldLesson.getFrequency(), destinationExecutionSemester,
+                                lessonOP == null ? occupationPeriod : lessonOP, allocatableSpaceToSet);
                     }
                 }
                 countCopiedLessons++;

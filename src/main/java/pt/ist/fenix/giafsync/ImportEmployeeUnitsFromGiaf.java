@@ -8,23 +8,23 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.organizationalStructure.AccountabilityTypeEnum;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Contract;
-import net.sourceforge.fenixedu.domain.organizationalStructure.EmployeeContract;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ContractSituation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.GiafProfessionalData;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
 import net.sourceforge.fenixedu.persistenceTierOracle.Oracle.PersistentSuportGiaf;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.slf4j.Logger;
 
 import pt.ist.fenix.giafsync.GiafSync.ImportProcessor;
 import pt.ist.fenix.giafsync.GiafSync.Modification;
+import pt.ist.fenixedu.contracts.domain.Employee;
+import pt.ist.fenixedu.contracts.domain.organizationalStructure.Contract;
+import pt.ist.fenixedu.contracts.domain.organizationalStructure.EmployeeContract;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.GiafProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
 
 class ImportEmployeeUnitsFromGiaf extends ImportProcessor {
     @Override
@@ -95,7 +95,7 @@ class ImportEmployeeUnitsFromGiaf extends ImportProcessor {
                         Contract workingContractOnDate =
                                 getLastContractByContractType(employee, accountabilityTypeEnum, new YearMonthDay(beginDate),
                                         endDate == null ? null : new YearMonthDay(endDate));
- 
+
                         if (workingContractOnDate != null) {
                             if (unit != null && endDate == null) {
                                 if (!workingContractOnDate.getUnit().equals(unit)) {

@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.accounting.AcademicEvent;
-import net.sourceforge.fenixedu.domain.accounting.AccountingTransactionDetail;
-import net.sourceforge.fenixedu.domain.accounting.Event;
-import net.sourceforge.fenixedu.domain.accounting.ResidenceEvent;
-import net.sourceforge.fenixedu.domain.administrativeOffice.AdministrativeOfficeType;
-import net.sourceforge.fenixedu.domain.documents.AnnualIRSDeclarationDocument;
-import net.sourceforge.fenixedu.presentationTier.docs.IRSCustomDeclaration;
-import net.sourceforge.fenixedu.presentationTier.docs.IRSCustomDeclaration.IRSDeclarationDTO;
-import net.sourceforge.fenixedu.util.report.ReportsUtils;
-
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.accounting.AcademicEvent;
+import org.fenixedu.academic.domain.accounting.AccountingTransactionDetail;
+import org.fenixedu.academic.domain.accounting.Event;
+import org.fenixedu.academic.domain.accounting.ResidenceEvent;
+import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOfficeType;
+import org.fenixedu.academic.domain.documents.AnnualIRSDeclarationDocument;
+import org.fenixedu.academic.report.IRSCustomDeclaration;
+import org.fenixedu.academic.report.IRSCustomDeclaration.IRSDeclarationDTO;
+import org.fenixedu.academic.util.report.ReportPrinter.ReportResult;
+import org.fenixedu.academic.util.report.ReportsUtils;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.scheduler.CronTask;
 import org.fenixedu.bennu.scheduler.annotation.Task;
@@ -86,9 +86,8 @@ public class ExportIRSDeclarations extends CronTask {
             try {
                 final IRSCustomDeclaration customDeclaration = new IRSCustomDeclaration(exportIRSDeclaration.getDeclarationDTO());
                 addUnitCoordinatorSignature(customDeclaration);
-                final byte[] report =
-                        ReportsUtils.exportToPdfFileAsByteArray(customDeclaration.getReportTemplateKey(),
-                                customDeclaration.getParameters(), customDeclaration.getDataSource());
+                final byte[] report = ReportsUtils.generateReport(customDeclaration.getReportTemplateKey(), customDeclaration.getParameters(),
+                        customDeclaration.getDataSource()).getData();
 
                 new AnnualIRSDeclarationDocument(exportIRSDeclaration.getPerson(), null, customDeclaration.getReportFileName()
                         + ".pdf", report, YEAR_TO_PROCESS);

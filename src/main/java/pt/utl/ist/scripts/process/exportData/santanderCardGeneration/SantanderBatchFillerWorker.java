@@ -8,28 +8,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.Degree;
-import net.sourceforge.fenixedu.domain.Department;
-import net.sourceforge.fenixedu.domain.ExecutionYear;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Role;
-import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
-import net.sourceforge.fenixedu.domain.Teacher;
-import net.sourceforge.fenixedu.domain.accounting.events.insurance.InsuranceEvent;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.exceptions.DomainException;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcessState;
-import net.sourceforge.fenixedu.domain.student.Registration;
-import net.sourceforge.fenixedu.domain.student.RegistrationProtocol;
-import net.sourceforge.fenixedu.domain.student.Student;
-import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
-
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Degree;
+import org.fenixedu.academic.domain.Department;
+import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.accounting.events.insurance.InsuranceEvent;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcessState;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.RegistrationProtocol;
+import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.idcards.domain.SantanderBatch;
 import org.fenixedu.idcards.domain.SantanderEntry;
 import org.fenixedu.idcards.domain.SantanderProblem;
@@ -38,6 +34,10 @@ import org.joda.time.DateTime;
 import org.joda.time.YearMonthDay;
 import org.slf4j.Logger;
 
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
+import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.ist.fenixframework.Atomic;
 
 public class SantanderBatchFillerWorker {
@@ -67,10 +67,9 @@ public class SantanderBatchFillerWorker {
                 continue;
             }
             final Set<Object[]> lines = new HashSet<Object[]>();
-            final Role personRole = Role.getRoleByRoleType(RoleType.PERSON);
-            for (final Person person : personRole.getAssociatedPersonsSet()) {
-                if (person.getUsername() != null && person.namesCorrectlyPartitioned()) {
-                    generateLine(lines, batch, person);
+            for (User user : Bennu.getInstance().getUserSet()) {
+                if (user.getPerson() != null) {
+                    generateLine(lines, batch, user.getPerson());
                 }
             }
             fillBatch(batch, lines);
@@ -100,15 +99,15 @@ public class SantanderBatchFillerWorker {
          */
         String line = null;
         if (treatAsStudent(person, batch.getExecutionYear())) {
-            line = createLine(batch, person, RoleType.STUDENT);
+            line = createLine(batch, person, "STUDENT");
         } else if (treatAsTeacher(person)) {
-            line = createLine(batch, person, RoleType.TEACHER);
+            line = createLine(batch, person, "TEACHER");
         } else if (treatAsResearcher(person)) {
-            line = createLine(batch, person, RoleType.RESEARCHER);
+            line = createLine(batch, person, "RESEARCHER");
         } else if (treatAsEmployee(person)) {
-            line = createLine(batch, person, RoleType.EMPLOYEE);
+            line = createLine(batch, person, "EMPLOYEE");
         } else if (treatAsGrantOwner(person)) {
-            line = createLine(batch, person, RoleType.GRANT_OWNER);
+            line = createLine(batch, person, "GRANT_OWNER");
         } else {
             return;
         }
@@ -119,28 +118,30 @@ public class SantanderBatchFillerWorker {
     }
 
     private boolean treatAsTeacher(Person person) {
-        if (person.hasRole(RoleType.TEACHER)) {
-            final Teacher teacher = person.getTeacher();
-            return (teacher != null && teacher.getCurrentWorkingUnit() != null && person.getPersonProfessionalData() != null && person
-                    .getPersonProfessionalData().getGiafProfessionalDataByCategoryType(CategoryType.TEACHER) != null);
+        if (person.getTeacher() != null) {
+            return person.getTeacher().isActiveContractedTeacher();
         }
         return false;
     }
 
     private boolean treatAsResearcher(Person person) {
-        return (person.hasRole(RoleType.RESEARCHER) && person.hasRole(RoleType.EMPLOYEE) && person.getEmployee() != null
-                && person.getPersonProfessionalData() != null && person.getPersonProfessionalData()
-                .getGiafProfessionalDataByCategoryType(CategoryType.RESEARCHER) != null);
+        if (person.getResearcher() != null) {
+            return person.getResearcher().isActiveContractedResearcher();
+        }
+        return false;
     }
 
     private boolean treatAsEmployee(Person person) {
-        return (person.hasRole(RoleType.EMPLOYEE) && person.getPersonProfessionalData() != null);
+        if (person.getEmployee() != null) {
+            return person.getEmployee().isActive();
+        }
+        return false;
     }
 
     private boolean treatAsGrantOwner(Person person) {
         return (isGrantOwner(person))
-                || (person.hasRole(RoleType.GRANT_OWNER) && person.getEmployee() != null && !person.hasRole(RoleType.EMPLOYEE) && person
-                        .getPersonProfessionalData() != null);
+                || (new ActiveGrantOwner().isMember(person.getUser()) && person.getEmployee() != null
+                        && !new ActiveEmployees().isMember(person.getUser()) && person.getPersonProfessionalData() != null);
     }
 
     private boolean treatAsStudent(Person person, ExecutionYear executionYear) {
@@ -160,7 +161,7 @@ public class SantanderBatchFillerWorker {
     }
 
     private boolean isGrantOwner(final Person person) {
-        if (person.hasRole(RoleType.GRANT_OWNER)) {
+        if (new ActiveGrantOwner().isMember(person.getUser())) {
             final PersonContractSituation currentGrantOwnerContractSituation =
                     person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                             .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
@@ -345,25 +346,25 @@ public class SantanderBatchFillerWorker {
         //return pickedSCP.getRegistration().getDegree().getSigla();
     }
 
-    private CampusAddress getCampusAddress(Person person, RoleType role) {
+    private CampusAddress getCampusAddress(Person person, String role) {
         Space campus = null;
         Map<String, CampusAddress> campi = getCampi();
         switch (role) {
-        case STUDENT:
+        case "STUDENT":
             try {
                 campus = person.getStudent().getLastActiveRegistration().getCampus();
             } catch (NullPointerException npe) {
                 return null;
             }
             break;
-        case EMPLOYEE:
+        case "EMPLOYEE":
             try {
                 campus = person.getEmployee().getCurrentCampus();
             } catch (NullPointerException npe) {
                 return null;
             }
             break;
-        case TEACHER:
+        case "TEACHER":
             try {
                 campus =
                         person.getPersonProfessionalData().getGiafProfessionalDataByCategoryType(CategoryType.TEACHER)
@@ -372,7 +373,7 @@ public class SantanderBatchFillerWorker {
                 return null;
             }
             break;
-        case RESEARCHER:
+        case "RESEARCHER":
             try {
                 campus =
                         person.getPersonProfessionalData().getGiafProfessionalDataByCategoryType(CategoryType.RESEARCHER)
@@ -381,7 +382,7 @@ public class SantanderBatchFillerWorker {
                 return null;
             }
             break;
-        case GRANT_OWNER:
+        case "GRANT_OWNER":
             try {
                 campus =
                         person.getPersonProfessionalData().getGiafProfessionalDataByCategoryType(CategoryType.GRANT_OWNER)
@@ -413,7 +414,7 @@ public class SantanderBatchFillerWorker {
 
     }
 
-    private String createLine(SantanderBatch batch, Person person, RoleType role) {
+    private String createLine(SantanderBatch batch, Person person, String role) {
 //        if (SantanderPhotoEntry.getOrCreatePhotoEntryForPerson(person) == null) {
 //            return null;
 //        }
@@ -428,7 +429,7 @@ public class SantanderBatchFillerWorker {
         String middleNames = makeStringBlock(names[2], 40);
 
         String degreeCode = makeStringBlock(getDegreeDescription(batch, person, role), 16);
-        if (role == RoleType.STUDENT && degreeCode.startsWith(" ")) {
+        if (role.equals("STUDENT") && degreeCode.startsWith(" ")) {
             return null;
         }
 
@@ -507,8 +508,8 @@ public class SantanderBatchFillerWorker {
         return strBuilder.toString();
     }
 
-    private String getDegreeDescription(final SantanderBatch batch, final Person person, RoleType roleType) {
-        if (roleType == RoleType.STUDENT || roleType == RoleType.GRANT_OWNER) {
+    private String getDegreeDescription(final SantanderBatch batch, final Person person, String roleType) {
+        if (roleType.equals("STUDENT") || roleType.equals("GRANT_OWNER")) {
             final PhdIndividualProgramProcess process = getPhdProcess(person);
             if (process != null) {
                 logger.debug("phdProcess: " + process.getExternalId());
@@ -529,9 +530,9 @@ public class SantanderBatchFillerWorker {
                 //return pickedSCP.getRegistration().getDegree().getSigla();
             }
         }
-        if (roleType == RoleType.TEACHER) {
+        if (roleType.equals("TEACHER")) {
             final Teacher teacher = person.getTeacher();
-            final Department department = teacher.getCurrentWorkingDepartment();
+            final Department department = teacher.getDepartment();
             if (department != null) {
                 //return department.getDepartmentUnit().getIdentificationCardLabel();
                 return department.getAcronym();
@@ -557,7 +558,7 @@ public class SantanderBatchFillerWorker {
         return degree;
     }
 
-    private String buildChip1Block(SantanderBatch batch, Person person, RoleType role) {
+    private String buildChip1Block(SantanderBatch batch, Person person, String role) {
         StringBuilder chip1String = new StringBuilder(185);
 
         String idNumber = makeZeroPaddedNumber(Integer.parseInt(person.getUsername().substring(3)), 10);
@@ -586,8 +587,8 @@ public class SantanderBatchFillerWorker {
         String executionYear = "00000000";
 
         String unit = makeStringBlock("", 11);
-        if (role == RoleType.TEACHER) {
-            unit = makeStringBlock(person.getTeacher().getCurrentWorkingDepartment().getAcronym(), 11);
+        if (role.equals("TEACHER")) {
+            unit = makeStringBlock(person.getTeacher().getDepartment().getAcronym(), 11);
         }
 
         String activeCard = "0";
@@ -601,35 +602,35 @@ public class SantanderBatchFillerWorker {
         String altRoleDescription = makeStringBlock("", 20);
         if (roleCode.equals("7")) {
             switch (role) {
-            case STUDENT:
+            case "STUDENT":
                 altRoleKey = "CATEG";
                 altRoleCode = "1";
                 altRoleTemplate = "02";
                 altRoleDescription = makeStringBlock("Estudante/Student", 20);
                 break;
 
-            case TEACHER:
+            case "TEACHER":
                 altRoleKey = "CATEG";
                 altRoleCode = "2";
                 altRoleTemplate = "02";
                 altRoleDescription = makeStringBlock("Docente/Faculty", 20);
                 break;
 
-            case EMPLOYEE:
+            case "EMPLOYEE":
                 altRoleKey = "CATEG";
                 altRoleCode = "3";
                 altRoleTemplate = "02";
                 altRoleDescription = makeStringBlock("Funcionario/Staff", 20);
                 break;
 
-            case RESEARCHER:
+            case "RESEARCHER":
                 altRoleKey = "CATEG";
                 altRoleCode = "8";
                 altRoleTemplate = "02";
                 altRoleDescription = makeStringBlock("Invest./Researcher", 20);
                 break;
 
-            case GRANT_OWNER:
+            case "GRANT_OWNER":
                 altRoleKey = "CATEG";
                 altRoleCode = "9";
                 altRoleTemplate = "02";

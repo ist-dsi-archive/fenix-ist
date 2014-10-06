@@ -2,17 +2,17 @@ package pt.utl.ist.scripts.process.report.fenixTeam;
 
 import java.util.Collections;
 
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.organizationalStructure.UnitCostCenterCode;
-import net.sourceforge.fenixedu.domain.util.email.Message;
-import net.sourceforge.fenixedu.domain.util.email.SystemSender;
-
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
+import org.fenixedu.academic.domain.organizationalStructure.UnitCostCenterCode;
+import org.fenixedu.academic.domain.util.email.Message;
+import org.fenixedu.academic.domain.util.email.SystemSender;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.scheduler.CronTask;
 import org.fenixedu.bennu.scheduler.annotation.Task;
 import org.joda.time.YearMonthDay;
+
+import pt.ist.fenixedu.contracts.domain.Employee;
 
 @Task(englishTitle = "BirthDaysCIIST")
 public class BirthDaysCIIST extends CronTask {
@@ -24,7 +24,7 @@ public class BirthDaysCIIST extends CronTask {
     public void runTask() {
         Unit ciist = UnitCostCenterCode.find(8400).getUnit();
         YearMonthDay now = new YearMonthDay();
-        for (Employee employee : ciist.getAllCurrentActiveWorkingEmployees()) {
+        for (Employee employee : Employee.getAllCurrentActiveWorkingEmployees(ciist)) {
             YearMonthDay birthDay = employee.getPerson().getDateOfBirthYearMonthDay();
             if (birthDay != null) {
                 if ((now.plusDays(howManyDaysBeforeToWarn).getDayOfMonth() == birthDay.getDayOfMonth())

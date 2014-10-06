@@ -11,22 +11,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.Country;
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.domain.person.Gender;
-import net.sourceforge.fenixedu.domain.person.IDDocumentType;
-import net.sourceforge.fenixedu.domain.person.MaritalStatus;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ContractSituation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.GiafProfessionalData;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonProfessionalData;
 import net.sourceforge.fenixedu.persistenceTierOracle.Oracle.PersistentSuportGiaf;
-import net.sourceforge.fenixedu.util.StringFormatter;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Country;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.domain.person.Gender;
+import org.fenixedu.academic.domain.person.IDDocumentType;
+import org.fenixedu.academic.domain.person.MaritalStatus;
+import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.academic.util.StringFormatter;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.StringNormalizer;
@@ -36,6 +31,11 @@ import org.slf4j.Logger;
 
 import pt.ist.fenix.giafsync.GiafSync.ImportProcessor;
 import pt.ist.fenix.giafsync.GiafSync.Modification;
+import pt.ist.fenixedu.contracts.domain.Employee;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.GiafProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalData;
 import pt.utl.ist.scripts.process.updateData.fixNames.DBField2Cap;
 
 public class UpdatePersonsFromGiaf extends ImportProcessor {
@@ -130,23 +130,24 @@ public class UpdatePersonsFromGiaf extends ImportProcessor {
                 YearMonthDay idEmissionDate = getLocalDateFromString(result.getString("emp_bi_dt"));
                 if (canEditPersonInfo(personByNumber, idEmissionDate)) {
 
-                    final String prettyPrintName = StringFormatter.prettyPrint(giafName);
-                    if (!personByNumber.getName().equals(prettyPrintName)) {
-                        if (namesCorrectlyPartitioned(personByNumber, prettyPrintName)) {
-                            modifications.add(new Modification() {
-                                @Override
-                                public void execute() {
-                                    personByNumber.setName(prettyPrintName);
-                                }
-                            });
-                            if (!newPersons.contains(personByNumber)) {
-                                editedPersons.add(personByNumber);
-                            }
-                        } else {
-                            logger.debug("\nNão pode alterar nome (tem nomes partidos). Número Mecanográfico: "
-                                    + personNumberString + " Nome: " + prettyPrintName);
-                        }
-                    }
+// Don't care for giaf name changes
+//                    final String prettyPrintName = StringFormatter.prettyPrint(giafName);
+//                    if (!personByNumber.getName().equals(prettyPrintName)) {
+//                        if (namesCorrectlyPartitioned(personByNumber, prettyPrintName)) {
+//                            modifications.add(new Modification() {
+//                                @Override
+//                                public void execute() {
+//                                    personByNumber.setName(prettyPrintName);
+//                                }
+//                            });
+//                            if (!newPersons.contains(personByNumber)) {
+//                                editedPersons.add(personByNumber);
+//                            }
+//                        } else {
+//                            logger.debug("\nNão pode alterar nome (tem nomes partidos). Número Mecanográfico: "
+//                                    + personNumberString + " Nome: " + prettyPrintName);
+//                        }
+//                    }
 
                     YearMonthDay idExpirationDate = getLocalDateFromString(result.getString("emp_bi_val_dt"));
                     String idArquive = result.getString("emp_bi_arq");
@@ -199,14 +200,15 @@ public class UpdatePersonsFromGiaf extends ImportProcessor {
     }
 
     private boolean namesCorrectlyPartitioned(Person personByNumber, String prettyPrintName) {
-        if (StringUtils.isEmpty(personByNumber.getGivenNames()) && StringUtils.isEmpty(personByNumber.getFamilyNames())) {
+        if (StringUtils.isEmpty(personByNumber.getProfile().getGivenNames())
+                && StringUtils.isEmpty(personByNumber.getFamilyNames())) {
             return true;
         }
-        return (personByNumber.getGivenNames() + " " + personByNumber.getFamilyNames()).equals(prettyPrintName);
+        return (personByNumber.getProfile().getGivenNames() + " " + personByNumber.getFamilyNames()).equals(prettyPrintName);
     }
 
     private boolean canEditPersonInfo(Person personByNumber, YearMonthDay idEmissionDate) {
-        Boolean isStudent = personByNumber.hasRole(RoleType.STUDENT);
+        Boolean isStudent = RoleType.STUDENT.isMember(personByNumber.getUser());
         ContractSituation contractSituation = getCurrentContractSituation(personByNumber.getEmployee());
         if (contractSituation != null && contractSituation.getEndSituation() && isStudent) {
             if (idEmissionDate == null || idEmissionDate.isBefore(personByNumber.getEmissionDateOfDocumentIdYearMonthDay())) {

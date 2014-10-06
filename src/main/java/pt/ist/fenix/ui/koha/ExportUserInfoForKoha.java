@@ -11,45 +11,43 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.fenixedu.domain.Degree;
-import net.sourceforge.fenixedu.domain.DegreeCurricularPlan;
-import net.sourceforge.fenixedu.domain.Department;
-import net.sourceforge.fenixedu.domain.DomainObjectUtil;
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.ExecutionYear;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Role;
-import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
-import net.sourceforge.fenixedu.domain.Teacher;
-import net.sourceforge.fenixedu.domain.accounting.events.insurance.InsuranceEvent;
-import net.sourceforge.fenixedu.domain.contacts.EmailAddress;
-import net.sourceforge.fenixedu.domain.contacts.MobilePhone;
-import net.sourceforge.fenixedu.domain.contacts.PartyContact;
-import net.sourceforge.fenixedu.domain.contacts.Phone;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.organizationalStructure.DepartmentUnit;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcessState;
-import net.sourceforge.fenixedu.domain.student.Registration;
-import net.sourceforge.fenixedu.domain.student.Student;
-import net.sourceforge.fenixedu.domain.student.registrationStates.RegistrationState;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
-import net.sourceforge.fenixedu.presentationTier.Action.externalServices.ExternalInterfaceDispatchAction;
-import net.sourceforge.fenixedu.util.FenixConfigurationManager;
+import net.sourceforge.fenixedu.FenixIstConfiguration;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.idcards.domain.CardGenerationBatch;
-import org.fenixedu.idcards.domain.CardGenerationEntry;
+import org.fenixedu.academic.domain.Degree;
+import org.fenixedu.academic.domain.DegreeCurricularPlan;
+import org.fenixedu.academic.domain.Department;
+import org.fenixedu.academic.domain.DomainObjectUtil;
+import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.accounting.events.insurance.InsuranceEvent;
+import org.fenixedu.academic.domain.contacts.EmailAddress;
+import org.fenixedu.academic.domain.contacts.MobilePhone;
+import org.fenixedu.academic.domain.contacts.PartyContact;
+import org.fenixedu.academic.domain.contacts.Phone;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.organizationalStructure.DepartmentUnit;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcessState;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
+import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
 import org.joda.time.YearMonthDay;
 
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import pt.ist.fenixedu.academic.ui.struts.action.externalServices.ExternalInterfaceDispatchAction;
+import pt.ist.fenixedu.contracts.domain.Employee;
+import pt.ist.fenixedu.contracts.domain.research.Researcher;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
@@ -59,8 +57,8 @@ public class ExportUserInfoForKoha extends ExternalInterfaceDispatchAction {
     private boolean chackCredentials(final HttpServletRequest request) {
         final String username = (String) getFromRequest(request, "username");
         final String password = (String) getFromRequest(request, "password");
-        final String usernameProp = FenixConfigurationManager.getConfiguration().getExternalServicesKohaUsername();
-        final String passwordProp = FenixConfigurationManager.getConfiguration().getExternalServicesKohaPassword();
+        final String usernameProp = FenixIstConfiguration.getConfiguration().getExternalServicesKohaUsername();
+        final String passwordProp = FenixIstConfiguration.getConfiguration().getExternalServicesKohaPassword();
 
         return !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password) && !StringUtils.isEmpty(usernameProp)
                 && !StringUtils.isEmpty(passwordProp) && username.equals(usernameProp) && password.equals(passwordProp);
@@ -132,19 +130,18 @@ public class ExportUserInfoForKoha extends ExternalInterfaceDispatchAction {
         spreadsheet.setHeader("IST-ID").setHeader("*departamento").setHeader("nome").setHeader("email").setHeader("telefone")
                 .setHeader("cgdCode");
 
-        final Role personRole = Role.getRoleByRoleType(RoleType.PERSON);
-        for (final Person person : personRole.getAssociatedPersonsSet()) {
-            if (person.hasRole(RoleType.TEACHER)) {
-                final Teacher teacher = person.getTeacher();
-                if (teacher != null && teacher.getCurrentWorkingUnit() != null && person.getPersonProfessionalData() != null
-                        && person.getPersonProfessionalData().getGiafProfessionalDataByCategoryType(CategoryType.TEACHER) != null) {
-                    addEmployeeInformation(spreadsheet, person);
-                }
-            } else if (person.hasRole(RoleType.RESEARCHER) && person.hasRole(RoleType.EMPLOYEE) && person.getEmployee() != null
-                    && person.getEmployee().getCurrentWorkingPlace() != null) {
-                addEmployeeInformation(spreadsheet, person);
+        Set<Person> teachersAndResearchers = new HashSet<>();
+        for (Teacher teacher : Bennu.getInstance().getTeachersSet()) {
+            if (teacher.isActiveContractedTeacher()) {
+                teachersAndResearchers.add(teacher.getPerson());
             }
         }
+        for (Researcher researcher : Bennu.getInstance().getResearchersSet()) {
+            if (researcher.isActiveContractedResearcher()) {
+                teachersAndResearchers.add(researcher.getPerson());
+            }
+        }
+        teachersAndResearchers.forEach(p -> addEmployeeInformation(spreadsheet, p));
 
         return sendXls(response, spreadsheet);
     }
@@ -165,9 +162,9 @@ public class ExportUserInfoForKoha extends ExternalInterfaceDispatchAction {
         final DateTime begin = executionYear.getBeginDateYearMonthDay().toDateTimeAtMidnight();
         final DateTime end = executionYear.getEndDateYearMonthDay().toDateTimeAtMidnight();;
 
-        final Role personRole = Role.getRoleByRoleType(RoleType.PERSON);
-        for (final Person person : personRole.getAssociatedPersonsSet()) {
-            if (person.getStudent() != null) {
+        for (User user : Bennu.getInstance().getUserSet()) {
+            Person person = user.getPerson();
+            if (person != null && person.getStudent() != null) {
                 final Student student = person.getStudent();
                 final StudentCurricularPlan scp = findStudentCurricularPlan(student, begin, end);
                 if (scp != null) {
@@ -326,16 +323,17 @@ public class ExportUserInfoForKoha extends ExternalInterfaceDispatchAction {
     }
 
     private String getCGDCode(final Person person) {
-        CardGenerationEntry result = null;
-        for (final CardGenerationEntry entry : person.getCardGenerationEntriesSet()) {
-            final CardGenerationBatch batch = entry.getCardGenerationBatch();
-            if (batch.getSent() != null && batch.getCardGenerationProblemsSet().size() == 0) {
-                if (result == null || result.getCardGenerationBatch().getSent().isBefore(batch.getSent())) {
-                    result = entry;
-                }
-            }
-        }
-        return result == null ? " " : result.getCgdIdentifier();
+        return "";
+//        CardGenerationEntry result = null;
+//        for (final CardGenerationEntry entry : person.getCardGenerationEntriesSet()) {
+//            final CardGenerationBatch batch = entry.getCardGenerationBatch();
+//            if (batch.getSent() != null && batch.getCardGenerationProblemsSet().size() == 0) {
+//                if (result == null || result.getCardGenerationBatch().getSent().isBefore(batch.getSent())) {
+//                    result = entry;
+//                }
+//            }
+//        }
+//        return result == null ? " " : result.getCgdIdentifier();
     }
 
 }

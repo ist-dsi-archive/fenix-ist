@@ -1,9 +1,8 @@
 package pt.utl.ist.scripts.process.updateData.inquiries;
 
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.inquiries.InquiryBlock;
-import net.sourceforge.fenixedu.domain.inquiries.ResultsInquiryTemplate;
-
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.inquiries.InquiryBlock;
+import org.fenixedu.academic.domain.inquiries.ResultsInquiryTemplate;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 
 public class CreateCourseResultInquiry extends CustomTask {

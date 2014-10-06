@@ -4,16 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.Attends;
-import net.sourceforge.fenixedu.domain.CurricularCourse;
-import net.sourceforge.fenixedu.domain.Enrolment;
-import net.sourceforge.fenixedu.domain.ExecutionCourse;
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.ExecutionYear;
-import net.sourceforge.fenixedu.domain.MarkSheet;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Professorship;
-
+import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.MarkSheet;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
@@ -30,8 +29,7 @@ public class ReportCoursesWithoutMarksheet extends CustomTask {
         spreadsheet.setHeader("Responsável\n");
 
         final Set<CurricularCourse> curricularCourses = new HashSet<CurricularCourse>();
-        for (final ExecutionSemester executionSemester : ExecutionYear.readCurrentExecutionYear()
-                .getExecutionPeriodsSet()) {
+        for (final ExecutionSemester executionSemester : ExecutionYear.readCurrentExecutionYear().getExecutionPeriodsSet()) {
             for (final Enrolment enrolment : executionSemester.getEnrolmentsSet()) {
                 final CurricularCourse curricularCourse = enrolment.getCurricularCourse();
                 if (!enrolment.isAnnulled() && !hasCurricularCourseMarkSheet(curricularCourse, enrolment.getExecutionPeriod())) {

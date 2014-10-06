@@ -11,16 +11,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.Country;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.GiafProfessionalData;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.GrantOwnerEquivalent;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonGrantOwnerEquivalent;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonProfessionalData;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonProfessionalExemption;
 import net.sourceforge.fenixedu.persistenceTierOracle.Oracle.PersistentSuportGiaf;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Country;
+import org.fenixedu.academic.domain.Person;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.StringNormalizer;
 import org.joda.time.DateTime;
@@ -31,6 +26,11 @@ import org.slf4j.Logger;
 
 import pt.ist.fenix.giafsync.GiafSync.ImportProcessor;
 import pt.ist.fenix.giafsync.GiafSync.Modification;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.GiafProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.GrantOwnerEquivalent;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonGrantOwnerEquivalent;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalExemption;
 
 class ImportPersonGrantOwnerEquivalentFromGiaf extends ImportProcessor {
     final static DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");

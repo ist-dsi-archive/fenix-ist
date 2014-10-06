@@ -3,14 +3,11 @@ package pt.utl.ist.scripts.process.updateData.fixNames;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sourceforge.fenixedu.domain.CurricularCourse;
-import net.sourceforge.fenixedu.domain.ExecutionCourse;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.degreeStructure.DegreeModule;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.fenixedu.academic.domain.CurricularCourse;
+import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.degreeStructure.DegreeModule;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.scheduler.CronTask;
 
@@ -162,7 +159,7 @@ public class DBField2Cap extends CronTask {
         try {
             fixCurricularCourseNames();
             fixExecutionCourseNames();
-            fixPersonNames();
+//            fixPersonNames();
         } catch (Exception e) {
             getLogger().error("Unable to run fixNames." + e);
             throw new Error(e);
@@ -193,25 +190,25 @@ public class DBField2Cap extends CronTask {
     }
 
     // PERSON AND PARENTS
-    public static void fixPersonNames() throws Exception {
-
-        for (final Party party : Bennu.getInstance().getPartysSet()) {
-            if (party.isPerson()) {
-                final Person pessoa = (Person) party;
-                String capitalizedName = prettyPrint(pessoa.getName());
-                pessoa.setName(capitalizedName);
-                if (pessoa.getNameOfFather() != null) {
-                    String capitalizedNameFather = prettyPrint(pessoa.getNameOfFather());
-                    pessoa.setNameOfFather(capitalizedNameFather);
-                }
-                if (pessoa.getNameOfMother() != null) {
-                    String capitalizedNameMother = prettyPrint(pessoa.getNameOfMother());
-                    pessoa.setNameOfMother(capitalizedNameMother);
-                }
-            }
-        }
-
-    }
+//    public static void fixPersonNames() throws Exception {
+//
+//        for (final Party party : Bennu.getInstance().getPartysSet()) {
+//            if (party.isPerson()) {
+//                final Person pessoa = (Person) party;
+//                String capitalizedName = prettyPrint(pessoa.getName());
+//                pessoa.setName(capitalizedName);
+//                if (pessoa.getNameOfFather() != null) {
+//                    String capitalizedNameFather = prettyPrint(pessoa.getNameOfFather());
+//                    pessoa.setNameOfFather(capitalizedNameFather);
+//                }
+//                if (pessoa.getNameOfMother() != null) {
+//                    String capitalizedNameMother = prettyPrint(pessoa.getNameOfMother());
+//                    pessoa.setNameOfMother(capitalizedNameMother);
+//                }
+//            }
+//        }
+//
+//    }
 
     /**
      * Capitalizes a string that may contain whitespaces and special characters.

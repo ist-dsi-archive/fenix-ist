@@ -5,27 +5,35 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Photograph;
-import net.sourceforge.fenixedu.domain.Role;
-import net.sourceforge.fenixedu.domain.contacts.EmailAddress;
-import net.sourceforge.fenixedu.domain.contacts.MobilePhone;
-import net.sourceforge.fenixedu.domain.contacts.PartyContact;
-import net.sourceforge.fenixedu.domain.contacts.PartyContactType;
-import net.sourceforge.fenixedu.domain.contacts.Phone;
-import net.sourceforge.fenixedu.domain.contacts.WebAddress;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Accountability;
-import net.sourceforge.fenixedu.domain.organizationalStructure.AccountabilityTypeEnum;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Invitation;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.student.Registration;
-
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.Photograph;
+import org.fenixedu.academic.domain.accessControl.ActiveStudentsGroup;
+import org.fenixedu.academic.domain.accessControl.ActiveTeachersGroup;
+import org.fenixedu.academic.domain.accessControl.AlumniGroup;
+import org.fenixedu.academic.domain.contacts.EmailAddress;
+import org.fenixedu.academic.domain.contacts.MobilePhone;
+import org.fenixedu.academic.domain.contacts.PartyContact;
+import org.fenixedu.academic.domain.contacts.PartyContactType;
+import org.fenixedu.academic.domain.contacts.Phone;
+import org.fenixedu.academic.domain.contacts.WebAddress;
+import org.fenixedu.academic.domain.organizationalStructure.Accountability;
+import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
+import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.UserProfile;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.idcards.domain.SantanderCardInformation;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.YearMonthDay;
+
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveResearchers;
+import pt.ist.fenixedu.contracts.domain.organizationalStructure.Invitation;
 
 import com.google.common.io.BaseEncoding;
 
@@ -134,8 +142,8 @@ public class PersonInformationDTO {
         fillPersonalAndWorkContacts(person.getEmailAddresses(), this.personalEmails, this.workEmails);
 
         this.roles = new ArrayList<String>();
-        for (Role role : person.getPersonRolesSet()) {
-            roles.add(role.getRoleType().name());
+        for (String role : calculateRoles(person.getUser())) {
+            roles.add(role);
         }
 
         for (final Accountability accountability : person.getParentsSet()) {
@@ -165,8 +173,8 @@ public class PersonInformationDTO {
 
         }
 
-        if (person.getTeacher() != null && person.getTeacher().getCurrentWorkingDepartment() != null) {
-            this.teacherDepartment = person.getTeacher().getCurrentWorkingDepartment().getRealName();
+        if (person.getTeacher() != null && person.getTeacher().getDepartment() != null) {
+            this.teacherDepartment = person.getTeacher().getDepartment().getRealName();
         }
 
         if (person.getEmployee() != null) {
@@ -184,7 +192,7 @@ public class PersonInformationDTO {
             }
         }
 
-        if (person.hasRole(RoleType.RESEARCHER) && !person.hasRole(RoleType.TEACHER)) {
+        if (RoleType.RESEARCHER.isMember(person.getUser()) && !RoleType.TEACHER.isMember(person.getUser())) {
             final Collection<? extends Accountability> accountabilities =
                     person.getParentAccountabilities(AccountabilityTypeEnum.RESEARCH_CONTRACT);
             final YearMonthDay currentDate = new YearMonthDay();
@@ -218,7 +226,7 @@ public class PersonInformationDTO {
     }
 
     private static String getMifareSerialNumber(String line) {
-        final int offset = line.length() - 550 -1;
+        final int offset = line.length() - 550 - 1;
         return line.substring(offset - 10, offset);
     }
 
@@ -301,13 +309,14 @@ public class PersonInformationDTO {
         this.userUID = userUID;
     }
 
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
+//
+//    public List<String> getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(List<String> roles) {
+//        this.roles = roles;
+//    }
 
     public String getPhoto() {
         return photo;
@@ -483,6 +492,29 @@ public class PersonInformationDTO {
 
     public void setSurName(String surName) {
         this.surName = surName;
+    }
+
+    private List<String> calculateRoles(User user) {
+        List<String> roles = new ArrayList<>();
+        if (new ActiveTeachersGroup().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "TEACHER"));
+        }
+        if (new ActiveStudentsGroup().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "STUDENT"));
+        }
+        if (new ActiveGrantOwner().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"));
+        }
+        if (new ActiveEmployees().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"));
+        }
+        if (new ActiveResearchers().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "RESEARCHER"));
+        }
+        if (AlumniGroup.get().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "ALUMNI"));
+        }
+        return roles;
     }
 
 }

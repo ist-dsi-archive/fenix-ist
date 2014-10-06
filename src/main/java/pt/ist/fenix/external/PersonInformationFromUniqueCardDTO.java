@@ -23,16 +23,15 @@ package pt.ist.fenix.external;
 
 import java.text.ParseException;
 
-import net.sourceforge.fenixedu.domain.Country;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.PhotoType;
-import net.sourceforge.fenixedu.domain.Photograph;
-import net.sourceforge.fenixedu.domain.contacts.PhysicalAddressData;
-import net.sourceforge.fenixedu.domain.person.Gender;
-import net.sourceforge.fenixedu.util.ContentType;
-import net.sourceforge.fenixedu.util.StringFormatter;
-
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Country;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.PhotoType;
+import org.fenixedu.academic.domain.Photograph;
+import org.fenixedu.academic.domain.contacts.PhysicalAddressData;
+import org.fenixedu.academic.domain.person.Gender;
+import org.fenixedu.academic.util.ContentType;
+import org.fenixedu.academic.util.StringFormatter;
 import org.joda.time.YearMonthDay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

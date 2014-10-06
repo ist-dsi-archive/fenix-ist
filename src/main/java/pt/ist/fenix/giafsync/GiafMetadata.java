@@ -5,26 +5,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.fenixedu.domain.Country;
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.person.IDDocumentType;
-import net.sourceforge.fenixedu.domain.person.MaritalStatus;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.Absence;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ContractSituation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.FunctionsAccumulation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.GrantOwnerEquivalent;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ProfessionalCategory;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ProfessionalContractType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ProfessionalRegime;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ProfessionalRelation;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ServiceExemption;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
-
+import org.fenixedu.academic.domain.Country;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.person.IDDocumentType;
+import org.fenixedu.academic.domain.person.MaritalStatus;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.StringNormalizer;
 import org.slf4j.Logger;
 
+import pt.ist.fenixedu.contracts.domain.Employee;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.Absence;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.FunctionsAccumulation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.GrantOwnerEquivalent;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalCategory;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalContractType;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalRegime;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalRelation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ServiceExemption;
+import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 class GiafMetadata {

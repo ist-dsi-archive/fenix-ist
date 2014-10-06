@@ -6,12 +6,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.ContractSituation;
 import net.sourceforge.fenixedu.persistenceTierOracle.Oracle.PersistentSuportGiaf;
 
 import org.slf4j.Logger;
 
 import pt.ist.fenix.giafsync.GiafSync.MetadataProcessor;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ContractSituation;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 class ImportContractSituationsFromGiaf implements MetadataProcessor {

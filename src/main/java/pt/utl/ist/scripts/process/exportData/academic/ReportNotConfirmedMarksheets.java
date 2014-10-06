@@ -2,8 +2,7 @@ package pt.utl.ist.scripts.process.exportData.academic;
 
 import java.io.ByteArrayOutputStream;
 
-import net.sourceforge.fenixedu.domain.MarkSheet;
-
+import org.fenixedu.academic.domain.MarkSheet;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 

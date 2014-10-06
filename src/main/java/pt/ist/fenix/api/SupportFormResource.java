@@ -2,7 +2,9 @@ package pt.ist.fenix.api;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -25,12 +27,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.injectionCode.AccessControl;
-import net.sourceforge.fenixedu.util.Bundle;
-import net.sourceforge.fenixedu.util.FenixConfigurationManager;
-
 import org.apache.commons.validator.EmailValidator;
+import org.fenixedu.academic.FenixEduAcademicConfiguration;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.accessControl.ActiveStudentsGroup;
+import org.fenixedu.academic.domain.accessControl.ActiveTeachersGroup;
+import org.fenixedu.academic.domain.accessControl.AlumniGroup;
+import org.fenixedu.academic.predicate.AccessControl;
+import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.rest.BennuRestResource;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -40,6 +45,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveResearchers;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.base.Objects;
@@ -113,7 +121,7 @@ public class SupportFormResource extends BennuRestResource {
         generateLabel(builder, "Roles").append('[');
         Person person = AccessControl.getPerson();
         if (person != null) {
-            builder.append(String.join(", ", person.getMainRoles()));
+            builder.append(getRoles(person.getUser()));
         }
         builder.append("]\n");
 
@@ -148,6 +156,29 @@ public class SupportFormResource extends BennuRestResource {
         generateLabel(builder, "Host").append('[').append(hostname).append("]\n");
     }
 
+    private String getRoles(User user) {
+        List<String> roles = new ArrayList<>();
+        if (new ActiveTeachersGroup().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "TEACHER"));
+        }
+        if (new ActiveStudentsGroup().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "STUDENT"));
+        }
+        if (new ActiveGrantOwner().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"));
+        }
+        if (new ActiveEmployees().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"));
+        }
+        if (new ActiveResearchers().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "RESEARCHER"));
+        }
+        if (AlumniGroup.get().isMember(user)) {
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "ALUMNI"));
+        }
+        return roles.stream().collect(Collectors.joining(", "));
+    }
+
     private static String str(String key) {
         return BundleUtil.getString("resources.FenixIstResources", key);
     }
@@ -163,7 +194,7 @@ public class SupportFormResource extends BennuRestResource {
     private void sendEmail(String from, String subject, String body, SupportBean bean) {
         Properties props = new Properties();
         props.put("mail.smtp.host",
-                Objects.firstNonNull(FenixConfigurationManager.getConfiguration().getMailSmtpHost(), "localhost"));
+                Objects.firstNonNull(FenixEduAcademicConfiguration.getConfiguration().getMailSmtpHost(), "localhost"));
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage message = new MimeMessage(session);
         try {

@@ -37,6 +37,11 @@ public class FenixIstConfiguration {
                 description = "Login URL to use when barra is set as authentication broker")
         public String barraLoginUrl();
 
+        @ConfigurationProperty(key = "externalServices.koha.password")
+        public String getExternalServicesKohaPassword();
+
+        @ConfigurationProperty(key = "externalServices.koha.username")
+        public String getExternalServicesKohaUsername();
     }
 
     public static ConfigurationProperties getConfiguration() {
