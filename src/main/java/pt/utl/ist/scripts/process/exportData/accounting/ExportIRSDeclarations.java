@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
 import net.sourceforge.fenixedu.domain.Person;
 import net.sourceforge.fenixedu.domain.accounting.AcademicEvent;
 import net.sourceforge.fenixedu.domain.accounting.AccountingTransactionDetail;
@@ -45,7 +44,7 @@ public class ExportIRSDeclarations extends CronTask {
     static File academicSignature = null;
 
     @Override
-    public void runTask() throws JRException, URISyntaxException, IOException {
+    public void runTask() throws URISyntaxException, IOException {
         taskLog("Start ExportIRSDeclaration");
 
         academicSignature = getSignatureFile();
@@ -79,7 +78,7 @@ public class ExportIRSDeclarations extends CronTask {
     }
 
     @Atomic(mode = TxMode.WRITE)
-    private void writeDocuments(List<ExportIRSDeclaration> documents) throws JRException {
+    private void writeDocuments(List<ExportIRSDeclaration> documents) {
         for (ExportIRSDeclaration exportIRSDeclaration : documents) {
             if (exportIRSDeclaration.getPerson().hasAnnualIRSDocumentFor(YEAR_TO_PROCESS)) {
                 exportIRSDeclaration.getPerson().getAnnualIRSDocumentFor(YEAR_TO_PROCESS).delete();
@@ -89,8 +88,7 @@ public class ExportIRSDeclarations extends CronTask {
                 addUnitCoordinatorSignature(customDeclaration);
                 final byte[] report =
                         ReportsUtils.exportToPdfFileAsByteArray(customDeclaration.getReportTemplateKey(),
-                                customDeclaration.getParameters(),
-                                customDeclaration.getDataSource());
+                                customDeclaration.getParameters(), customDeclaration.getDataSource());
 
                 new AnnualIRSDeclarationDocument(exportIRSDeclaration.getPerson(), null, customDeclaration.getReportFileName()
                         + ".pdf", report, YEAR_TO_PROCESS);
@@ -101,7 +99,7 @@ public class ExportIRSDeclarations extends CronTask {
         }
     }
 
-    private Map<Person, ExportIRSDeclaration> getDocuments(Set<Event> paymentsForCivilYear) throws JRException {
+    private Map<Person, ExportIRSDeclaration> getDocuments(Set<Event> paymentsForCivilYear) {
         final Map<Person, ExportIRSDeclaration> result = new HashMap<Person, ExportIRSDeclaration>();
         for (final Event event : paymentsForCivilYear) {
             if (isToProcess(event)) {
@@ -145,7 +143,7 @@ public class ExportIRSDeclarations extends CronTask {
         return result;
     }
 
-    private void createDeclarationData(Event event, Map<Person, ExportIRSDeclaration> result) throws JRException {
+    private void createDeclarationData(Event event, Map<Person, ExportIRSDeclaration> result) {
 
         ExportIRSDeclaration exportIRSDeclaration = result.get(event.getPerson());
         if (exportIRSDeclaration != null) {
