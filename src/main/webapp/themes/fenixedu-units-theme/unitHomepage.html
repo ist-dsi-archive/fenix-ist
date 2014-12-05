@@ -1,0 +1,54 @@
+{% extends "fenixedu-units-theme/base.html" %}
+{% import "fenixedu-units-theme/view.html" %}
+
+{% block content %}
+
+    {% block unitHeader %}{% endblock unitHeader %}
+    
+    <hr />
+
+    <div class="row">   
+        {% set colSize = showEvents and events is not empty and showAnnouncements and announcements is not empty ? 6 : 12 %}
+
+        {% if showAnnouncements and announcements is not empty %}
+            <div class="col-md-{{ colSize }}">
+                <h3 class="text-center">{{ i18n('resources.FenixEduCMSResources', 'label.announcements') }}</h3>
+                <blockquote>
+                    {% for announcement in announcements %}
+                        <p>{{ viewPost(announcement) }}</p>
+                        <hr>
+                    {% else %}
+                        <h4>{{ i18n('resources.FenixEduCMSResources', 'label.announcements.empty') }}</h4>
+                    {% endfor %}
+                    <a href="announcements">{{ i18n('resources.FenixEduCMSResources', 'label.announcements.all') }}</a>
+                </blockquote>
+            </div>
+        {% endif %}
+
+        {% if showEvents and events is not empty %}
+            <div class="col-md-{{ colSize }}">
+                <h3 class="text-center">{{ i18n('resources.FenixEduCMSResources', 'label.events') }}</h3>
+                <blockquote>
+                    {% for event in events %}
+                        <p>{{ viewPost(event) }}</p>
+                        <hr>
+                    {% else %}
+                    <h4>{{ i18n('resources.FenixEduCMSResources', 'label.events.empty') }}</h4>
+                    {% endfor %}
+                    <a href="events">{{ i18n('resources.FenixEduCMSResources', 'label.events.all') }}</a>
+                </blockquote>
+            </div>
+        {% endif %}
+
+    </div>
+    <style>
+        .banner {
+            width: 100%;
+            float: left;
+            background-color: {{ color }};
+            /*background-image: url('{{ backgroundImage }}');*/
+            background-repeat: {{ repeatType }};
+        }
+    </style>
+
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% block content %}
+	{% if subunits is not empty %}
+		<ul>
+			{% for subunit in subunits %}
+				<li>
+					<a href="{{ subunit.cmsSite.initialPage.address }}">
+						{{ subunit.nameI18n }}
+					</a>
+				</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<h4>{{ i18n('resources.SiteResources', 'message.unitSite.unit.subunits.empty') }}</h4>
+	{% endif %}
+
+{% endblock content %}

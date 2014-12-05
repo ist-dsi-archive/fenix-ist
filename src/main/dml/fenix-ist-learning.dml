@@ -1,0 +1,44 @@
+package pt.ist.learning;
+
+class unit.UnitSite extends .org.fenixedu.cms.domain.Site {}
+class homepage.HomepageSite extends .org.fenixedu.cms.domain.Site {
+    boolean showActiveStudentCurricularPlans;
+    boolean showAlternativeHomepage;
+    boolean showAlumniDegrees;
+    boolean showCategory;
+    boolean showCurrentAttendingExecutionCourses;
+    boolean showCurrentExecutionCourses;
+    boolean showEmail;
+    boolean showMobileTelephone;
+    boolean showPhoto;
+    boolean showResearchUnitHomepage;
+    boolean showPersonalTelephone;
+    boolean showUnit;
+    boolean showWorkTelephone;
+    String researchUnitHomepage;
+    LocalizedString researchUnitName;
+}
+
+class homepage.ResearcherComponent extends .org.fenixedu.cms.domain.component.Component  {
+	String titleKey;
+	String titleBundle;
+	String dataKey;
+}
+
+relation HomepageHasOwner {
+    homepage.HomepageSite playsRole cmsSite {
+        multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.Person playsRole owner {
+        multiplicity 1..1;
+    }
+}
+
+relation UnitSiteHasUnit {
+    unit.UnitSite playsRole cmsSite {
+    	    multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit {
+    	    multiplicity 1..1;
+    }
+}

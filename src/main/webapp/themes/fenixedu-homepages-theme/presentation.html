@@ -1,0 +1,102 @@
+{% extends "fenixedu-homepages-theme/base.html" %}
+
+{% import "fenixedu-homepages-theme/unitView.html" %}
+{% import "fenixedu-homepages-theme/curricularPlanView.html" %}
+{% import "fenixedu-homepages-theme/contactView.html" %}
+{% import "fenixedu-homepages-theme/courseView.html" %}
+
+{% macro presentationRow(title, content) %}
+	<tr>
+		<th>{{ i18n('resources.HomepageResources', title) }}:</th>
+		<td>
+			{{ content | raw }}
+		</td>
+	</tr>
+{% endmacro %}
+
+{% macro presentationContactRows(title, contacts, type, ctxPath='') %}
+	{% for contact in contacts %}
+		<tr>
+			{% if loop.index == 0 %}
+				<th rowspan="{{ contacts | length }}">{{ i18n('resources.HomepageResources', title) }}:</th>
+			{% endif %}
+			<td>
+				{{ contactView(contact,type,showDefault=(contacts | length > 1),publicSpace=true,ctxPath=ctxPath) }}
+			</td>
+		</tr>
+	{% endfor %}
+{% endmacro %}
+
+{% block content %}
+<h1 id="no">
+	{{ownerName}}
+</h1>
+
+<table class="thleft">
+	<!-- photo -->
+	{% if ownerId is not empty %}
+    <tr>
+        <th></th>
+        <td>
+			<div>
+				<img src="{{ request.contextPath + "/publico/retrievePersonalPhoto.do?method=retrievePhotographOnPublicSpace&amp;personId=" + ownerId }}"  style="padding: 1em 0;" alt="{{ i18n('resources.ImageResources','personPhoto') }}" />
+			</div>
+        </td>
+    </tr>
+    {% endif %}
+    
+    <!-- working unit -->
+	{% if workingUnit is not null %}
+		{{ presentationRow('label.homepage.showUnit',listUnitTree(workingUnit)) }}
+	{% endif %}
+	
+	<!-- teacher category -->
+	{% if teacherCategory is not null %}
+		{{ presentationRow('label.homepage.showCategory', teacherCategory | title) }}
+	{% endif %}
+	
+	<!-- research unit -->
+	{% if workingResearchUnits is not empty %}
+		{{ presentationRow('label.homepage.showResearchUnitHomepage', researchUnitsList(workingResearchUnits)) }}
+	{% elseif researchUnitHomepage is not empty and researchUnitName is not null %}
+		{{ presentationRow('label.homepage.showResearchUnitHomepage','<a href="' + researchUnitHomepage + '">' + researchUnitName.content + '</a>') }}
+	{% endif %}
+	
+	<!-- active student curricular plans -->
+	{% if activeCurricularPlans is not empty %}
+		{{ presentationRow('label.homepage.showActiveStudentCurricularPlans',curricularPlanDegreeList(activeCurricularPlans)) }}
+	{% endif %}
+	
+	<!-- Attending Courses -->
+	{% if attendingCourses is not empty %}
+		{{ presentationRow('label.homepage.showCurrentAttendingExecutionCourses', courseList(attendingCourses)) }}
+	{% endif %}
+	
+	<!-- Alumni Degrees -->
+	{% if completedCurricularPlans is not empty %}
+		{{ presentationRow('label.homepage.showAlumniDegrees', curricularPlanDegreeList(completedCurricularPlans)) }}
+	{% endif %}
+
+	<!-- email -->
+	{{ presentationContactRows('label.homepage.showEmail', emails, 'email', request.contextPath) }}
+	
+	<!-- phone -->
+	{{ presentationContactRows('label.homepage.showTelephone', personalPhones, 'phone') }}
+	
+	<!-- work phone -->
+	{{ presentationContactRows('label.homepage.showWorkTelephone', workPhones, 'phone') }}
+	
+	<!-- mobile phone -->
+	{{ presentationContactRows('label.homepage.showMobileTelephone', mobilePhones, 'phone') }}
+
+	<!-- alternative page -->
+	{{ presentationContactRows('label.homepage.showAlternativeHomepage', websites, 'website') }}
+	
+	<!-- Teaching Courses -->
+	{% if teachingCourses is not empty %}
+		{{ presentationRow('label.homepage.showCurrentExecutionCourses', courseList(teachingCourses)) }}
+	{% endif %}
+
+</table>
+
+{% endblock content %}

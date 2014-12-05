@@ -1,0 +1,22 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% macro degreesForTypes(degreesByType, types) %}
+    {% if types is not empty %}
+        {% for type in types %}
+            <h4>{{ i18n('resources.EnumerationResources', 'DegreeType.' + type.name) }}</h4>
+            <ul class="list-unstyled">
+                {% for degree in getValue(degreesByType, type) %}
+                    <li><h5><a href="{{ degree.unit.cmsSite.address }}">{{ degree.nameI18N }}</a></h5></li>
+                {% endfor %}
+            </ul>
+            <hr/>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {{ degreesForTypes(degreesByType, activeTypes) }}
+
+    <h3>{{ i18n('resources.PublicDepartmentResources', 'label.inactive.degrees') }}</h3>
+    {{ degreesForTypes(degreesByType, inactiveTypes) }}
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% import "fenixedu-units-theme/personCard.html" %}
+
+{% block content %}
+
+	{% macro researchUnitMembers(unit) %}
+        {% if unit.researchers is empty and unit.technicalStaff is empty and unit.internships is empty and unit.scholarships is empty %}
+            <p>{{ i18n('resources.FenixEduCMSResources', 'researchUnit.members.empty') }}</p>
+        {% else %}
+            {{ personsCards(unit.researchers, i18n('resources.SiteResources', 'label.researchers')) }}
+
+            {{ personsCards(unit.technicalStaff, i18n('resources.SiteResources', 'label.technicalStaff')) }}
+
+            {{ personsCards(unit.internships, i18n('resources.SiteResources', 'label.internship')) }}
+
+            {{ personsCards(unit.scholarships, i18n('resources.SiteResources', 'label.scholarship')) }}
+        {% endif %}
+	{% endmacro %}
+
+	<h3>{{ unit.nameWithAcronym }}</h3>
+
+	<div>{{ researchUnitMembers(unit) }}</div>
+
+	{% if unit.allCurrentActiveSubUnits is not empty %}
+		{% for subunit in unit.allCurrentActiveSubUnits %}
+			{% if subunit.researchUnit %}
+				{% set unitUrl = subunit.cmsSite.initialPage is not empty ? 'unit.cmsSite.initialPage.pageAddress' : '#' %}
+				<h4><a href="{{ unitUrl }}">{{ subunit.nameWithAcronym }}</a></h4>
+				
+				{% if subunit.siteAvailable %}
+					{{ researchUnitMembers(subunit) }}
+				{% else %}
+					<p>{{ i18n('resources.SiteResources', 'label.noMembersDefined') }}</p>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+
+{% endblock content %}
+

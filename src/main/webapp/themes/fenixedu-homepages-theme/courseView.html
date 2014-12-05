@@ -1,0 +1,22 @@
+{% macro courseLink(course) %}
+	{% if course.executionCourse is not null %}
+		{# for wrapper classes #}
+		{% set course = course.executionCourse %}
+	{% endif %}
+	{% if course.site is not empty %}
+		<a href="{{ course.site }}">
+			{{ course.name }}
+		</a>
+	{% else %}
+		{{ course.name }}
+	{% endif %}
+{% endmacro %}
+
+{% macro courseList(courses, separator=',') %}
+	{% for course in courses %}
+		{% if loop.index != 0 %}
+			{{ separator | raw }}
+		{% endif %}
+		{{ courseLink(course) }}
+	{% endfor %}
+{% endmacro %}

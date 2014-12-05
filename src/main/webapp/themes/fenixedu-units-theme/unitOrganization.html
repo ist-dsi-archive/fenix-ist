@@ -1,0 +1,37 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% import "fenixedu-units-theme/personCard.html" %}
+
+{% macro unitOrganization(unitBean) %}
+	
+    {% if entries(unitBean.personFunctionsByFunction) is empty and unitBean.subunitBeans is empty %}
+        <p>{{ i18n('resources.FenixEduCMSResources', 'researchUnit.organization.empty') }}</p>
+    {% else %}
+        <h3>{{ unitBean.unit.name }}</h3>
+
+        {% for entry in entries(unitBean.personFunctionsByFunction) %}
+            {% set function = entry.key %}
+            {% set personsFunctions = entry.value %}
+
+            {% if personsFunctions is not empty %}
+                <h4 class="persons-title">{{ function.typeName.content }}</h4>
+                {% for personFunction in personsFunctions %}
+                        {{ personCard(personFunction.person) }}
+                        <hr>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+        {% lazyFor subUnitBean in unitBean.subunitBeans %}
+            <div class="subUnits">{{ unitOrganization(subUnitBean) }}</div>
+        {% endLazyFor %}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+	{% if unitBean is not empty %}
+		{{ unitOrganization(unitBean) }}
+	{% else %}
+		<p>{{ i18n('resources.SiteResources', 'label.noMembersDefined') }}</p>
+	{% endif %}
+{% endblock content %}
