@@ -19,7 +19,7 @@ class homepage.HomepageSite extends .org.fenixedu.cms.domain.Site {
     LocalizedString researchUnitName;
 }
 
-class homepage.ResearcherComponent extends .org.fenixedu.cms.domain.component.Component  {
+class homepage.components.ResearcherComponent extends .org.fenixedu.cms.domain.component.Component  {
 	String titleKey;
 	String titleBundle;
 	String dataKey;

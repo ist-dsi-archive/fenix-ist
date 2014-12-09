@@ -13,6 +13,7 @@ import org.fenixedu.cms.domain.component.MenuComponent;
 import org.fenixedu.cms.domain.component.ViewPost;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.learning.domain.degree.components.ThesisComponent;
+import pt.ist.learning.unit.components.*;
 
 import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 import static org.fenixedu.cms.domain.component.Component.forType;

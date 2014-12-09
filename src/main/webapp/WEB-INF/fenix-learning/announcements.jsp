@@ -123,51 +123,51 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
     </c:when>
 
     <c:otherwise>
-        <h4><i>${fr:message("resources.FenixEduCMSResources", "label.announcements.emtpy")}</i></h4>
+        <h4><i><spring:message code="label.announcements.emtpy" /></i></h4>
     </c:otherwise>
 
 </c:choose>
 
 <!-- Modal panel for creating an announcement -->
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade modal-lg" id="createModal" tabindex="-1" role="dialog" aria-hidden="true">
     <form method="post" action="${context}/create">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span><span class="sr-only">
-                            ${fr:message("resources.FenixEduCMSResources", "action.cancel" )}
+                            <spring:message code="action.cancel" />
                         </span>
                     </button>
-                    <h4>${fr:message("resources.FenixEduCMSResources", "action.create.announcement")}</h4>
+                    <h4><spring:message code="action.create.announcement"/></h4>
                 </div>
 
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="name" class="control-label">
-                            ${fr:message("resources.FenixEduCMSResources", "label.announcement.title" )}
+                            <spring:message code="label.announcement.title" />
                         </label>
 
                         <input bennu-localized-string required-any name="name" id="name"
-                               placeholder="${fr:message("resources.FenixEduCMSResources", "label.announcement.title" )}">
+                               placeholder="<spring:message code="label.announcement.title" />">
                     </div>
 
                     <div class="form-group">
                         <label for="announcementBody" class="control-label">
-                            ${fr:message("resources.FenixEduCMSResources", "label.announcement.content")}
+                            <spring:message code="label.announcement.content" />
                         </label>
 
                         <input bennu-localized-string bennu-html-editor required-any name="body" id="body"
-                                   placeholder="${fr:message("resources.FenixEduCMSResources", "label.announcement.content" )}">
+                                   placeholder="<spring:message code="label.announcement.content" />">
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">
-                        ${fr:message("resources.FenixEduCMSResources", "action.cancel" )}
+                        <spring:message code="action.cancel" />
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        ${fr:message("resources.FenixEduCMSResources", "action.save" )}
+                        <spring:message code="action.save" />
                     </button>
                 </div>
             </div>
@@ -184,20 +184,20 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only">
-                            ${fr:message("resources.FenixEduCMSResources", "action.cancel" )}
+                            <spring:message code="action.cancel" />
                         </span>
                     </button>
-                    <h4>${fr:message("resources.FenixEduCMSResources", "action.delete" )}</h4>
+                    <h4><spring:message code="action.delete" /></h4>
                 </div>
                 <div class="modal-body">
-                    <p>${fr:message("resources.FenixEduCMSResources", "label.announcement.delete.confirmation")}</p>
+                    <p><spring:message code="label.announcement.delete.confirmation"/>></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">
-                        ${fr:message("resources.FenixEduCMSResources", "action.cancel" )}
+                        <spring:message code="action.cancel" />
                     </button>
                     <button type="submit" class="btn btn-danger">
-                        ${fr:message("resources.FenixEduCMSResources", "action.delete" )}
+                        <spring:message code="action.delete" />
                     </button>
                 </div>
             </div>
@@ -205,9 +205,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
     </form>
 </div>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/font-awesome.css"/>
-<script src="${pageContext.request.contextPath}/static/js/toolkit.js" defer></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/toolkit/toolkit.css"/>
+${portal.toolkit()}
 
 <script>
     function showDeleteConfirmation(announcementSlug) {

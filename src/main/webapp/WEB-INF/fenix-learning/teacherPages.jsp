@@ -25,16 +25,16 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 <c:set var="context" scope="session" value="${pageContext.request.contextPath}/pages/${site.externalId}/admin"/>
 
 ${portal.angularToolkit()}
-<link href="${pageContext.request.contextPath}/bennu-admin/fancytree/skin-lion/ui.fancytree.css" rel="stylesheet" type="text/css">
-<script src="${pageContext.request.contextPath}/bennu-admin/fancytree/jquery-ui.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/bennu-admin/fancytree/jquery.fancytree-all.min.js" type="text/javascript"></script>
+<link href="${pageContext.request.contextPath}/static/lib/fancytree/skin-lion/ui.fancytree.css" rel="stylesheet" type="text/css">
+<script src="${pageContext.request.contextPath}/static/lib/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/static/lib/fancytree/jquery.fancytree-all.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     context = "${context}";
 </script>
 
-<script src="${pageContext.request.contextPath}/cms/angular-file-upload.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/cms/pages.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/static/lib/angular-file-upload/angular-file-upload.min.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/static/pages.js" type="text/javascript"></script>
 
 <h1><spring:message code="label.pages.management"/></h1>
 
@@ -80,7 +80,7 @@ ${portal.angularToolkit()}
                                 <input type="text" id="title" name="title" ng-localized-string="selected.title" required class="form-control" placeholder="<spring:message code="label.title"/>"/>
 
                                 <label for="body"><spring:message code="label.content"/></label>
-                                <textarea bennu-localized-string ng-html-editor="selected.body" placeholder="<spring:message code="label.content"/>" id="body" class="form-control"></textarea>
+                                <textarea bennu-localized-string ng-html-editor="selected.body" id="body" class="form-control"></textarea>
 
                                 <div>
                                     <div class="pull-right">

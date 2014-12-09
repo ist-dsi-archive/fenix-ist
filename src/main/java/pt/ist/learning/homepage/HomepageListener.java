@@ -9,6 +9,8 @@ import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.cms.domain.component.MenuComponent;
 import org.fenixedu.commons.i18n.LocalizedString;
+import pt.ist.learning.homepage.components.PresentationComponent;
+import pt.ist.learning.homepage.components.ResearcherComponent;
 
 import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 
@@ -47,11 +49,11 @@ public class HomepageListener {
         Component publicationsComponent = new ResearcherComponent(PUBLICATIONS_KEY, BUNDLE, "publications");
 
         Page initialPage = Page.create(newSite, menu, null, PRESENTATION_TITLE, true, "presentation", user, presentationComponent, menuComponent);
-        Page.create(newSite, menu, null, INTERESTS_TITLE, true, "researcherSection", user, interestsComponent, menuComponent);
-        Page.create(newSite, menu, null, PRIZES_TITLE, true, "researcherSection", user, prizesComponent, menuComponent);
-        Page.create(newSite, menu, null, ACTIVITIES_TITLE, true, "researcherSection", user, activitiesComponent, menuComponent);
-        Page.create(newSite, menu, null, PATENTS_TITLE, true, "researcherSection", user, patentsComponent, menuComponent);
-        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user, publicationsComponent, menuComponent);
+        Page.create(newSite, menu, null, INTERESTS_TITLE, false, "researcherSection", user, interestsComponent, menuComponent);
+        Page.create(newSite, menu, null, PRIZES_TITLE, false, "researcherSection", user, prizesComponent, menuComponent);
+        Page.create(newSite, menu, null, ACTIVITIES_TITLE, false, "researcherSection", user, activitiesComponent, menuComponent);
+        Page.create(newSite, menu, null, PATENTS_TITLE, false, "researcherSection", user, patentsComponent, menuComponent);
+        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, false, "researcherSection", user, publicationsComponent, menuComponent);
 
         newSite.setInitialPage(initialPage);
 
