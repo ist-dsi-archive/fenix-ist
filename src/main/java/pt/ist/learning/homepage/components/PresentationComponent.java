@@ -27,8 +27,9 @@ public class PresentationComponent extends HomepageSiteComponent {
         global.put("ownerName", owner.getNickname());
 
         if (site.getShowPhoto()) {
-            global.put("ownerId", owner.getExternalId());
+            global.put("ownerAvatarUrl", owner.getUser().getProfile().getAvatarUrl());
         }
+
         //TODO: employee
         /*
         Employee employee = owner.getEmployee();
@@ -38,13 +39,15 @@ public class PresentationComponent extends HomepageSiteComponent {
                 if (site.getShowUnit()) {
                     global.put("workingUnit", contract.getWorkingUnit());
                 }
-                if (site.getShowCategory() && owner.getTeacher() != null) {
-                    global.put("teacherCategory", owner.getTeacher().getCategory().getName().getContent());
-                }
             }
         }*/
+        if(site.getShowCategory()
+                && owner.getTeacher() != null
+                && owner.getTeacher().isActiveContractedTeacher()
+                && owner.getTeacher().getCategory() != null) {
+                global.put("teacherCategory", owner.getTeacher().getCategory().getName().getContent());
+        }
 
-        //TODO: getWorkingResearchUnits
         /*
         if (site.getShowResearchUnitHomepage()) {
             List<Unit> researchUnits = owner.getWorkingResearchUnits();
@@ -75,25 +78,11 @@ public class PresentationComponent extends HomepageSiteComponent {
         }
         */
 
-        if (site.getShowEmail()) {
-            global.put("emails", getSortedFilteredContacts(owner.getEmailAddresses()));
-        }
-
-        if (site.getShowPersonalTelephone()) {
-            global.put("personalPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.PERSONAL));
-        }
-
-        if (site.getShowWorkTelephone()) {
-            global.put("workPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.WORK));
-        }
-
-        if (site.getShowMobileTelephone()) {
-            global.put("mobilePhones", getSortedFilteredContacts(owner.getMobilePhones()));
-        }
-
-        if (site.getShowAlternativeHomepage()) {
-            global.put("websites", getSortedFilteredContacts(owner.getWebAddresses()));
-        }
+        global.put("emails", getSortedFilteredContacts(owner.getEmailAddresses()));
+        global.put("personalPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.PERSONAL));
+        global.put("workPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.WORK));
+        global.put("mobilePhones", getSortedFilteredContacts(owner.getMobilePhones()));
+        global.put("websites", getSortedFilteredContacts(owner.getWebAddresses()));
 
         //TODO: working contract
         /*

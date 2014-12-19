@@ -305,7 +305,7 @@ ${portal.toolkit()}
 
                     <div class="modal-body">
                         <div class="container">
-                            <p>Please select pages with dynamic content that will be active</p>
+                            <p><spring:message code="title.homepage.activePages"></spring:message></p>
                             <div class="form-group">
                                 <c:forEach var="page" items="${dynamicPages}">
                                     <row>

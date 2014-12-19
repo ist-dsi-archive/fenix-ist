@@ -2,11 +2,7 @@
 	{% if type == 'phone' %}
 		{{ contact.number }}
 	{% elseif type == 'email' %}
-		{% if publicSpace %}
-			<img src="{{ ctxPath + '/publico/viewHomepage.do?method=emailPng&amp;email=' + contact.externalId }}">
-		{% else %}
-			<a href="{{ 'mailto:' + contact.value }}">{{ contact.value }}</a>
-		{% endif %}
+		<a href="{{ 'mailto:' + contact.value }}">{{ contact.value }}</a>
 	{% elseif type == 'website' %}
 		<a href="{{ contact.presentationValue }}">{{ contact.presentationValue }}</a>
 	{% endif %}
