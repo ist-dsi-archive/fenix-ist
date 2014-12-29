@@ -20,15 +20,6 @@ public class FenixIstConfiguration {
                 description = "Login URL to use when barra is set as authentication broker")
         public String barraLoginUrl();
 
-        @ConfigurationProperty(key = "db.giaf.alias", defaultValue = "//localhost:3306/AssiduidadeOracleTeste")
-        public String dbGiafAlias();
-
-        @ConfigurationProperty(key = "db.giaf.pass")
-        public String dbGiafPass();
-
-        @ConfigurationProperty(key = "db.giaf.user", defaultValue = "root")
-        public String dbGiafUser();
-
         @ConfigurationProperty(key = "ciistCostCenterCode", description = "Deprecated, to be removed", defaultValue = "8431")
         public Integer getCIISTCostCenterCode();
 
