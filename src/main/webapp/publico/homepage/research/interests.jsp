@@ -7,7 +7,7 @@
 <h1><bean:message key="researcher.interests.title.complete" bundle="RESEARCHER_RESOURCES"/></h1>
 
 <bean:define id="sotisURL">
-    <%= net.sourceforge.fenixedu.FenixIstConfiguration.getConfiguration().sotisURL() %>
+    <%= pt.ist.fenix.FenixIstConfiguration.getConfiguration().sotisURL() %>
 </bean:define>
 
 <bean:define id="lang">
