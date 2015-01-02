@@ -1,5 +1,8 @@
 package pt.ist.learning.unit;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.bennu.core.domain.User;
@@ -9,14 +12,20 @@ import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.cms.domain.component.ListCategoryPosts;
-import org.fenixedu.cms.domain.component.MenuComponent;
 import org.fenixedu.cms.domain.component.ViewPost;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.learning.domain.degree.components.ThesisComponent;
-import pt.ist.learning.unit.components.*;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
+import pt.ist.learning.unit.components.CompetenceCourseComponent;
+import pt.ist.learning.unit.components.DepartmentCourses;
+import pt.ist.learning.unit.components.DepartmentDegrees;
+import pt.ist.learning.unit.components.DepartmentDissertationsComponent;
+import pt.ist.learning.unit.components.EmployeesComponent;
+import pt.ist.learning.unit.components.Organization;
+import pt.ist.learning.unit.components.SubUnits;
+import pt.ist.learning.unit.components.UnitHomepageComponent;
+import pt.ist.learning.unit.components.UnitReserachersComponent;
+import pt.ist.learning.unit.components.UnitTeachersComponent;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -44,29 +53,29 @@ public class DepartmentListener {
         final Unit unit = department.getDepartmentUnit();
         final UnitSite newSite = new UnitSite(unit);
 
-        final Menu menu = new Menu(newSite, MENU_TITLE);
+        final Menu menu = new Menu(newSite);
+        menu.setName(MENU_TITLE);
         final User user = Authenticate.getUser();
         newSite.setTheme(CMSTheme.forType("fenixedu-units-theme"));
 
-        Component menuComponent = new MenuComponent(menu);
-        Component announcementsComponent = new ListCategoryPosts(newSite.categoryForSlug("announcement", TITLE_ANNOUNCEMENTS));
-        Component eventsComponent = new ListCategoryPosts(newSite.categoryForSlug("event", TITLE_EVENTS));
+        Component announcementsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("announcement", TITLE_ANNOUNCEMENTS));
+        Component eventsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("event", TITLE_EVENTS));
 
-        Page initialPage = Page.create(newSite, menu, null, TITLE_HOMEPAGE, true, "unitHomepage", user, forType(UnitHomepageComponent.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_EVENTS, true, "category", user, eventsComponent, menuComponent);
-        Page.create(newSite, menu, null, TITLE_ANNOUNCEMENTS, true, "category", user, announcementsComponent, menuComponent);
+        Page initialPage = Page.create(newSite, menu, null, TITLE_HOMEPAGE, true, "unitHomepage", user, forType(UnitHomepageComponent.class));
+        Page.create(newSite, menu, null, TITLE_EVENTS, true, "category", user, eventsComponent);
+        Page.create(newSite, menu, null, TITLE_ANNOUNCEMENTS, true, "category", user, announcementsComponent);
 
-        Page.create(newSite, menu, null, TITLE_SUBUNITS, true, "subunits", user, forType(SubUnits.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_ORGANIZATION, true, "unitOrganization", user, forType(Organization.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_TEACHERS, true, "departmentFaculty", user, forType(UnitTeachersComponent.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_EMPLOYEES, true, "employeesByArea", user, forType(EmployeesComponent.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_DEGREES, true, "departmentDegrees", user, forType(DepartmentDegrees.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_COURES, true, "departmentCourses", user, forType(DepartmentCourses.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_THESES, true, "dissertations", user, forType(DepartmentDissertationsComponent.class), menuComponent);
-        Page.create(newSite, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user, forType(UnitReserachersComponent.class), menuComponent);
-        Page.create(newSite, null, null, TITLE_THESIS, true, "dissertation", user, forType(ThesisComponent.class), menuComponent);
-        Page.create(newSite, null, null, TITLE_COURSE, true, "competenceCourse", user, forType(CompetenceCourseComponent.class), menuComponent);
-        Page.create(newSite, null, null, TITLE_VIEW_POST, true, "view", user, forType(ViewPost.class), menuComponent);
+        Page.create(newSite, menu, null, TITLE_SUBUNITS, true, "subunits", user, forType(SubUnits.class));
+        Page.create(newSite, menu, null, TITLE_ORGANIZATION, true, "unitOrganization", user, forType(Organization.class));
+        Page.create(newSite, menu, null, TITLE_TEACHERS, true, "departmentFaculty", user, forType(UnitTeachersComponent.class));
+        Page.create(newSite, menu, null, TITLE_EMPLOYEES, true, "employeesByArea", user, forType(EmployeesComponent.class));
+        Page.create(newSite, menu, null, TITLE_DEGREES, true, "departmentDegrees", user, forType(DepartmentDegrees.class));
+        Page.create(newSite, menu, null, TITLE_COURES, true, "departmentCourses", user, forType(DepartmentCourses.class));
+        Page.create(newSite, menu, null, TITLE_THESES, true, "dissertations", user, forType(DepartmentDissertationsComponent.class));
+        Page.create(newSite, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(newSite, null, null, TITLE_THESIS, true, "dissertation", user, forType(ThesisComponent.class));
+        Page.create(newSite, null, null, TITLE_COURSE, true, "competenceCourse", user, forType(CompetenceCourseComponent.class));
+        Page.create(newSite, null, null, TITLE_VIEW_POST, true, "view", user, forType(ViewPost.class));
 
         newSite.setInitialPage(initialPage);
 

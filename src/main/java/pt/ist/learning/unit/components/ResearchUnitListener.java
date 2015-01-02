@@ -1,5 +1,8 @@
 package pt.ist.learning.unit.components;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
@@ -9,13 +12,10 @@ import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.cms.domain.component.ListCategoryPosts;
-import org.fenixedu.cms.domain.component.MenuComponent;
 import org.fenixedu.cms.domain.component.ViewPost;
 import org.fenixedu.commons.i18n.LocalizedString;
-import pt.ist.learning.unit.UnitSite;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
+import pt.ist.learning.unit.UnitSite;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -34,23 +34,23 @@ public class ResearchUnitListener {
 
     public static UnitSite create(Unit researchUnit) {
         final UnitSite newSite = new UnitSite(researchUnit);
-        final Menu menu = new Menu(newSite, MENU_TITLE);
+        final Menu menu = new Menu(newSite);
+        menu.setName(MENU_TITLE);
         final User user = Authenticate.getUser();
 
         newSite.setTheme(CMSTheme.forType("fenixedu-units-theme"));
 
-        Component menuComponent = new MenuComponent(menu);
-        Component announcementsComponent = new ListCategoryPosts(newSite.categoryForSlug("announcement", ANNOUNCEMENTS_TITLE));
-        Component eventsComponent = new ListCategoryPosts(newSite.categoryForSlug("event", EVENTS_TITLE));
+        Component announcementsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENTS_TITLE));
+        Component eventsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("event", EVENTS_TITLE));
 
-        Page initialPage = Page.create(newSite, menu, null, HOMEPAGE_TITLE, true, "unitHomepageWithBannerIntro", user, forType(UnitHomepageComponent.class), menuComponent);
-        Page.create(newSite, null, null, VIEW_POST_TITLE, true, "view", user, forType(ViewPost.class), menuComponent);
-        Page.create(newSite, menu, null, MEMBERS_TITLE, true, "members", user, forType(UnitComponent.class), menuComponent);
-        Page.create(newSite, menu, null, SUBUNITS_TITLE, true, "subunits", user, forType(SubUnits.class), menuComponent);
-        Page.create(newSite, menu, null, ORGANIZATION_TITLE, true, "unitOrganization", user, forType(Organization.class), menuComponent);
-        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user, forType(UnitReserachersComponent.class), menuComponent);
-        Page.create(newSite, menu, null, ANNOUNCEMENTS_TITLE, true, "category", user, announcementsComponent, menuComponent);
-        Page.create(newSite, menu, null, EVENTS_TITLE, true, "category", user, eventsComponent, menuComponent);
+        Page initialPage = Page.create(newSite, menu, null, HOMEPAGE_TITLE, true, "unitHomepageWithBannerIntro", user, forType(UnitHomepageComponent.class));
+        Page.create(newSite, null, null, VIEW_POST_TITLE, true, "view", user, forType(ViewPost.class));
+        Page.create(newSite, menu, null, MEMBERS_TITLE, true, "members", user, forType(UnitComponent.class));
+        Page.create(newSite, menu, null, SUBUNITS_TITLE, true, "subunits", user, forType(SubUnits.class));
+        Page.create(newSite, menu, null, ORGANIZATION_TITLE, true, "unitOrganization", user, forType(Organization.class));
+        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(newSite, menu, null, ANNOUNCEMENTS_TITLE, true, "category", user, announcementsComponent);
+        Page.create(newSite, menu, null, EVENTS_TITLE, true, "category", user, eventsComponent);
 
         newSite.setInitialPage(initialPage);
 

@@ -1,5 +1,7 @@
 package pt.ist.learning.homepage;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -7,12 +9,10 @@ import org.fenixedu.cms.domain.CMSTheme;
 import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.Component;
-import org.fenixedu.cms.domain.component.MenuComponent;
 import org.fenixedu.commons.i18n.LocalizedString;
+
 import pt.ist.learning.homepage.components.PresentationComponent;
 import pt.ist.learning.homepage.components.ResearcherComponent;
-
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -35,12 +35,12 @@ public class HomepageListener {
 
     public static HomepageSite create(Person person) {
         HomepageSite newSite = new HomepageSite(person);
-        Menu menu = new Menu(newSite, MENU_TITLE);
+        Menu menu = new Menu(newSite);
+        menu.setName(MENU_TITLE);
         User user = Authenticate.getUser();
 
         newSite.setTheme(CMSTheme.forType("fenixedu-homepages-theme"));
 
-        Component menuComponent = new MenuComponent(menu);
         Component presentationComponent = Component.forType(PresentationComponent.class);
         Component interestsComponent = new ResearcherComponent(INTERESTS_KEY, BUNDLE, "interests");
         Component prizesComponent = new ResearcherComponent(PRIZES_KEY, BUNDLE, "prizes");
@@ -48,12 +48,12 @@ public class HomepageListener {
         Component patentsComponent = new ResearcherComponent(PATENTS_KEY, BUNDLE, "patents");
         Component publicationsComponent = new ResearcherComponent(PUBLICATIONS_KEY, BUNDLE, "publications");
 
-        Page initialPage = Page.create(newSite, menu, null, PRESENTATION_TITLE, true, "presentation", user, presentationComponent, menuComponent);
-        Page.create(newSite, menu, null, INTERESTS_TITLE, false, "researcherSection", user, interestsComponent, menuComponent);
-        Page.create(newSite, menu, null, PRIZES_TITLE, false, "researcherSection", user, prizesComponent, menuComponent);
-        Page.create(newSite, menu, null, ACTIVITIES_TITLE, false, "researcherSection", user, activitiesComponent, menuComponent);
-        Page.create(newSite, menu, null, PATENTS_TITLE, false, "researcherSection", user, patentsComponent, menuComponent);
-        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, false, "researcherSection", user, publicationsComponent, menuComponent);
+        Page initialPage = Page.create(newSite, menu, null, PRESENTATION_TITLE, true, "presentation", user, presentationComponent);
+        Page.create(newSite, menu, null, INTERESTS_TITLE, false, "researcherSection", user, interestsComponent);
+        Page.create(newSite, menu, null, PRIZES_TITLE, false, "researcherSection", user, prizesComponent);
+        Page.create(newSite, menu, null, ACTIVITIES_TITLE, false, "researcherSection", user, activitiesComponent);
+        Page.create(newSite, menu, null, PATENTS_TITLE, false, "researcherSection", user, patentsComponent);
+        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, false, "researcherSection", user, publicationsComponent);
 
         newSite.setInitialPage(initialPage);
 

@@ -1,34 +1,36 @@
 package pt.ist.learning.ui;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import static java.util.Comparator.comparing;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 import org.fenixedu.bennu.core.groups.AnyoneGroup;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
 import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
-import org.fenixedu.cms.domain.*;
-import org.fenixedu.cms.domain.component.MenuComponent;
+import org.fenixedu.cms.domain.Category;
+import org.fenixedu.cms.domain.Menu;
+import org.fenixedu.cms.domain.MenuItem;
+import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Post;
+import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.StaticPost;
 import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import pt.ist.fenixframework.Atomic;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 @Service
 public class PagesAdminService {
@@ -44,8 +46,8 @@ public class PagesAdminService {
     @Atomic(mode = Atomic.TxMode.WRITE)
     protected Optional<MenuItem> create(Site site, MenuItem parent, LocalizedString name, LocalizedString body, Integer position) {
         Menu menu = site.getMenusSet().stream().findFirst().orElse(null);
-        Page page = Page.create(site, menu, parent, name, true, "view", Authenticate.getUser(), new MenuComponent(menu));
-        Category category = site.categoryForSlug("content", new LocalizedString().with(I18N.getLocale(), "Content"));
+        Page page = Page.create(site, menu, parent, name, true, "view", Authenticate.getUser());
+        Category category = site.getOrCreateCategoryForSlug("content", new LocalizedString().with(I18N.getLocale(), "Content"));
         Post post = Post.create(site, page, name, body, category, true, Authenticate.getUser());
         page.addComponents(new StaticPost(post));
         MenuItem menuItem = page.getMenuItemsSet().stream().findFirst().get();
@@ -54,7 +56,6 @@ public class PagesAdminService {
         } else {
             menu.add(menuItem);
         }
-        menuItem.setMenu(menu);
         return Optional.of(menuItem);
     }
 
@@ -84,7 +85,6 @@ public class PagesAdminService {
             } else {
                 menuItemParent.putAt(menuItem, position);
             }
-            menuItem.setMenu(menu);
         }
 
         if(canViewGroup!= null && !menuItem.getPage().getCanViewGroup().equals(canViewGroup)) {

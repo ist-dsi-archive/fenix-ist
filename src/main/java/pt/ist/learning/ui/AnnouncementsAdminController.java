@@ -83,7 +83,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
     }
 
     private Category announcementsCategory(Site cmsSite) {
-        return cmsSite.categoryForSlug("announcement", ANNOUNCEMENT);
+        return cmsSite.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENT);
     }
 
     @Override
