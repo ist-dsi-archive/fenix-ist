@@ -21,7 +21,7 @@ class homepage.components.ResearcherComponent extends .org.fenixedu.cms.domain.c
 }
 
 relation HomepageHasOwner {
-    homepage.HomepageSite playsRole cmsSite {
+    homepage.HomepageSite playsRole homepage {
         multiplicity 0..1;
     }
     .org.fenixedu.academic.domain.Person playsRole owner {
@@ -30,7 +30,7 @@ relation HomepageHasOwner {
 }
 
 relation UnitSiteHasUnit {
-    unit.UnitSite playsRole cmsSite {
+    unit.UnitSite playsRole site {
     	    multiplicity 0..1;
     }
     .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit {

@@ -4,10 +4,10 @@ import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.cms.domain.CMSTheme;
 import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.commons.i18n.LocalizedString;
 
@@ -37,10 +37,13 @@ public class HomepageListener {
         HomepageSite newSite = new HomepageSite(person);
         Menu menu = new Menu(newSite);
         menu.setName(MENU_TITLE);
-        User user = Authenticate.getUser();
 
         newSite.setTheme(CMSTheme.forType("fenixedu-homepages-theme"));
+        createDefaultContents(newSite, menu, person.getUser());
+        return newSite;
+    }
 
+    public static void createDefaultContents(Site newSite, Menu menu, User user) {
         Component presentationComponent = Component.forType(PresentationComponent.class);
         Component interestsComponent = new ResearcherComponent(INTERESTS_KEY, BUNDLE, "interests");
         Component prizesComponent = new ResearcherComponent(PRIZES_KEY, BUNDLE, "prizes");
@@ -48,7 +51,8 @@ public class HomepageListener {
         Component patentsComponent = new ResearcherComponent(PATENTS_KEY, BUNDLE, "patents");
         Component publicationsComponent = new ResearcherComponent(PUBLICATIONS_KEY, BUNDLE, "publications");
 
-        Page initialPage = Page.create(newSite, menu, null, PRESENTATION_TITLE, true, "presentation", user, presentationComponent);
+        Page initialPage =
+                Page.create(newSite, menu, null, PRESENTATION_TITLE, true, "presentation", user, presentationComponent);
         Page.create(newSite, menu, null, INTERESTS_TITLE, false, "researcherSection", user, interestsComponent);
         Page.create(newSite, menu, null, PRIZES_TITLE, false, "researcherSection", user, prizesComponent);
         Page.create(newSite, menu, null, ACTIVITIES_TITLE, false, "researcherSection", user, activitiesComponent);
@@ -56,7 +60,5 @@ public class HomepageListener {
         Page.create(newSite, menu, null, PUBLICATIONS_TITLE, false, "researcherSection", user, publicationsComponent);
 
         newSite.setInitialPage(initialPage);
-
-        return newSite;
     }
 }
