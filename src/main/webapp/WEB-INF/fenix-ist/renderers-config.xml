@@ -26,7 +26,7 @@
 <renderers-config>
     <!--@ Tag Renderers -->
     
-    <renderer type="java.util.Collection" layout="tag-count" class="org.fenixedu.academic.ui.renderers.TagCountRenderer">
+    <renderer type="java.util.Collection" layout="tag-count" class="pt.ist.fenix.ui.renderers.TagCountRenderer">
         <property name="moduleRelative" value="true"/>
         <property name="contextRelative" value="true"/>
         <property name="separator" value="|"/>
