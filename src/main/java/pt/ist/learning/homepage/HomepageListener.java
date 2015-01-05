@@ -18,7 +18,7 @@ import pt.ist.learning.homepage.components.ResearcherComponent;
  * Created by borgez on 24-11-2014.
  */
 public class HomepageListener {
-    private static final String BUNDLE = "resources.FenixEduCMSResources";
+    private static final String BUNDLE = "resources.FenixEduLearningResources";
     private static final String INTERESTS_KEY = "homepage.researcher.interests";
     private static final String PATENTS_KEY = "homepage.researcher.patents";
     private static final String PUBLICATIONS_KEY = "homepage.researcher.publications";
@@ -26,7 +26,7 @@ public class HomepageListener {
     private static final String PRIZES_KEY = "homepage.researcher.prizes";
 
     private static final LocalizedString PRESENTATION_TITLE = getLocalizedString(BUNDLE, "homepage.presentation.title");
-    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduCMSResources", "label.menu");
+    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduLearningResources", "label.menu");
     private static final LocalizedString INTERESTS_TITLE = getLocalizedString(BUNDLE, INTERESTS_KEY);
     private static final LocalizedString PATENTS_TITLE = getLocalizedString(BUNDLE, PATENTS_KEY);
     private static final LocalizedString PUBLICATIONS_TITLE = getLocalizedString(BUNDLE, PUBLICATIONS_KEY);

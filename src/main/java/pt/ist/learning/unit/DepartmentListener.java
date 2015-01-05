@@ -31,8 +31,8 @@ import pt.ist.learning.unit.components.UnitTeachersComponent;
  * Created by borgez on 24-11-2014.
  */
 public class DepartmentListener {
-    private static final String BUNDLE = "resources.FenixEduCMSResources";
-    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduCMSResources", "label.menu");
+    private static final String BUNDLE = "resources.FenixEduLearningResources";
+    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduLearningResources", "label.menu");
     private static final LocalizedString TITLE_HOMEPAGE = getLocalizedString(BUNDLE, "researchUnit.homepage");
     private static final LocalizedString TITLE_EVENTS = getLocalizedString(BUNDLE, "label.events");
     private static final LocalizedString TITLE_ANNOUNCEMENTS = getLocalizedString(BUNDLE, "label.announcements");

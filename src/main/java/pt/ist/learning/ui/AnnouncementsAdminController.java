@@ -1,5 +1,17 @@
 package pt.ist.learning.ui;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.bennu.core.security.Authenticate.getUser;
+import static org.fenixedu.cms.domain.Post.CREATION_DATE_COMPARATOR;
+import static pt.ist.fenixframework.FenixFramework.atomic;
+import static pt.ist.fenixframework.FenixFramework.getDomainObject;
+
+import java.util.Collection;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
@@ -18,24 +30,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.bennu.core.security.Authenticate.getUser;
-import static org.fenixedu.cms.domain.Post.CREATION_DATE_COMPARATOR;
-import static pt.ist.fenixframework.FenixFramework.atomic;
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
-
 @Controller
 @RequestMapping("/teacher/{executionCourseId}/announcements")
 public class AnnouncementsAdminController extends StrutsFunctionalityController {
-    private static final LocalizedString ANNOUNCEMENT = getLocalizedString("resources.FenixEduCMSResources", "label.announcements");
+    private static final LocalizedString ANNOUNCEMENT = getLocalizedString("resources.FenixEduLearningResources",
+            "label.announcements");
 
     @RequestMapping(method = RequestMethod.GET)
-    public AnnouncementsAdminView all(Model model, @PathVariable String executionCourseId){
+    public AnnouncementsAdminView all(Model model, @PathVariable String executionCourseId) {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
         AccessControl.check(person -> professorship != null && professorship.getPermissions().getAnnouncements());
@@ -55,7 +57,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public RedirectView create(@PathVariable String executionCourseId, @RequestParam LocalizedString name,
-                               @RequestParam LocalizedString body) throws Exception {
+            @RequestParam LocalizedString body) throws Exception {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Site cmsSite = executionCourse.getCmsSite();
         atomic(() -> Post.create(cmsSite, null, name, body, announcementsCategory(cmsSite), true, getUser()));
@@ -64,7 +66,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
 
     @RequestMapping(value = "{postSlug}/edit", method = RequestMethod.POST)
     public RedirectView edit(@PathVariable String executionCourseId, @PathVariable String postSlug,
-                             @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
+            @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Post post = executionCourse.getCmsSite().postForSlug(postSlug);
         atomic(() -> {

@@ -21,8 +21,8 @@ import pt.ist.learning.unit.UnitSite;
  * Created by borgez on 24-11-2014.
  */
 public class ResearchUnitListener {
-    private static final String BUNDLE = "resources.FenixEduCMSResources";
-    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduCMSResources", "label.menu");
+    private static final String BUNDLE = "resources.FenixEduLearningResources";
+    private static final LocalizedString MENU_TITLE = getLocalizedString("resources.FenixEduLearningResources", "label.menu");
     private static final LocalizedString ANNOUNCEMENTS_TITLE = getLocalizedString(BUNDLE, "label.announcements");
     private static final LocalizedString EVENTS_TITLE = getLocalizedString(BUNDLE, "label.events");
     private static final LocalizedString MEMBERS_TITLE = BundleUtil.getLocalizedString(BUNDLE, "label.researchers");
@@ -40,15 +40,19 @@ public class ResearchUnitListener {
 
         newSite.setTheme(CMSTheme.forType("fenixedu-units-theme"));
 
-        Component announcementsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENTS_TITLE));
+        Component announcementsComponent =
+                new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENTS_TITLE));
         Component eventsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("event", EVENTS_TITLE));
 
-        Page initialPage = Page.create(newSite, menu, null, HOMEPAGE_TITLE, true, "unitHomepageWithBannerIntro", user, forType(UnitHomepageComponent.class));
+        Page initialPage =
+                Page.create(newSite, menu, null, HOMEPAGE_TITLE, true, "unitHomepageWithBannerIntro", user,
+                        forType(UnitHomepageComponent.class));
         Page.create(newSite, null, null, VIEW_POST_TITLE, true, "view", user, forType(ViewPost.class));
         Page.create(newSite, menu, null, MEMBERS_TITLE, true, "members", user, forType(UnitComponent.class));
         Page.create(newSite, menu, null, SUBUNITS_TITLE, true, "subunits", user, forType(SubUnits.class));
         Page.create(newSite, menu, null, ORGANIZATION_TITLE, true, "unitOrganization", user, forType(Organization.class));
-        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(newSite, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user,
+                forType(UnitReserachersComponent.class));
         Page.create(newSite, menu, null, ANNOUNCEMENTS_TITLE, true, "category", user, announcementsComponent);
         Page.create(newSite, menu, null, EVENTS_TITLE, true, "category", user, eventsComponent);
 

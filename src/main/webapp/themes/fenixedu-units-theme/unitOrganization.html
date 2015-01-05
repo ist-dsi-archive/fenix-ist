@@ -5,7 +5,7 @@
 {% macro unitOrganization(unitBean) %}
 	
     {% if entries(unitBean.personFunctionsByFunction) is empty and unitBean.subunitBeans is empty %}
-        <p>{{ i18n('resources.FenixEduCMSResources', 'researchUnit.organization.empty') }}</p>
+        <p>{{ i18n('resources.FenixEduLearningResources', 'researchUnit.organization.empty') }}</p>
     {% else %}
         <h3>{{ unitBean.unit.name }}</h3>
 

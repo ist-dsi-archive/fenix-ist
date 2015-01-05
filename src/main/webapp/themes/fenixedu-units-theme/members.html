@@ -6,7 +6,7 @@
 
 	{% macro researchUnitMembers(unit) %}
         {% if unit.researchers is empty and unit.technicalStaff is empty and unit.internships is empty and unit.scholarships is empty %}
-            <p>{{ i18n('resources.FenixEduCMSResources', 'researchUnit.members.empty') }}</p>
+            <p>{{ i18n('resources.FenixEduLearningResources', 'researchUnit.members.empty') }}</p>
         {% else %}
             {{ personsCards(unit.researchers, i18n('resources.SiteResources', 'label.researchers')) }}
 
