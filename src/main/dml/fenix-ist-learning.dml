@@ -37,3 +37,12 @@ relation UnitSiteHasUnit {
     	    multiplicity 1..1;
     }
 }
+
+relation UserBookmarks {
+    .org.fenixedu.bennu.core.domain.User playsRole bookmarkedBy {
+        multiplicity *;
+    }
+    .org.fenixedu.cms.domain.Category playsRole bookmarks {
+        multiplicity *;
+    }
+}
