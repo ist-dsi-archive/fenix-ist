@@ -1,5 +1,9 @@
 package pt.ist.learning.ui;
 
+import static pt.ist.fenixframework.FenixFramework.getDomainObject;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
@@ -11,12 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.JstlView;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
 @Controller
 @RequestMapping("/teacher/{executionCourseId}/pages")
@@ -26,13 +25,13 @@ public class TeacherPagesController extends StrutsFunctionalityController {
     PagesAdminService service;
 
     @RequestMapping(method = RequestMethod.GET)
-    public TeacherPagesView all(Model model, @PathVariable String executionCourseId){
+    public TeacherPagesView all(Model model, @PathVariable String executionCourseId) {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
         AccessControl.check(person -> professorship != null && professorship.getPermissions().getSections());
         model.addAttribute("executionCourse", executionCourse);
         model.addAttribute("professorship", professorship);
-        model.addAttribute("site", executionCourse.getCmsSite());
+        model.addAttribute("site", executionCourse.getSite());
         return new TeacherPagesView();
     }
 

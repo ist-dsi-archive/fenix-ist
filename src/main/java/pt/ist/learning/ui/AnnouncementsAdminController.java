@@ -42,7 +42,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
         Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
         AccessControl.check(person -> professorship != null && professorship.getPermissions().getAnnouncements());
         model.addAttribute("executionCourse", executionCourse);
-        model.addAttribute("announcements", getAnnouncements(executionCourse.getCmsSite()));
+        model.addAttribute("announcements", getAnnouncements(executionCourse.getSite()));
         model.addAttribute("professorship", professorship);
         return new AnnouncementsAdminView();
     }
@@ -50,7 +50,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
     @RequestMapping(value = "{postSlug}/delete", method = RequestMethod.POST)
     public RedirectView delete(@PathVariable String executionCourseId, @PathVariable String postSlug) {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
-        Post post = executionCourse.getCmsSite().postForSlug(postSlug);
+        Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> post.delete());
         return viewAll(executionCourse);
     }
@@ -59,7 +59,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
     public RedirectView create(@PathVariable String executionCourseId, @RequestParam LocalizedString name,
             @RequestParam LocalizedString body) throws Exception {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
-        Site cmsSite = executionCourse.getCmsSite();
+        Site cmsSite = executionCourse.getSite();
         atomic(() -> Post.create(cmsSite, null, name, body, announcementsCategory(cmsSite), true, getUser()));
         return viewAll(executionCourse);
     }
@@ -68,7 +68,7 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
     public RedirectView edit(@PathVariable String executionCourseId, @PathVariable String postSlug,
             @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
         ExecutionCourse executionCourse = getDomainObject(executionCourseId);
-        Post post = executionCourse.getCmsSite().postForSlug(postSlug);
+        Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> {
             post.setName(name);
             post.setBody(body);

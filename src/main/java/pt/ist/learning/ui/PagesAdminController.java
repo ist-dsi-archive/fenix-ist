@@ -1,33 +1,41 @@
 package pt.ist.learning.ui;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.fenixedu.bennu.io.domain.GroupBasedFile;
-import org.fenixedu.cms.domain.MenuItem;
-import org.fenixedu.cms.domain.Site;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
+import org.fenixedu.bennu.io.domain.GroupBasedFile;
+import org.fenixedu.cms.domain.MenuItem;
+import org.fenixedu.cms.domain.Site;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @RestController
 @RequestMapping("/pages/{siteId}/admin")
 public class PagesAdminController {
 
+    private static final String JSON_VALUE = "application/json; charset=utf-8";
+
     @Autowired
     PagesAdminService service;
 
-    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = JSON_VALUE)
     public @ResponseBody String data(@PathVariable String siteId) {
         return service.serialize(site(siteId)).toString();
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = JSON_VALUE)
     public @ResponseBody String create(@PathVariable String siteId, @RequestBody String bodyJson) {
         PagesAdminBean bean = new PagesAdminBean(bodyJson);
         Site site = site(siteId);
@@ -41,21 +49,23 @@ public class PagesAdminController {
         return data(siteId);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.PUT, consumes = JSON_VALUE)
     public @ResponseBody String edit(@RequestBody String bodyJson) {
         PagesAdminBean bean = new PagesAdminBean(bodyJson);
-        MenuItem menuItem = service.edit(bean.getMenuItem(), bean.getParent(), bean.getTitle(), bean.getBody(), bean.getPosition(), bean.getCanViewGroup());
+        MenuItem menuItem =
+                service.edit(bean.getMenuItem(), bean.getParent(), bean.getTitle(), bean.getBody(), bean.getPosition(),
+                        bean.getCanViewGroup());
         return service.serialize(menuItem).toString();
     }
 
     @RequestMapping(value = "/attachment/{menuItemId}", method = RequestMethod.POST)
     public @ResponseBody String addAttachments(@PathVariable("menuItemId") String menuItemId,
-                                               @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file) throws IOException {
         service.addAttachment(file.getOriginalFilename(), file, getDomainObject(menuItemId));
         return getAttachments(menuItemId);
     }
 
-    @RequestMapping(value = "/attachment/{menuItemId}/{fileId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/attachment/{menuItemId}/{fileId}", method = RequestMethod.DELETE, produces = JSON_VALUE)
     public @ResponseBody String deleteAttachments(@PathVariable String menuItemId, @PathVariable String fileId) {
         MenuItem menuItem = getDomainObject(menuItemId);
         GroupBasedFile postFile = getDomainObject(fileId);
