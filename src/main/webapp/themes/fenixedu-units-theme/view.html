@@ -1,0 +1,57 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% macro viewPost(post, page, request) %}
+
+    <div>
+        {% if post.isVisible %}
+
+            {% if post.name.content != page.name.content %}
+                <h2 style="margin-top: 0"><a href="{{post.address}}">{{ post.name.content }}</a></h2>
+                <p class="small">
+                    {{ post.creationDate|formatDate("d MMMM Y, HH:mm") }} - {{post.createdBy.displayName}}
+                </p>
+            {% endif %}
+
+            <p>{{post.body.content | raw}}</p>
+
+            {% if post.attachments.size != 0 %}
+                <p>
+                <h4>Attachments</h4>
+                <ul>
+                    {% for file in post.attachments %}
+                        <li><a href="{{file.url}}">{{file.name}}</a></li>
+                    {% endfor %}
+                </ul>
+                </p>
+            {% endif %}
+
+        {% else %}
+
+            {% if request.user.isAuthenticated %}
+                
+                <p>
+                    {{ i18n('CmsExceptionResources', 'label.autenticated.private.post') }}
+                </p>
+
+            {% else %}
+
+                <p>
+                    {{ i18n('CmsExceptionResources', 'label.unautenticated.private.post') }} {{ post.visibilityGroup }}
+                </p>
+
+                <p>
+                    <a href="/login?callback={{ request.url }}">Login</a>
+                </p>    
+
+            {% endif %}    
+
+        {% endif %}
+
+    </div><!-- /.blog-post -->
+
+
+{% endmacro %}
+
+{% block content %}
+	{{ viewPost(post, page, request) }}
+{% endblock content %}

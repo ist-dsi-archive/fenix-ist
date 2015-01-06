@@ -18,7 +18,7 @@ public class SubUnits extends UnitSiteComponent {
     }
 
     private List<Unit> subUnitsWithSite(Unit unit) {
-        return unit.getSubUnits().stream().filter(u -> u.getSite() != null).sorted(Unit.COMPARATOR_BY_NAME_AND_ID)
-                .collect(toList());
+        return unit.getSubUnits().stream().filter(subunit -> subunit.getSite() != null)
+                .sorted(Unit.COMPARATOR_BY_NAME_AND_ID).collect(toList());
     }
 }

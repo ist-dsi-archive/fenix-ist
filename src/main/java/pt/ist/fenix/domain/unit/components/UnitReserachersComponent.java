@@ -6,6 +6,8 @@ import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.cms.rendering.TemplateContext;
 import org.fenixedu.commons.i18n.I18N;
+import pt.ist.fenix.FenixIstConfiguration;
+import pt.ist.fenix.domain.homepage.HomepageSite;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,7 +19,7 @@ public class UnitReserachersComponent extends UnitSiteComponent {
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
         globalContext.put("researchers", researchers(unit(page)));
         globalContext.put("researcher", researchers(unit(page)).map(Person::getUsername).collect(Collectors.joining(",")));
-        globalContext.put("sotisUrl", "https://sotis.tecnico.ulisboa.pt"); //FIXME get real configuration property when available
+        globalContext.put("sotisUrl", FenixIstConfiguration.getConfiguration().sotisURL());
         globalContext.put("language", I18N.getLocale().toLanguageTag());
         globalContext.put("dataKey", "list");
     }

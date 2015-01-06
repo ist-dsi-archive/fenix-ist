@@ -1,0 +1,157 @@
+body {
+	background-color: #fbfbfb;
+	background: url('//tecnico.ulisboa.pt/img/page/cubes.png') repeat scroll center top #FFF;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 13px;
+	color: #444;
+}
+
+a {
+	color: #118cdc;
+}
+
+footer {
+	padding:20px 30px 50px;
+}
+
+main {
+	margin-top: 10px;
+	background: #FDFDFD;
+	border: 1px solid #e3e3e3;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+main>div>.top-lead {
+	border-bottom: 1px solid #eee;
+	padding-bottom: 5px;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+	background-color: #118cdc;
+}
+
+.nav-pills>li>a {
+	color: #62696c;
+	border-radius: 1px;
+	padding: 5px 10px;
+}
+
+* {
+	text-rendering: optimizelegibility;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.009);
+}
+
+.fenixedu-bar{
+	min-height:0;
+	margin-bottom:0;
+	border:none;
+	background:#444;
+	border-radius: 0;
+}
+.fenixedu-bar .navbar-text{
+	margin-top:8px;
+	margin-bottom:8px;
+	margin-left:20px;
+	color:#ddd;
+}
+
+.fenixedu-bar a,.fenixedu-bar li a,.fenixedu-bar .navbar-brand{
+	padding-top:8px;
+	padding-bottom:8px;color:#ddd !important;
+}
+
+.fenixedu-bar .navbar-brand{
+	height:auto;
+	font-size:14px;
+}
+
+.fenixedu-bar .navbar-nav>.active>a{
+	padding-top:4px;
+	padding-bottom:4px;
+	margin:4px 5px 0 5px;
+	background-color:#666;
+}
+
+.fenixedu-bar .navbar-nav>.active>a:hover{
+	background-color:#3a3a3a;
+}
+
+.fenixedu-bar .navbar-toggle {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.fenixedu-bar .navbar-toggle .icon-bar {
+	background-color: #ddd;
+}
+
+.fenixedu-bar .devmode{
+	font-size:12px
+}
+
+nav {
+	border-left: 1px solid #eee;
+}
+
+.main-content {
+	border-right: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+	nav {
+		border-top: 2px solid #eee;
+		background-color: #f6f6f6;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	main {
+		padding: 0;
+	}
+	.blog-main {
+		padding-top: 10px;
+	}
+}
+
+.menu-header {
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.site-header a, .site-header a:hover {
+	color: #444;
+	text-decoration: none;
+}
+
+.date-label {
+	background-color: #118cdc;
+}
+
+.locale-changer {
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.locale-changer.active, .locale-changer.active:hover {
+    color: #222;
+    border-bottom: none;
+    text-decoration: none;
+}
+.locale-changer:not(.active) {
+	cursor: pointer;
+}
+.locale-changer:not(:last-of-type):after {
+    content: '/';
+    font: normal 300 13px/1.2 "Helvetica Neue", sans-serif;
+    padding: 0 4px 0 7.5px;
+    color: #999;
+}
+
+.menuItem>.children {
+    display: none;
+}
+.menuItem.open>.children {
+    display: block;
+    padding-left: 15px;
+}

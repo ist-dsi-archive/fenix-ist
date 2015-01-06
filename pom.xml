@@ -33,6 +33,28 @@
                     <meminitial>1536</meminitial>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <zip
+                                        destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-homepages-theme.zip"
+                                        basedir="${project.basedir}/src/main/webapp/themes/fenixedu-homepages-theme"></zip>
+                                <zip
+                                        destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-units-theme.zip"
+                                        basedir="${project.basedir}/src/main/webapp/themes/fenixedu-units-theme"></zip>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

@@ -6,7 +6,11 @@
             <h4>{{ i18n('resources.EnumerationResources', 'DegreeType.' + type.name) }}</h4>
             <ul class="list-unstyled">
                 {% for degree in getValue(degreesByType, type) %}
-                    <li><h5><a href="{{ degree.unit.site.address }}">{{ degree.nameI18N }}</a></h5></li>
+                    {% if degree.siteUrl is not empty %}
+                        <li><h5><a href="{{ degree.siteUrl }}">{{ degree.nameI18N }}</a></h5></li>
+                    {% else %}
+                        <li><h5>{{ degree.nameI18N }}</h5></li>
+                    {% endif %}
                 {% endfor %}
             </ul>
             <hr/>

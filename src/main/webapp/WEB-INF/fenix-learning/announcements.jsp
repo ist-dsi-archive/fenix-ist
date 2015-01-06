@@ -214,7 +214,9 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
     </form>
 </div>
 
-${portal.toolkit()}
+${portal.toolkit()}Encaminha-se o email sobre mudanças no horário do autocarro que faz a ligação entre os dois campi (Alameda e Taguspark), enviado à comunidade Taguspark na passada sexta-feira.
+
+
 
 <script>
     function submitFiles(files, cb,postslug) {
