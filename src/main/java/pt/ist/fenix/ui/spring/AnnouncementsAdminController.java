@@ -72,8 +72,8 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public RedirectView create(@PathVariable ExecutionCourse executionCourse, @RequestParam LocalizedString name,
             @RequestParam LocalizedString body) throws Exception {
-        Site cmsSite = executionCourse.getSite();
-        atomic(() -> Post.create(cmsSite, null, name, body, announcementsCategory(cmsSite), true, getUser()));
+        Site site = executionCourse.getSite();
+        atomic(() -> Post.create(site, null, name, body, announcementsCategory(site), true, getUser()));
         return viewAll(executionCourse);
     }
 
@@ -92,13 +92,13 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
         return new RedirectView(format("/teacher/%s/announcements", executionCourse.getExternalId()), true);
     }
 
-    private List<Post> getAnnouncements(Site cmsSite) {
-        return announcementsCategory(cmsSite).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR)
+    private List<Post> getAnnouncements(Site site) {
+        return announcementsCategory(site).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR)
                 .collect(Collectors.toList());
     }
 
-    private Category announcementsCategory(Site cmsSite) {
-        return cmsSite.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENT);
+    private Category announcementsCategory(Site site) {
+        return site.getOrCreateCategoryForSlug("announcement", ANNOUNCEMENT);
     }
 
     @Override

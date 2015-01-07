@@ -130,19 +130,19 @@ public class PagesAdminService {
                 .map(component -> ((StaticPost) component).getPost()).filter(post -> post != null).findFirst().get();
     }
 
-    protected JsonObject serialize(Site cmsSite) {
+    protected JsonObject serialize(Site site) {
         JsonObject data = new JsonObject();
-        if (!cmsSite.getMenusSet().isEmpty()) {
-            Menu menu = cmsSite.getMenusSet().stream().findFirst().get();
+        if (!site.getMenusSet().isEmpty()) {
+            Menu menu = site.getMenusSet().stream().findFirst().get();
             JsonObject root = new JsonObject();
-            root.add("title", cmsSite.getName().json());
+            root.add("title", site.getName().json());
             root.add("root", new JsonPrimitive(true));
             root.add("isFolder", new JsonPrimitive(true));
             root.add("expanded", new JsonPrimitive(true));
             root.add("key", new JsonPrimitive("null"));
 
             JsonArray groupsJson = new JsonArray();
-            for (Group group : permissionGroups(cmsSite)) {
+            for (Group group : permissionGroups(site)) {
                 groupsJson.add(serializeGroup(group));
             }
 

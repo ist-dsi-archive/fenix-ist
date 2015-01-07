@@ -135,7 +135,7 @@ ${portal.toolkit()}
                     </div>
                     <div class="col-sm-8">
                         <c:forEach var="executionCourse" items="${person.teacher.currentExecutionCourses}">
-                            <a href="${executionCourse.cmsSite.address}" target="_blank">${executionCourse.nome}</a>
+                            <a href="${executionCourse.site.fullUrl}" target="_blank">${executionCourse.nome}</a>
                         </c:forEach>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ ${portal.toolkit()}
                         <c:forEach var="studentCurricularPlan" items="${person.activeStudentCurricularPlansSortedByDegreeTypeAndDegreeName}">
                             <c:if test="${not empty studentCurricularPlan.degreeCurricularPlan.degree.site}">
 
-                                <a href="studentCurricularPlan.degreeCurricularPlan.degree.site.address" target="_blank"></a>
+                                <a href="${studentCurricularPlan.degreeCurricularPlan.degree.site.fullUrl}" target="_blank"></a>
                                 <c:choose>
                                     <c:when test="${not empty studentCurricularPlan.specialization.name}">
                                         <c:choose>
@@ -224,7 +224,7 @@ ${portal.toolkit()}
                         </div>
                         <div class="col-sm-8">
                             <c:forEach var="attend" items="${personAttends}">
-                                <a href="${attend.disciplinaExecucao.cmsSite.address}">${attend.disciplinaExecucao.nome}</a>
+                                <a href="${attend.disciplinaExecucao.site.fullUrl}">${attend.disciplinaExecucao.nome}</a>
                             </c:forEach>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ ${portal.toolkit()}
                         </div>
                         <div class="col-sm-8">
                             <c:forEach var="studentCurricularPlan" items="person.completedStudentCurricularPlansSortedByDegreeTypeAndDegreeName">
-                                <a href="${studentCurricularPlan.degreeCurricularPlan.degree.cmsSite.address}">
+                                <a href="${studentCurricularPlan.degreeCurricularPlan.degree.site.fullUrl}">
                                     <c:choose>
                                         <c:when test="${not empty studentCurricularPlan.specialization.name}">
                                             <c:choose>

@@ -41,7 +41,7 @@
 			<tbody>
 				<c:forEach var="course" items="${courses}">
 				<c:forEach var="slug" items="${slugs}">
-					<c:set var="category" value="${course.cmsSite.categoryForSlug(slug)}"/>
+					<c:set var="category" value="${course.site.categoryForSlug(slug)}"/>
 					<tr>
 						<td>${course.name}</td>
 						<td>${category.name.content}</td>
