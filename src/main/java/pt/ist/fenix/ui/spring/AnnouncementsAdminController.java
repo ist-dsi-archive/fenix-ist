@@ -1,21 +1,21 @@
 package pt.ist.fenix.ui.spring;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 import static org.fenixedu.bennu.core.security.Authenticate.getUser;
 import static org.fenixedu.cms.domain.Post.CREATION_DATE_COMPARATOR;
 import static pt.ist.fenixframework.FenixFramework.atomic;
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
-import java.util.Collection;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.academic.ui.spring.StrutsFunctionalityController;
+import org.fenixedu.academic.ui.spring.controller.teacher.ExecutionCourseController;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
 import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.Post;
@@ -30,44 +30,56 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.google.common.math.IntMath;
+
 @Controller
-@RequestMapping("/teacher/{executionCourseId}/announcements")
-public class AnnouncementsAdminController extends StrutsFunctionalityController {
+@RequestMapping("/teacher/{executionCourse}/announcements")
+public class AnnouncementsAdminController extends ExecutionCourseController {
     private static final LocalizedString ANNOUNCEMENT = getLocalizedString("resources.FenixEduLearningResources",
             "label.announcements");
 
+    private static final int PER_PAGE = 5;
+
     @RequestMapping(method = RequestMethod.GET)
-    public AnnouncementsAdminView all(Model model, @PathVariable String executionCourseId) {
-        ExecutionCourse executionCourse = getDomainObject(executionCourseId);
+    public AnnouncementsAdminView all(Model model, @PathVariable ExecutionCourse executionCourse, @RequestParam(required = false,
+            defaultValue = "1") int page) {
         Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
         AccessControl.check(person -> professorship != null && professorship.getPermissions().getAnnouncements());
+        List<Post> announcements = getAnnouncements(executionCourse.getSite());
         model.addAttribute("executionCourse", executionCourse);
-        model.addAttribute("announcements", getAnnouncements(executionCourse.getSite()));
+        int pages = IntMath.divide(announcements.size(), PER_PAGE, RoundingMode.CEILING);
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > pages) {
+            page = pages;
+        }
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pages", pages);
+        model.addAttribute("announcements",
+                announcements.stream().skip((page - 1) * PER_PAGE).limit(PER_PAGE).collect(Collectors.toList()));
         model.addAttribute("professorship", professorship);
         return new AnnouncementsAdminView();
     }
 
     @RequestMapping(value = "{postSlug}/delete", method = RequestMethod.POST)
-    public RedirectView delete(@PathVariable String executionCourseId, @PathVariable String postSlug) {
-        ExecutionCourse executionCourse = getDomainObject(executionCourseId);
+    public RedirectView delete(@PathVariable ExecutionCourse executionCourse, @PathVariable String postSlug) {
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> post.delete());
         return viewAll(executionCourse);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public RedirectView create(@PathVariable String executionCourseId, @RequestParam LocalizedString name,
+    public RedirectView create(@PathVariable ExecutionCourse executionCourse, @RequestParam LocalizedString name,
             @RequestParam LocalizedString body) throws Exception {
-        ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Site cmsSite = executionCourse.getSite();
         atomic(() -> Post.create(cmsSite, null, name, body, announcementsCategory(cmsSite), true, getUser()));
         return viewAll(executionCourse);
     }
 
     @RequestMapping(value = "{postSlug}/edit", method = RequestMethod.POST)
-    public RedirectView edit(@PathVariable String executionCourseId, @PathVariable String postSlug,
+    public RedirectView edit(@PathVariable ExecutionCourse executionCourse, @PathVariable String postSlug,
             @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
-        ExecutionCourse executionCourse = getDomainObject(executionCourseId);
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> {
             post.setName(name);
@@ -80,8 +92,9 @@ public class AnnouncementsAdminController extends StrutsFunctionalityController 
         return new RedirectView(format("/teacher/%s/announcements", executionCourse.getExternalId()), true);
     }
 
-    private Collection<Post> getAnnouncements(Site cmsSite) {
-        return announcementsCategory(cmsSite).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR).collect(toList());
+    private List<Post> getAnnouncements(Site cmsSite) {
+        return announcementsCategory(cmsSite).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR)
+                .collect(Collectors.toList());
     }
 
     private Category announcementsCategory(Site cmsSite) {

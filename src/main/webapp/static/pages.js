@@ -65,7 +65,6 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
         var data = {
             title: $scope.selected.title,
             body: $scope.selected.body,
-            position: $scope.selected.node.getIndex(),
             menuItemId: $scope.selected.key,
             menuItemParentId:  $scope.selected.node.parent.data.item.key,
             canViewGroupIndex: $scope.selected.canViewGroupIndex
@@ -80,6 +79,7 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
         $scope.error = null;
         $scope.saving = true;
         promise.success(function (newItem) {
+            newItem.loaded = true;
             if(Object.keys(newItem.body).length == 0) {
                 newItem.body = emptyLocalizedString();
             }
@@ -92,7 +92,15 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
         }).error($scope.handleError);
     };
 
+    $scope.move = function(item, insertAfter) {
+        $http.put($scope.context + '/move', 
+            { menuItemId: item.key, parent: item.menuItemParentId, insertAfter: insertAfter ? insertAfter.key : null }).success(function (data) {
+            item.position = data.position;
+        });
+    }
+
     $http.get($scope.context + "/data").success(function (data) {
+        $scope.loaded = true;
         $("#tree").fancytree({ source: [], extensions: ["dnd"],
             dnd: {
                 preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
@@ -105,22 +113,25 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
                 dragEnter: function (node, data) {  return true; },
                 dragDrop: function (node, data) {
                     if(!node.data.item.root || data.hitMode !== "before") {
+                        var insertAfter = null;
                         if (data.hitMode === "before") {
                             //if placed before -> take the position of that item
-                            $scope.selected.position = node.data.item.position;
+                            var other = node.parent.children[node.parent.children.indexOf(node) - 1];
+                            if (other) {
+                                insertAfter = other.data.item;
+                            }
                             $scope.selected.menuItemParentId = node.parent.key;
                         }
                         else if (data.hitMode === "after") {
                             //if placed after -> take the position after that item
-                            $scope.selected.position = node.data.item.position + 1;
+                            insertAfter = node.data.item;
                             $scope.selected.menuItemParentId = node.parent.data.item.key;
                         } else if (data.hitMode === "over") {
                             //over a given item -> take the position of first child of that item
-                            $scope.selected.position = 0;
                             $scope.selected.menuItemParentId = node.data.item.key;
                         }
                         data.otherNode.moveTo(node, data.hitMode);
-                        $scope.saveSelected();
+                        $scope.move($scope.selected, insertAfter);
                     }
                 }
             }
@@ -129,7 +140,16 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
         var tree = $("#tree").fancytree("getTree");
 
         $("#tree").bind("fancytreeactivate", function (event, data) {
-            $scope.selected = data.node.data.item;
+            var item = data.node.data.item;
+            if(item.key == undefined) {
+                item.loaded = true;
+            } else if(!item.loaded && item.key !== 'null') {
+                $http.get($scope.context + '/data/' + item.key).success(function (data) {
+                    item.body = data;
+                    item.loaded = true;
+                });
+            }
+            $scope.selected = item;
             $scope.error = null;
             if (!$scope.$$phase) {
                 $scope.$apply();
@@ -148,8 +168,8 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
         }
     });
 
-    $scope.updateFilePosition = function(file, newPosition) {
-        var msg = { menuItemId: $scope.selected.key, fileId: file.externalId, position: newPosition, name: file.name };
+    $scope.updateFile = function(file, newPosition) {
+        var msg = { menuItemId: $scope.selected.key, fileId: file.externalId, position: newPosition, name: file.name, group: file.group };
         $scope.error = null;
         $scope.saving = true;
         $http.put($scope.context + "/attachment", msg)
@@ -181,7 +201,6 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
             }).progress(function(evt) {
                 console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
             }).success(function(data, status, headers, config) {
-                console.log('file ' + config.file.name + 'is uploaded successfully. Response: ' + JSON.stringify(data));
                 $scope.selected.files = data;
             });
         }

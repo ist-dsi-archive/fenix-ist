@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.accessControl.AllAlumniGroup;
 import org.fenixedu.academic.predicate.AccessControl;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -33,6 +35,7 @@ public class HomepageAdminController {
         model.addAttribute("homepage", getHomepage());
         model.addAttribute("person", loggedPerson());
         model.addAttribute("dynamicPages", service.dynamicPages(getHomepage()).collect(Collectors.toList()));
+        model.addAttribute("isAlumi", new AllAlumniGroup().isMember(Authenticate.getUser()));
         return "fenix-learning/homepageOptions";
     }
 
@@ -48,7 +51,11 @@ public class HomepageAdminController {
                     defaultValue = "false") Boolean showResearchUnitHomepage, @RequestParam(required = false,
                     defaultValue = "false") Boolean showActiveStudentCurricularPlans, @RequestParam(required = false,
                     defaultValue = "false") Boolean published, @RequestParam(required = false) String researchUnitHomepage,
-            @RequestParam(required = false) LocalizedString researchUnitName) {
+            @RequestParam(required = false) LocalizedString researchUnitName, @RequestParam(required = false,
+                    defaultValue = "false") Boolean showUnit,
+            @RequestParam(required = false, defaultValue = "false") Boolean showCurrentExecutionCourses, @RequestParam(
+                    required = false, defaultValue = "false") Boolean showCurrentAttendingExecutionCourses, @RequestParam(
+                    required = false, defaultValue = "false") Boolean showAlumniDegrees) {
         atomic(() -> {
             HomepageSite homepage = getHomepage();
             homepage.setShowPhoto(showPhoto);
@@ -58,15 +65,19 @@ public class HomepageAdminController {
             homepage.setResearchUnitHomepage(researchUnitHomepage);
             homepage.setResearchUnitName(researchUnitName);
             homepage.setPublished(published);
+            homepage.setShowUnit(showUnit);
+            homepage.setShowCurrentExecutionCourses(showCurrentExecutionCourses);
+            homepage.setShowCurrentAttendingExecutionCourses(showCurrentAttendingExecutionCourses);
+            homepage.setShowAlumniDegrees(showAlumniDegrees);
         });
-        return new RedirectView("personal-homepage", true);
+        return new RedirectView("/personal-homepage", true);
     }
 
     @RequestMapping(value = "/activePages", method = RequestMethod.POST)
     public RedirectView editActivePages(HttpServletRequest request) {
         atomic(() -> service.dynamicPages(getHomepage()).forEach(
                 page -> page.setPublished(request.getParameterMap().keySet().contains(page.getSlug()))));
-        return new RedirectView("personal-homepage", true);
+        return new RedirectView("/personal-homepage", true);
     }
 
     private HomepageSite getHomepage() {

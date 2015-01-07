@@ -25,53 +25,45 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 <c:set var="context" scope="session" value="${pageContext.request.contextPath}/teacher/${executionCourse.externalId}/announcements"/>
 
 
-<h2 class="page-header"><spring:message code="label.announcements"/></h2>
-
-<!-- Button for announcements creation --->
-<div class="btn-group">
-    <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-primary" role="button">
+<h2 class="page-header">
+    <spring:message code="label.announcements"/>
+    <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-primary pull-right" role="button">
         <spring:message code="action.create"/>
     </a>
-</div>
-
-<div style="padding: 15px;"></div>
-
+</h2>
 
 <c:choose>
-
-    <c:when test="${announcements.size() > 0}">
+    <c:when test="${not empty announcements}">
         <c:forEach var="announcement" items="${announcements}">
+            <div class="row">
+                <div class="col-sm-10">
+                    <h4><a href="${announcement.address}" target="_blank">${announcement.name.content}</a></h4>
+                    <small>
+                        <a href="mailto:${announcement.createdBy.email}">${announcement.createdBy.name}</a>
+                          -
+                        ${announcement.creationDate.toString('dd MMMM yyyy, HH:mm', locale)}
+                    </small>
+                    <h5>
+                        ${announcement.body.content}
+                    </h5>
+                </div>
 
-            <!-- announcements rendering --->
-            <div class="announcement">
-                <div class="row">
-                    <div class="col-md-8 col-md-offset-1">
-                        <h4><a href="${announcement.address}" target="_blank">${announcement.name.content}</a></h4>
-                        <small>
-                            <a href="mailto:${announcement.createdBy.email}">${announcement.createdBy.name}</a>
-                              -
-                            ${announcement.creationDate.toString('dd MMMM yyyy, HH:mm', locale)}
-                        </small>
-                        <h5>
-                            ${announcement.body.content}
-                        </h5>
-                    </div>
-
-                    <div class="btn-group col-md-2">
-                        <div class="pull-right">
-                            <a href="#" class="btn btn-danger" onclick="showDeleteConfirmation('${announcement.slug}');">
-                                <spring:message code="action.delete"/>
-                            </a>
-                            <a href="#" class="btn btn-default" data-toggle="modal" data-target="#editModal">
-                                <spring:message code="action.edit"/>
-                            </a>
-                        </div>
+                <div class="btn-group col-sm-2">
+                    <div class="pull-right">
+                        <button class="btn btn-default" data-toggle="modal" data-target="#editModal${announcement.externalId}">
+                            <spring:message code="action.edit"/>
+                        </button>
+                        <button class="btn btn-danger" onclick="showDeleteConfirmation('${announcement.slug}');">
+                            <spring:message code="action.delete"/>
+                        </button>
                     </div>
                 </div>
             </div>
 
+            <hr />
+
             <!-- Modal panel for editing an announcement -->
-            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal fade" id="editModal${announcement.externalId}" tabindex="-1" role="dialog" aria-hidden="true">
                 <form method="post" action="${context}/${announcement.slug}/edit">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -92,7 +84,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 
                                     <input bennu-localized-string required-any name="name" id="name"
                                         placeholder="<spring:message code="label.announcement.title"/>"
-                                        value='${announcement.name.json()}'>
+                                        value='<c:out value="${announcement.name.json()}"/>'>
                                 </div>
 
                                 <div class="form-group">
@@ -102,7 +94,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 
                                     <input bennu-localized-string bennu-html-editor required-any name="body" id="body"
                                         placeholder="<spring:message code="label.announcement.content"/>"
-                                        value='${announcement.body.json()}'>
+                                        value='<c:out value="${announcement.body.json()}"/>'>
                                       <br/>
                                 </div>
                             </div>
@@ -118,8 +110,25 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                 </form>
             </div>
-
         </c:forEach>
+
+        <c:if test="${pages > 1}">
+            <nav class="text-center">
+                <ul class="pagination">
+                    <li ${currentPage == 1 ? 'class="disabled"' : ''}>
+                        <a href="?page=${currentPage - 1}">&laquo;</a>
+                    </li>
+                    <c:forEach begin="1" end="${pages}" var="i">
+                        <li ${i == currentPage ? 'class="active"' : ''}>
+                            <a href="?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+                    <li ${currentPage == pages ? 'class="disabled"' : ''}>
+                        <a href="?page=${currentPage + 1}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </c:if>
     </c:when>
 
     <c:otherwise>
@@ -129,7 +138,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 </c:choose>
 
 <!-- Modal panel for creating an announcement -->
-<div class="modal fade modal-lg" id="createModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-hidden="true">
     <form method="post" action="${context}/create">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -190,7 +199,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
                     <h4><spring:message code="action.delete" /></h4>
                 </div>
                 <div class="modal-body">
-                    <p><spring:message code="label.announcement.delete.confirmation"/>></p>
+                    <p><spring:message code="label.announcement.delete.confirmation"/></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default">

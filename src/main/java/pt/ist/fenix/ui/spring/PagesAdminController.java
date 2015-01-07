@@ -3,12 +3,19 @@ package pt.ist.fenix.ui.spring;
 import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
+import org.fenixedu.academic.predicate.AccessControl;
+import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.cms.domain.Site;
+import org.fenixedu.cms.exceptions.CmsDomainException;
+import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import pt.ist.fenix.domain.homepage.HomepageSite;
+import pt.ist.fenixframework.FenixFramework;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -35,12 +45,17 @@ public class PagesAdminController {
         return service.serialize(site(siteId)).toString();
     }
 
+    @RequestMapping(value = "/data/{menuItem}", method = RequestMethod.GET, produces = JSON_VALUE)
+    public @ResponseBody String data(@PathVariable String siteId, @PathVariable MenuItem menuItem) {
+        return service.data(site(siteId), menuItem).toString();
+    }
+
     @RequestMapping(method = RequestMethod.POST, consumes = JSON_VALUE)
     public @ResponseBody String create(@PathVariable String siteId, @RequestBody String bodyJson) {
         PagesAdminBean bean = new PagesAdminBean(bodyJson);
         Site site = site(siteId);
-        Optional<MenuItem> menuItem = service.create(site, bean.getParent(), bean.getTitle(), bean.getBody(), bean.getPosition());
-        return service.serialize(menuItem.get()).toString();
+        Optional<MenuItem> menuItem = service.create(site, bean.getParent(), bean.getTitle(), bean.getBody());
+        return service.serialize(menuItem.get(), true).toString();
     }
 
     @RequestMapping(value = "/{menuItemId}", method = RequestMethod.DELETE)
@@ -52,10 +67,19 @@ public class PagesAdminController {
     @RequestMapping(method = RequestMethod.PUT, consumes = JSON_VALUE)
     public @ResponseBody String edit(@RequestBody String bodyJson) {
         PagesAdminBean bean = new PagesAdminBean(bodyJson);
-        MenuItem menuItem =
-                service.edit(bean.getMenuItem(), bean.getParent(), bean.getTitle(), bean.getBody(), bean.getPosition(),
-                        bean.getCanViewGroup());
-        return service.serialize(menuItem).toString();
+        MenuItem menuItem = service.edit(bean.getMenuItem(), bean.getTitle(), bean.getBody(), bean.getCanViewGroup());
+        return service.serialize(menuItem, true).toString();
+    }
+
+    @RequestMapping(value = "/move", method = RequestMethod.PUT, consumes = JSON_VALUE)
+    public @ResponseBody String move(@RequestBody String bodyJson) {
+        JsonObject json = new JsonParser().parse(bodyJson).getAsJsonObject();
+        MenuItem item = getDomainObject(json.get("menuItemId").getAsString());
+        MenuItem parent = getDomainObject(json.get("parent").getAsString());
+        MenuItem insertAfter =
+                getDomainObject(json.get("insertAfter").isJsonNull() ? null : json.get("insertAfter").getAsString());
+        service.moveTo(item, parent, insertAfter);
+        return service.serialize(item, false).toString();
     }
 
     @RequestMapping(value = "/attachment/{menuItemId}", method = RequestMethod.POST)
@@ -84,12 +108,28 @@ public class PagesAdminController {
         JsonObject updateMessage = new JsonParser().parse(bodyJson).getAsJsonObject();
         MenuItem menuItem = getDomainObject(updateMessage.get("menuItemId").getAsString());
         GroupBasedFile attachment = getDomainObject(updateMessage.get("fileId").getAsString());
-        service.updateAttachment(menuItem, attachment, updateMessage.get("position").getAsInt());
+        service.updateAttachment(menuItem, attachment, updateMessage.get("position").getAsInt(), updateMessage.get("group")
+                .getAsInt(), updateMessage.get("name").getAsString());
         return getAttachments(menuItem.getExternalId());
     }
 
-    private static Site site(String siteId) {
-        return getDomainObject(siteId);
+    @ModelAttribute("site")
+    private Site site(@PathVariable String siteId) {
+        Site site = getDomainObject(siteId);
+        if (!FenixFramework.isDomainObjectValid(site)) {
+            throw BennuCoreDomainException.resourceNotFound(siteId);
+        }
+        if (site instanceof ExecutionCourseSite) {
+            if (((ExecutionCourseSite) site).getExecutionCourse().getProfessorshipForCurrentUser() == null) {
+                throw CmsDomainException.forbiden();
+            }
+        } else if (site instanceof HomepageSite) {
+            if (!Objects.equals(AccessControl.getPerson(), ((HomepageSite) site).getOwner())) {
+                throw CmsDomainException.forbiden();
+            }
+        } else if (!site.getCanAdminGroup().isMember(Authenticate.getUser())) {
+            throw CmsDomainException.forbiden();
+        }
+        return site;
     }
-
 }

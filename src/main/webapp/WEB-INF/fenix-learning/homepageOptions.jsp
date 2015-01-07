@@ -27,7 +27,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 <link href="${pageContext.request.contextPath}/static/lib/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/lib/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 
-<c:set var="context" scope="session" value="${pageContext.request.contextPath}/personal-homepage"/>
+<c:set var="context" scope="request" value="${pageContext.request.contextPath}/personal-homepage"/>
 ${portal.toolkit()}
 
 <h2 class="page-header">
@@ -35,8 +35,8 @@ ${portal.toolkit()}
 </h2>
 <c:if test="${homepage.published}">
     <ul class="nav nav-pills">
-        <li role="presentation" class="active"><a>Options</a></li>
-        <li role="presentation"><a href="${context}/content">Content</a></li>
+        <li role="presentation" class="active"><a href="${pageContext.request.contextPath}/personal-homepage"><spring:message code="label.homepage.options"/></a></li>
+        <li role="presentation"><a href="${pageContext.request.contextPath}/personal-homepage/content"><spring:message code="label.homepage.contents"/></a></li>
         <c:if test="${not empty homepage}">
             <li><a href="${homepage.fullUrl}" target="_blank">Link</a></li>
         </c:if>
@@ -50,10 +50,10 @@ ${portal.toolkit()}
     <form role="form" method="post" action="${context}/options" class="form-horizontal" id="homepage-publish-form">
     <c:if test="${not empty person}">
         <div class="form-group">
-            <label class="col-md-2 control-label">
+            <label class="col-sm-3 control-label">
                 <spring:message code="label.homepage.activated" />
             </label>
-            <div class="col-md-2">
+            <div class="col-sm-3">
                 <div class="checkbox">
                     <input name="published" type="checkbox" value="true" ${homepage.published ? "checked='checked'" : ""} onchange="$('#homepage-publish-form').submit()">
                 </div>
@@ -64,41 +64,41 @@ ${portal.toolkit()}
             <p>
                 <h3 class="page-header"><spring:message code="label.homepage.components" />
                     <a href="#" data-toggle="modal" data-target="#activePagesModal" class="btn btn-default pull-right" role="button">
-                        <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> Active Pages
+                        <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> <spring:message code="label.homepage.active.pages"/>
                     </a>
                 </h3>
             </p>
 
             <!-- Working Unit -->
-            <%--
-            TODO
             <c:if test="${not empty person.employee.currentWorkingContract.workingUnit}">
                 <div class="form-group">
-                    <label class="col-md-2 control-label">
-                        <spring:message code="label.homepage.showUnit" />
+                    <label class="col-sm-2 control-label">
+                        <spring:message code="label.homepage.showUnit" />:
                     </label>
-                    <div class="col-md-2">
-                        <form:checkbox path="homepage.showUnit"></form:checkbox>
+                    <div class="col-sm-2">
+                        <div class="checkbox">
+                            <input name="showUnit" type="checkbox" value="true" ${homepage.showUnit ? "checked='checked'" : ""}>
+                        </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-sm-8">
                         <p>${person.employee.currentWorkingContract.workingUnit.name}</p>
                     </div>
                 </div>
+                <hr/>
             </c:if>
-            --%>
 
             <!-- Photo -->
             <c:if test="${not empty person.user.profile && not empty person.user.profile.avatarUrl}">
                 <div class="form-group">
-                    <label class="col-md-2 control-label">
+                    <label class="col-sm-2 control-label">
                         <spring:message code="label.homepage.showPhoto" />:
                     </label>
-                    <div class="col-md-2">
+                    <div class="col-sm-2">
                         <div class="checkbox">
                             <input name="showPhoto" type="checkbox" value="true" ${homepage.showPhoto ? "checked='checked'" : ""}>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-sm-8">
                         <img class="img-circle" alt="photo" src="${person.user.profile.avatarUrl}"/>
                     </div>
                 </div>
@@ -108,15 +108,15 @@ ${portal.toolkit()}
             <!-- Teacher -->
             <c:if test="${not empty person.teacher && not empty person.teacher.activeContractedTeacher}">
                 <div class="form-group">
-                    <label class="col-md-2 control-label">
+                    <label class="col-sm-2 control-label">
                         <spring:message code="label.homepage.showCategory" />:
                     </label>
-                    <div class="col-md-2">
+                    <div class="col-sm-2">
                         <div class="checkbox">
                             <input name="showCategory" type="checkbox" value="true" ${homepage.showCategory ? "checked='checked'" : ""}>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-sm-8">
                         <c:if test="${not empty person.teacher.category}">
                             ${person.teacher.category.name.content}
                         </c:if>
@@ -125,29 +125,46 @@ ${portal.toolkit()}
                 <hr/>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label">
+                    <label class="col-sm-2 control-label">
+                        <spring:message code="label.homepage.showCurrentExecutionCourses" />:
+                    </label>
+                    <div class="col-sm-2">
+                        <div class="checkbox">
+                            <input name="showCurrentExecutionCourses" type="checkbox" value="true" ${homepage.showCurrentExecutionCourses ? "checked='checked'" : ""}>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <c:forEach var="executionCourse" items="${person.teacher.currentExecutionCourses}">
+                            <a href="${executionCourse.cmsSite.address}" target="_blank">${executionCourse.nome}</a>
+                        </c:forEach>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
                         <spring:message code="label.homepage.showResearchUnitHomepage" />:
                     </label>
-                    <div class="col-md-2">
+                    <div class="col-sm-2">
                         <div class="checkbox">
                             <input name="showResearchUnitHomepage" type="checkbox" value="true" ${homepage.showResearchUnitHomepage ? "checked='checked'" : ""}>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-sm-8">
                         <c:if test="${not empty person.teacher.category}">
                             <div class="form-group">
-                                <label class="control-label col-md-2">
+                                <label class="control-label col-sm-2">
                                     <spring:message code="label.homepage.research.unit.homepage" />:
                                 </label>
-                                <div class="col-md-8">
+                                <div class="col-sm-8">
                                     <input type="url" name="researchUnitHomepage" class="form-control" value="${homepage.researchUnitHomepage}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-2">
+                                <label class="control-label col-sm-2">
                                     <spring:message code="label.homepage.research.unit.name" />:
                                 </label>
-                                <div class="col-md-8">
+                                <div class="col-sm-8">
                                     <input type="text" name="researchUnitName" bennu-localized-string class="form-control" value='${homepage.researchUnitName.json()}'>
                                 </div>
                             </div>
@@ -161,15 +178,15 @@ ${portal.toolkit()}
             <!-- Active curricular plans -->
             <c:if test="${not empty person.activeStudentCurricularPlansSortedByDegreeTypeAndDegreeName && not empty person.activeStudentCurricularPlansSortedByDegreeTypeAndDegreeName}">
                 <div class="form-group">
-                    <label class="col-md-2 control-label">
+                    <label class="col-sm-2 control-label">
                         <spring:message code="label.homepage.showActiveStudentCurricularPlans" />:
                     </label>
-                    <div class="col-md-2">
+                    <div class="col-sm-2">
                         <div class="checkbox">
                             <input name="showActiveStudentCurricularPlans" type="checkbox" value="true" ${homepage.showActiveStudentCurricularPlans ? "checked='checked'" : ""}>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-sm-8">
                         <c:forEach var="studentCurricularPlan" items="${person.activeStudentCurricularPlansSortedByDegreeTypeAndDegreeName}">
                             <c:if test="${not empty studentCurricularPlan.degreeCurricularPlan.degree.site}">
 
@@ -190,48 +207,42 @@ ${portal.toolkit()}
                                         ${fr:message('resources.EnumerationResources', studentCurricularPlan.degreeCurricularPlan.degree.tipoCurso.name)}
                                         </c:otherwise>
                                     </c:choose>
-                                    <spring:message code="label.in" />${studentCurricularPlan.registration.degreeName}
+                                    <spring:message code="label.in" /> ${studentCurricularPlan.registration.degreeName}
                                 </c:if>
                             </c:forEach>
                         </div>
                     </div>
                     <hr/>
-                </c:if>
-
-                <!-- Current attending execution courses -->
-                <%--
-                TODO
-                <c:if test="${not empty person.employee.currentWorkingContract.workingUnit}">
                     <div class="form-group">
-                        <label class="col-md-2 control-label">
+                        <label class="col-sm-2 control-label">
                             <spring:message code="label.homepage.showCurrentAttendingExecutionCourses" />:
                         </label>
-                        <div class="col-md-2">
-                            <form:checkbox path="homepage.showCurrentAttendingExecutionCourses"></form:checkbox>
+                        <div class="col-sm-2">
+                            <div class="checkbox">
+                                <input name="showCurrentAttendingExecutionCourses" type="checkbox" value="true" ${homepage.showCurrentAttendingExecutionCourses ? "checked='checked'" : ""}>
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <c:forEach var="attend" items="personAttends">
+                        <div class="col-sm-8">
+                            <c:forEach var="attend" items="${personAttends}">
                                 <a href="${attend.disciplinaExecucao.cmsSite.address}">${attend.disciplinaExecucao.nome}</a>
                             </c:forEach>
                         </div>
                     </div>
                     <hr />
                 </c:if>
-                --%>
 
-                <!-- Alumni degrees -->
-                <%--
-                TODO
-                <c:if test="${not empty person.completedStudentCurricularPlansSortedByDegreeTypeAndDegreeName}">
+                <c:if test="${isAlumni}">
                     <div class="form-group">
-                        <label class="col-md-2 control-label">
+                        <label class="col-sm-2 control-label">
 
                      <spring:message code="label.homepage.showAlumniDegrees" />:
                         </label>
-                        <div class="col-md-2">
-                            <form:checkbox path="homepage.showAlumniDegrees"></form:checkbox>
+                        <div class="col-sm-2">
+                            <div class="checkbox">
+                                <input name="showAlumniDegrees" type="checkbox" value="true" ${homepage.showAlumniDegrees ? "checked='checked'" : ""}>
+                            </div>
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-sm-8">
                             <c:forEach var="studentCurricularPlan" items="person.completedStudentCurricularPlansSortedByDegreeTypeAndDegreeName">
                                 <a href="${studentCurricularPlan.degreeCurricularPlan.degree.cmsSite.address}">
                                     <c:choose>
@@ -255,42 +266,17 @@ ${portal.toolkit()}
                         </div>
                     </div>
                     <hr />
-
                 </c:if>
-                --%>
 
-                <%--
-                TODO
-                <!-- Current execution courses -->
-                <c:if test="${not empty person.teacher && not empty person.teacher.activeContractedTeacher}">
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">
-                            <spring:message code="label.homepage.showCurrentExecutionCourses" />:
-                        </label>
-                        <div class="col-md-2">
-                            <form:checkbox path="homepage.showCurrentExecutionCourses"></form:checkbox>
-                        </div>
-                        <div class="col-md-9">
-                            <c:forEach var="executionCourse" items="${person.teacher.currentExecutionCourses}">
-                                <a href="${executionCourse.cmsSite.address}" target="_blank">${executionCourse.nome}</a>
-                            </c:forEach>
-                        </div>
-                    </div>
-                    <hr />
-
-                </c:if>
-                --%>
-
+                <div class="btn-group pull-right" role="group">
+                    <button type="reset" class="btn btn-default"><spring:message code="action.cancel" /></button>
+                    <button type="submit" class="btn btn-primary"><spring:message code="action.save" /></button>
+                </div>
             </c:if>
         </c:if>
-
-        <div class="btn-group pull-right" role="group">
-            <button type="reset" class="btn btn-default"><spring:message code="action.cancel" /></button>
-            <button type="submit" class="btn btn-primary"><spring:message code="action.save" /></button>
-        </div>
     </form>
 
-    <div class="modal fade modal-lg" id="activePagesModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="activePagesModal" tabindex="-1" role="dialog" aria-hidden="true">
         <form method="post" action="${context}/activePages" class="form-horizontal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -300,28 +286,26 @@ ${portal.toolkit()}
                             <spring:message code="action.cancel" />
                         </span>
                         </button>
-                        <h4>Active Pages</h4>
+                        <h4><spring:message code="label.homepage.active.pages"/></h4>
                     </div>
 
                     <div class="modal-body">
-                        <div class="container">
-                            <p><spring:message code="title.homepage.activePages"></spring:message></p>
-                            <div class="form-group">
-                                <c:forEach var="page" items="${dynamicPages}">
-                                    <row>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">
-                                                ${page.name.content}:
-                                        </label>
-                                        <div class="col-md-2">
-                                            <div class="checkbox">
-                                                <input name="${page.slug}" type="checkbox" value="true" ${page.published ? "checked='checked'" : ""}>
-                                            </div>
+                        <div class="form-group">
+                            <spring:message code="title.homepage.activePages"></spring:message>
+                        </div>
+                        <div class="form-group">
+                            <c:forEach var="page" items="${dynamicPages}">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label">
+                                            ${page.name.content}:
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <div class="checkbox">
+                                            <input name="${page.slug}" type="checkbox" value="true" ${page.published ? "checked='checked'" : ""}>
                                         </div>
                                     </div>
-                                    </row>
-                                </c:forEach>
-                            </div>
+                                </div>
+                            </c:forEach>
                         </div>
                     </div>
                     <div class="modal-footer">

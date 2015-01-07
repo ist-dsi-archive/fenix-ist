@@ -1,13 +1,11 @@
 package pt.ist.fenix.ui.spring;
 
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.academic.ui.spring.StrutsFunctionalityController;
+import org.fenixedu.academic.ui.spring.controller.teacher.ExecutionCourseController;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,15 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.JstlView;
 
 @Controller
-@RequestMapping("/teacher/{executionCourseId}/pages")
-public class TeacherPagesController extends StrutsFunctionalityController {
+@RequestMapping("/teacher/{executionCourse}/pages")
+public class TeacherPagesController extends ExecutionCourseController {
 
     @Autowired
     PagesAdminService service;
 
     @RequestMapping(method = RequestMethod.GET)
-    public TeacherPagesView all(Model model, @PathVariable String executionCourseId) {
-        ExecutionCourse executionCourse = getDomainObject(executionCourseId);
+    public TeacherPagesView all(Model model, @PathVariable ExecutionCourse executionCourse) {
         Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
         AccessControl.check(person -> professorship != null && professorship.getPermissions().getSections());
         model.addAttribute("executionCourse", executionCourse);
