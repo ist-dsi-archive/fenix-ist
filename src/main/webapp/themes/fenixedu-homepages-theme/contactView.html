@@ -1,4 +1,4 @@
-{% macro contactView(contact,type,showDefault=false,showType=false,publicSpace=false,ctxPath='') %}
+{% macro contactView(contact,type,showDefault=false,showType=false,ctxPath='') %}
 	{% if type == 'phone' %}
 		{{ contact.number }}
 	{% elseif type == 'email' %}

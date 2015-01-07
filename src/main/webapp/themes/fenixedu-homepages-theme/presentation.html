@@ -21,7 +21,7 @@
 				<th rowspan="{{ contacts | length }}">{{ i18n('resources.HomepageResources', title) }}:</th>
 			{% endif %}
 			<td>
-				{{ contactView(contact,type,showDefault=(contacts | length > 1),publicSpace=true,ctxPath=ctxPath) }}
+				{{ contactView(contact,type,showDefault=(contacts | length > 1),ctxPath=ctxPath) }}
 			</td>
 		</tr>
 	{% endfor %}
