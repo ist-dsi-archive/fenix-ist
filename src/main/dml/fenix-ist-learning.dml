@@ -1,6 +1,7 @@
-package pt.ist.learning;
+package pt.ist.fenix.domain;
 
 class unit.UnitSite extends .org.fenixedu.cms.domain.Site {}
+
 class homepage.HomepageSite extends .org.fenixedu.cms.domain.Site {
     boolean showActiveStudentCurricularPlans;
     boolean showAlumniDegrees;
