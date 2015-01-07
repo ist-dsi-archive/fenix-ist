@@ -59,7 +59,7 @@
 		{% if workingResearchUnits is not empty %}
 			{{ presentationRow('label.homepage.showResearchUnitHomepage', researchUnitsList(workingResearchUnits)) }}
 		{% elseif researchUnitHomepage is not empty and researchUnitName is not null %}
-			{{ presentationRow('label.homepage.showResearchUnitHomepage','<a href="{{ researchUnitHomepage }}">' + researchUnitName.content + '</a>') }}
+			{{ presentationRow('label.homepage.showResearchUnitHomepage','<a href="' + researchUnitHomepage + '">' + researchUnitName.content + '</a>') }}
 		{% endif %}
 
 		<!-- active student curricular plans -->
