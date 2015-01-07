@@ -20,14 +20,8 @@ package pt.ist.fenix.ui.struts.action.research.researchUnit;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.bennu.core.groups.Group;
-import org.fenixedu.bennu.core.groups.UnionGroup;
-
-import com.google.common.collect.ImmutableSet;
 
 public class UnitFileUploadBean extends UnitFileBean implements Serializable {
 
@@ -36,15 +30,12 @@ public class UnitFileUploadBean extends UnitFileBean implements Serializable {
     private String fileName;
     private Long fileSize;
 
-    private List<Group> permittedGroups;
-    private Group permittedGroup;
-
     transient private InputStream uploadFile;
     private String authorsName;
 
     public UnitFileUploadBean(Unit unit) {
+        super();
         this.unit = unit;
-        permittedGroups = new ArrayList<Group>();
     }
 
     @Override
@@ -82,25 +73,5 @@ public class UnitFileUploadBean extends UnitFileBean implements Serializable {
 
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
-    }
-
-    public Group getPermittedGroup() {
-        return (permittedGroup != null) ? permittedGroup : getUnion();
-    }
-
-    public void setPermittedGroup(Group permittedGroup) {
-        this.permittedGroup = permittedGroup;
-    }
-
-    public Group getUnion() {
-        return UnionGroup.of(ImmutableSet.copyOf(getPermittedGroups()));
-    }
-
-    public List<Group> getPermittedGroups() {
-        return permittedGroups;
-    }
-
-    public void setPermittedGroups(List<Group> permittedGroups) {
-        this.permittedGroups = permittedGroups;
     }
 }

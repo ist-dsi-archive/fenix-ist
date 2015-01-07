@@ -23,6 +23,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html:xhtml/>
 <bean:define id="unitID" name="unit" property="externalId"/>
@@ -40,7 +41,7 @@
 			<bean:message key="label.sendEmailToGroups.explanation" bundle="RESEARCHER_RESOURCES"/>
 		</span>
 	</li>
-	<logic:equal name="unit" property="currentUserAbleToDefineGroups" value="true">
+	<c:if test="${unit.site.canAdminGroup.isMember(LOGGED_USER_ATTRIBUTE)}">
 		<li>
 			<html:link page="<%= "/researchUnitFunctionalities.do?method=configureGroups&unitId=" + unitID %>">
 				<bean:message key="label.configurePersistentGroups" bundle="RESEARCHER_RESOURCES"/>
@@ -50,7 +51,7 @@
 				<bean:message key="label.configurePersistentGroups.explanation" bundle="RESEARCHER_RESOURCES"/>
 			</span>
 		</li>
-	</logic:equal>
+	</c:if>
 	<li>
 		<html:link page="<%= "/researchUnitFunctionalities.do?method=manageFiles&unitId=" + unitID %>">
 			<bean:message key="label.manageFiles" bundle="RESEARCHER_RESOURCES"/>

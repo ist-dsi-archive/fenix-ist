@@ -23,12 +23,13 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <jsp:include flush="true" page="../../commons/PersistentMemberGroups/managePersistedGroups.jsp"/>
 
 <bean:define id="unitID" name="unit" property="externalId"/>
 
-<logic:equal name="unit" property="currentUserAbleToDefineGroups" value="true">
+<c:if test="${unit.site.canAdminGroup.isMember(LOGGED_USER_ATTRIBUTE)}">
 
 	<p class="mtop2 mbottom05">
 		<strong><bean:message key="label.publicationManagers" bundle="RESEARCHER_RESOURCES"/></strong>
@@ -63,4 +64,4 @@
 	</p>
 </logic:empty>
 
-</logic:equal>
+</c:if>

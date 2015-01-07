@@ -24,6 +24,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/taglib/collection-pager" prefix="cp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <h2><bean:message key="label.manageFiles" bundle="RESEARCHER_RESOURCES"/> <span class="small">${unit.name}</span></h2>
 
@@ -37,11 +38,11 @@
 			<html:link page="<%= "/" + actionName + ".do?method=prepareFileUpload&unitId=" + unitID %>"><bean:message key="label.addFile" bundle="RESEARCHER_RESOURCES"/></html:link>
 		</li>
 	</logic:equal>
-	<logic:equal name="unit" property="currentUserAbleToDefineGroups" value="true">
+	<c:if test="${unit.site.canAdminGroup.isMember(LOGGED_USER_ATTRIBUTE)}">
 		<li>
 			<html:link page="<%= "/" + actionName + ".do?method=configureGroups&unitId=" + unitID %>"><bean:message key="label.manageAccessGroups" bundle="RESEARCHER_RESOURCES"/></html:link>
 		</li>
-	</logic:equal>
+	</c:if>
 	<li>
 		<a href="#" data-toggle="collapse" data-target="#instructions"><bean:message key="label.instructions" bundle="RESEARCHER_RESOURCES"/></a>
 	</li>
