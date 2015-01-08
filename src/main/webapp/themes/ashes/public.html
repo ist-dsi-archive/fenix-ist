@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html lang="en" class="ie ie9"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html dir="ltr" lang="{{currentLocale}}"> <!--<![endif]-->
+  <head>
+
+	<!-- Basic Page Needs -->
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Language" content="{{currentLocale.language}}" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="Description" content="FenixEdu™ is an open-source academic information platform." />
+	<meta name="Keywords" content="FenixEdu, open-source, academic, information, platform, academic administration, higher education, e-learning" />
+	<meta name="Language" content="{{currentLocale}}" />
+	<meta name="Robots" content="all" />
+	<meta name="Author" content="FenixEdu" />
+	<meta name="Email" content="hello@fenixedu.org" />
+	<meta name="Copyright" content="Técnico Lisboa — Instituto Superior Técnico" />
+	<meta name="Distribution" content="Global" />
+	<meta name="Rating" content="General" />
+
+	<!-- OpenGraph Specific Metas -->
+	<meta property="og:title" content="FenixEdu™" />
+	<meta property="og:type" content="application" />
+	<meta property="og:url" content="http://www.fenixedu.org" />
+	<meta property="og:site_name" content="FenixEdu" />
+	<meta property="og:description" content="FenixEdu™ is an open-source academic information platform." />
+	<meta property="fb:profile_id" content="379238245509413" />
+
+	<!-- Mobile Specific Metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.5">
+
+    <title>{% block title %}{{ functionality.title.content }} · {{ selectedTopLevel.title.content }}{% endblock %}</title>
+
+    <link href="{{contextPath}}/themes/ashes/css/style.css" rel="stylesheet">
+    <link href="{{contextPath}}/themes/ashes/css/publicPages.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="{{contextPath}}/bennu-portal/js/jquery.min.js"></script>
+	<script src="{{contextPath}}/themes/ashes/js/bootstrap.min.js"></script>
+	<script> setLang = function(l) {
+		$.post('{{contextPath}}/api/bennu-core/profile/locale/' + l.replace('_', '-')).always(function() { location.reload(); });
+	}
+	</script>
+	
+	<!-- Favicons & TouchIcons-->
+	<link rel="shortcut icon" type="image/x-icon" href="{{contextPath}}/api/bennu-portal/configuration/favicon">
+
+  </head>
+
+  <body>
+  	{% block topbar %}
+	<!-- Bar -->
+	<div class="navbar navbar-inverse hidden-xs fenixedu-bar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="{{contextPath}}/" target="_blank">{{config.applicationTitle.content}}</a></li>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-right">
+				<li></li>
+					{% if loggedUser == null %}
+						<li><a href="{{contextPath}}/login">Login</a></li>
+					{% else %}
+						<li><a><img src="{{loggedUser.profile.avatarUrl}}?s=20" width="20" heigth="20" style="margin-right: 10px" class="img-circle"/>{{loggedUser.profile.displayName}}</a></li>
+						{% if devMode %}
+							<li class="devmode active"><a>Debug Mode</a></li>
+						{% endif %}
+						<li class="active"><a href="{{contextPath}}/logout">Logout</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+	<div class="container-fluid">
+		<header class="row">
+			<div class="col-sm-2 logo-container text-center">
+				<a href="http://tecnico.ulisboa.pt">
+					<img src="{{contextPath}}/api/bennu-portal/configuration/logo" alt="FenixEdu"/>
+				</a>
+				<button type="button" class="navbar-toggle hamburger" data-toggle="collapse" data-target="#topNav">
+					<a href="{{contextPath}}/">Login</a>
+				</button>
+			</div>
+			<div class="col-sm-2 col-sm-offset-8 text-right hidden-xs">
+				<form action="http://tecnico.ulisboa.pt/search/" id="search-form">
+					<input type="hidden" name="cx" value="007266409324096302065:xkagxvojzme" />
+					<input type="hidden" name="cof" value="FORID:10" />
+					<input type="hidden" name="ie" value="UTF-8" />
+					<label for="textfield">
+						<input alt="input.q" placeholder="{{i18n('resources.GlobalResources', 'search.title')}}" type="text" class="search-field" id="textfield" name="q" size="30"/>
+					</label>
+				</form>
+			</div>
+		</header>
+
+		<div class="row perf_nav hidden-xs">
+			<ul class="col-sm-10 col-sm-offset-2">
+				<li><a href="https://tecnico.ulisboa.pt/">{{i18n('resources.GlobalResources', 'link.home')}}</a></li>
+			  	<li><a href="https://tecnico.ulisboa.pt/pt/alunos/">{{i18n('resources.GlobalResources', 'link.student')}}</a></li>
+			  	<li><a href="https://tecnico.ulisboa.pt/pt/docentes/">{{i18n('resources.GlobalResources', 'link.teacher')}}</a></li>
+				<li><a href="https://tecnico.ulisboa.pt/pt/pessoal/">{{i18n('resources.GlobalResources', 'link.staff')}}</a></li>
+				<li><a href="https://tecnico.ulisboa.pt/pt/candidatos/">{{i18n('resources.GlobalResources', 'link.candidade')}}	</a></li>	
+			  	<li><a href="https://tecnico.ulisboa.pt/en/">{{i18n('resources.GlobalResources', 'link.international')}}</a></li>
+			  	<li><a href="https://tecnico.ulisboa.pt/pt/alumni/">{{i18n('resources.GlobalResources', 'link.alumni')}}</a></li>
+			</ul>
+		</div>
+
+		<div class="row main-row">
+			<nav class="col-sm-2 hidden-xs" id="context">
+				<ul>
+					<li><a href="http://tecnico.ulisboa.pt/html/instituto/">{{i18n('resources.GlobalResources', 'label.institution')}}</a></li>
+					<li><a href="http://tecnico.ulisboa.pt/html/estrutura/">{{i18n('resources.GlobalResources', 'label.structure')}}</a></li>
+					<li><a href="http://tecnico.ulisboa.pt/html/ensino/">{{i18n('resources.GlobalResources', 'label.education')}}</a></li>
+					<li><a href="http://tecnico.ulisboa.pt/html/id/">{{i18n('resources.GlobalResources', 'label.research.and.development.acronyms')}}</a></li>
+					<li><a href="http://tecnico.ulisboa.pt/html/viverist/">Viver no Técnico Lisboa</a></li>
+				</ul>
+			</nav>
+			<main class="col-sm-10" role="main">
+				<span class="pull-right">
+					{% for locale in locales %}
+						<a href="" class="locale-changer {% if locale == currentLocale %}active{% endif %}" title="{{locale.displayName}}" onclick="setLang('{{locale}}')">{{locale.language}}</a>
+					{% endfor %}
+				</span>
+				<div class="table-responsive" id="main-content-wrapper">
+					{{body}}
+				</div>
+			</main>
+		</div>
+
+		<footer class="row">
+			<div class="col-sm-12">
+				<span class="pull-left">
+					<a href="http://tecnico.ulisboa.pt/pt/sobre-IST/contactos/">
+						{{i18n('resources.GlobalResources', 'footer.contacts.label')}}
+					</a>
+					|
+					<a href="mailto:{{config.supportEmailAddress}}">
+						{{i18n('resources.GlobalResources', 'footer.webmaster.label')}}
+					</a>
+				</span>
+				<span class="pull-right">
+					{{config.applicationCopyright.content}}
+				</span>
+			</div>
+		</footer>
+	</div>
+</html>
