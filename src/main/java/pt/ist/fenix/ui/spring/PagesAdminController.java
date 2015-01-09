@@ -67,7 +67,8 @@ public class PagesAdminController {
     @RequestMapping(method = RequestMethod.PUT, consumes = JSON_VALUE)
     public @ResponseBody String edit(@RequestBody String bodyJson) {
         PagesAdminBean bean = new PagesAdminBean(bodyJson);
-        MenuItem menuItem = service.edit(bean.getMenuItem(), bean.getTitle(), bean.getBody(), bean.getCanViewGroup());
+        MenuItem menuItem =
+                service.edit(bean.getMenuItem(), bean.getTitle(), bean.getBody(), bean.getCanViewGroup(), bean.isVisible());
         return service.serialize(menuItem, true).toString();
     }
 

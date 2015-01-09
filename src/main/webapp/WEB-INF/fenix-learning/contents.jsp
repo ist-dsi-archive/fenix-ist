@@ -23,7 +23,7 @@
                 <div ng-show="selected.loaded">
                     <ul class="nav nav-pills" role="tablist">
                         <li class="active"><a id="pageTabLink" href="#page" role="tab" data-toggle="tab"><spring:message code="label.page"/></a></li>
-                        <li><a href="#files" id="pageFilesLink" role="tab" data-toggle="tab" ng-if="selected.key"><spring:message code="label.files"/></a></li>
+                        <li><a href="#files" id="pageFilesLink" role="tab" data-toggle="tab" ng-if="selected.key"><spring:message code="label.files"/> <span class="badge">{{selected.files.length}}</span></a></li>
                         <li><a href="#permissions" role="tab" data-toggle="tab" ng-if="selected.key"><spring:message code="label.permissions"/></a></li>
                         <li><a href="{{selected.pageAddress}}" role="tab" ng-if="selected.key" target="_blank"><spring:message code="label.preview"/></a></li>
                     </ul>
@@ -41,11 +41,19 @@
                                 <textarea bennu-localized-string ng-html-editor="selected.body" id="body" class="form-control"></textarea>
 
                                 <div>
+                                    <div class="pull-left">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-model="selected.visible"/>
+                                                <spring:message code="label.visible"/>
+                                            </label>
+                                        </div>
+                                    </div>
                                     <div class="pull-right">
                                         <button data-toggle="modal" data-target="#itemDeleteModal" class="btn btn-danger btn-sm" ng-disabled="selected.root">
                                             <spring:message code="action.delete"/>
                                         </button>
-                                        <button ng-click="saveSelected()" class="btn btn-primary btn-sm">
+                                        <button ng-click="saveSelected()" ng-disabled="selected.saving" class="btn btn-primary btn-sm">
                                             <spring:message code="action.save"/>
                                         </button>
                                     </div>

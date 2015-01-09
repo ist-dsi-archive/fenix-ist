@@ -67,10 +67,14 @@ public class PagesAdminService {
     }
 
     @Atomic(mode = Atomic.TxMode.WRITE)
-    protected MenuItem edit(MenuItem menuItem, LocalizedString name, LocalizedString body, Group canViewGroup) {
+    protected MenuItem edit(MenuItem menuItem, LocalizedString name, LocalizedString body, Group canViewGroup, Boolean visible) {
 
         if (!menuItem.getName().equals(name)) {
             menuItem.setName(name);
+        }
+
+        if (visible != null) {
+            menuItem.getPage().setPublished(visible);
         }
 
         if (!menuItem.getPage().getName().equals(name)) {
@@ -168,6 +172,7 @@ public class PagesAdminService {
         root.add("pageAddress", new JsonPrimitive(pageAddress));
         root.add("position", new JsonPrimitive(item.getPosition()));
         root.add("isFolder", new JsonPrimitive(Optional.ofNullable(item.getFolder()).orElse(false)));
+        root.addProperty("visible", item.getPage().isPublished());
 
         if (withBody) {
             root.add("body", data(item.getMenu().getSite(), item));
@@ -269,7 +274,7 @@ public class PagesAdminService {
         return postForPage(item.getPage()).getBody() != null ? postForPage(item.getPage()).getBody().json() : new JsonObject();
     }
 
-    private List<Group> permissionGroups(Site site) {
+    static List<Group> permissionGroups(Site site) {
         if (site instanceof ExecutionCourseSite) {
             return ((ExecutionCourseSite) site).getContextualPermissionGroups();
         }

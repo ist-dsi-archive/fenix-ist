@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 
 import pt.ist.fenixframework.FenixFramework;
 
@@ -21,6 +20,7 @@ public class PagesAdminBean {
     private MenuItem parent;
     private LocalizedString title;
     private LocalizedString body;
+    private final Boolean visible;
 
     public PagesAdminBean(String json) {
         this(PARSER.parse(json).getAsJsonObject());
@@ -43,6 +43,7 @@ public class PagesAdminBean {
             Integer.parseInt(asString(jsonObj, "canViewGroupIndex").get());
             this.canViewGroup = executionCourseGroup(Integer.parseInt(asString(jsonObj, "canViewGroupIndex").get()));
         }
+        this.visible = jsonObj.has("visible") ? jsonObj.get("visible").getAsBoolean() : null;
     }
 
     public MenuItem getMenuItem() {
@@ -80,8 +81,11 @@ public class PagesAdminBean {
     }
 
     private Group executionCourseGroup(int canViewGroupIndex) {
-        ExecutionCourseSite site = (ExecutionCourseSite) menuItem.getPage().getSite();
-        return site.getContextualPermissionGroups().get(canViewGroupIndex);
+        return PagesAdminService.permissionGroups(menuItem.getPage().getSite()).get(canViewGroupIndex);
+    }
+
+    public Boolean isVisible() {
+        return visible;
     }
 
     @Override

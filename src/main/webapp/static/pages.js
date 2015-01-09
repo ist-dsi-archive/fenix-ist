@@ -67,8 +67,10 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
             body: $scope.selected.body,
             menuItemId: $scope.selected.key,
             menuItemParentId:  $scope.selected.node.parent.data.item.key,
-            canViewGroupIndex: $scope.selected.canViewGroupIndex
+            canViewGroupIndex: $scope.selected.canViewGroupIndex,
+            visible: $scope.selected.visible
         };
+        $scope.selected.saving = true;
         $scope.data = data;
         var promise;
         if ($scope.selected.key) {
