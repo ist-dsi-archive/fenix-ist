@@ -73,7 +73,8 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
     public RedirectView create(@PathVariable ExecutionCourse executionCourse, @RequestParam LocalizedString name,
             @RequestParam LocalizedString body) throws Exception {
         Site site = executionCourse.getSite();
-        atomic(() -> Post.create(site, null, name, body, announcementsCategory(site), true, getUser()));
+        atomic(() -> Post.create(site, null, Post.sanitize(name), Post.sanitize(body), announcementsCategory(site), true,
+                getUser()));
         return viewAll(executionCourse);
     }
 
@@ -82,8 +83,8 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
             @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> {
-            post.setName(name);
-            post.setBody(body);
+            post.setName(Post.sanitize(name));
+            post.setBody(Post.sanitize(body));
         });
         return viewAll(executionCourse);
     }
@@ -93,8 +94,7 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
     }
 
     private List<Post> getAnnouncements(Site site) {
-        return announcementsCategory(site).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR)
-                .collect(Collectors.toList());
+        return announcementsCategory(site).getPostsSet().stream().sorted(CREATION_DATE_COMPARATOR).collect(Collectors.toList());
     }
 
     private Category announcementsCategory(Site site) {
