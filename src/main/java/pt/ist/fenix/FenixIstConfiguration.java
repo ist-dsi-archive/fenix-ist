@@ -64,6 +64,10 @@ public class FenixIstConfiguration {
         @ConfigurationProperty(key = "sotisURL", defaultValue = "https://sotis.tecnico.ulisboa.pt")
         public String sotisURL();
 
+        @ConfigurationProperty(key = "merge.units.emails",
+                description = "comma separated emails of persons who want to receive emails about merge of units.")
+        public String getMergeUnitsEmails();
+
     }
 
     public static boolean barraLogin() {
