@@ -6,7 +6,9 @@ import static org.fenixedu.bennu.core.security.Authenticate.getUser;
 import static org.fenixedu.cms.domain.Post.CREATION_DATE_COMPARATOR;
 import static pt.ist.fenixframework.FenixFramework.atomic;
 
+import java.io.IOException;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +19,13 @@ import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.spring.controller.teacher.ExecutionCourseController;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
+import org.fenixedu.bennu.core.groups.AnyoneGroup;
+import org.fenixedu.bennu.io.domain.GroupBasedFile;
+import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
 import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.Post;
 import org.fenixedu.cms.domain.Site;
+import org.fenixedu.cms.ui.AdminSites;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,10 +33,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import pt.ist.fenixframework.Atomic;
+
 import com.google.common.math.IntMath;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping("/teacher/{executionCourse}/announcements")
@@ -67,6 +79,42 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> post.delete());
         return viewAll(executionCourse);
+    }
+
+    @RequestMapping(value = "{postSlug}/addFile.json", method = RequestMethod.POST, produces = "application/json")
+    public @ResponseBody String addFileJson(Model model, @PathVariable ExecutionCourse executionCourse, @PathVariable(
+            value = "postSlug") String slugPost, @RequestParam("attachment") MultipartFile[] attachments) throws IOException {
+        Site s = executionCourse.getSite();
+
+        AdminSites.canEdit(s);
+
+        Post p = s.postForSlug(slugPost);
+        JsonArray array = new JsonArray();
+
+        Arrays.asList(attachments).stream().map((attachment) -> {
+            GroupBasedFile f = null;
+            try {
+                f = addFile(attachment, p);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JsonObject obj = new JsonObject();
+            obj.addProperty("displayname", f.getDisplayName());
+            obj.addProperty("filename", f.getFilename());
+            obj.addProperty("url", FileDownloadServlet.getDownloadUrl(f));
+            return obj;
+        }).forEach(x -> array.add(x));
+
+        return array.toString();
+    }
+
+    @Atomic
+    private GroupBasedFile addFile(MultipartFile attachment, Post p) throws IOException {
+        GroupBasedFile f =
+                new GroupBasedFile(attachment.getOriginalFilename(), attachment.getOriginalFilename(), attachment.getBytes(),
+                        AnyoneGroup.get());
+        p.getPostFiles().putFile(f);
+        return f;
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)

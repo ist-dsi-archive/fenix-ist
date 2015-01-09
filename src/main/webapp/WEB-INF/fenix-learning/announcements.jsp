@@ -92,7 +92,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
                                         <spring:message code="label.announcement.content"/>
                                     </label>
 
-                                    <input bennu-localized-string bennu-html-editor required-any name="body" id="body"
+                                    <input bennu-localized-string bennu-html-editor required-any name="body" id="body" data-post-slug="${announcement.slug}"
                                         placeholder="<spring:message code="label.announcement.content"/>"
                                         value='<c:out value="${announcement.body.json()}"/>'>
                                       <br/>
@@ -166,7 +166,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
                             <spring:message code="label.announcement.content" />
                         </label>
 
-                        <input bennu-localized-string bennu-html-editor required-any name="body" id="body"
+                        <input bennu-localized-string bennu-html-editor toolbar="size,style,lists,align,links,table,undo,fullscreen,source" required-any name="body" id="body"
                                    placeholder="<spring:message code="label.announcement.content" />">
                     </div>
 
@@ -215,6 +215,55 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 </div>
 
 ${portal.toolkit()}
+
+<script>
+    function submitFiles(files, cb,postslug) {
+
+        var formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            formData.append('attachment', files[i]);
+        }
+
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', postslug + 'addFile.json');
+
+        function transferCanceled(event) {
+
+        }
+
+        function transferFailed(event) {
+
+        }
+
+        function transferComplete(event) {
+            var objs = JSON.parse(event.currentTarget.response);
+            cb(objs.map(function(x){ return x.url }));
+        }
+
+        function updateProgress(event) {
+            if (event.lengthComputable) {
+                var complete = (event.loaded / event.total * 100 | 0);
+                //progress.value = progress.innerHTML = complete;
+                console.log(complete);
+            }
+        }
+
+        xhr.addEventListener("progress", updateProgress, false);
+        xhr.addEventListener("load", transferComplete, false);
+        xhr.addEventListener("error", transferFailed, false);
+        xhr.addEventListener("abort", transferCanceled, false);
+
+        xhr.send(formData);
+    }
+    $("[data-post-slug]").map(function(i,e){
+        e = $(e);
+        
+        e.data("fileHandler", function(f,cb){
+            submitFiles(f,cb,e.data("post-slug"));
+        });
+    });
+</script>
 
 <script>
     function showDeleteConfirmation(announcementSlug) {
