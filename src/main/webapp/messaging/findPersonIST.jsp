@@ -31,6 +31,8 @@
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/taglib/enum" prefix="e"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/taglib/collection-pager" prefix="cp"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html:xhtml />
 
 <h2>
@@ -144,8 +146,7 @@
 			<table class="ppid" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="70%"><strong> <bean:write name="personalInfo" property="name" /> </strong> <%= personalIds %>
-    					<bean:define id="roles"><%= LegacyRoleUtils.mainRolesStr(personalInfo.getUser()) %></bean:define>
-    					<em><bean:write name="roles" /></em>
+					    <em><c:out value="${LegacyRoleUtils.mainRolesStr(personalInfo.getUser())}" /></em>
 					</td>
 					<td width="30%" style="text-align: right;"><bean:define
 							id="aa" value="<%= "aa" + personIndex %>" /> <bean:define
