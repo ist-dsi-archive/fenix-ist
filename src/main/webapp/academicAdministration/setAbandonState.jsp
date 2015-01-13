@@ -15,9 +15,9 @@
 <br/>
 <fr:form id="chooseSemesterForm" action="/setAbandonState.do?method=confirmUpdate">
 	<fr:edit id="executionSemester" name="updateAbandonStateBean">
-		<fr:schema bundle="ACADEMIC_OFFICE_RESOURCES" type="pt.ist.fenix.ui.academicAdministration.UpdateAbandonStateBean">
+		<fr:schema bundle="ACADEMIC_OFFICE_RESOURCES" type="pt.ist.fenix.ui.struts.action.academicAdministration.UpdateAbandonStateBean">
 			<fr:slot name="whenToAbandon" layout="menu-select" key="message.execution.course.management.choose.semester" required="true">
-				<fr:property name="providerClass" value="net.sourceforge.fenixedu.presentationTier.renderers.providers.NotClosedExecutionPeriodsProvider" />
+				<fr:property name="providerClass" value="pt.ist.fenix.presentationTier.renderers.providers.NotClosedExecutionPeriodsProvider" />
 				<fr:property name="format" value="\${qualifiedName}" />
 			</fr:slot>
 			<fr:layout>

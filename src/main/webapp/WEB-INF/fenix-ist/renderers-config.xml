@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright © 2002 Instituto Superior Técnico
+
+    This file is part of FenixEdu Core.
+
+    FenixEdu Core is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    FenixEdu Core is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with FenixEdu Core.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<!-- TODO: make this a public id or at least obsolute 
+     Currently there is a semi-hack built in the RendererPlugin to accept this format.
+-->
+<renderers-config>
+    <!--@ Tag Renderers -->
+    
+    <renderer type="java.util.Collection" layout="tag-count" class="pt.ist.fenix.ui.renderers.TagCountRenderer">
+        <property name="moduleRelative" value="true"/>
+        <property name="contextRelative" value="true"/>
+        <property name="separator" value="|"/>
+    </renderer>
+
+    <renderer type="java.util.Collection" layout="tag-cloud" class="pt.ist.fenix.ui.renderers.TagCloudRenderer">
+        <property name="moduleRelative" value="true"/>
+        <property name="contextRelative" value="true"/>
+        <property name="numberOfLevels" value="6"/>
+    </renderer>
+    
+
+    <renderer type="java.util.Collection" layout="tag-search" class="pt.ist.fenix.ui.renderers.AdvancedTagCloudSearchRenderer">
+        <property name="moduleRelative" value="true"/>
+        <property name="contextRelative" value="true"/>
+        <property name="numberOfLevels" value="6"/>
+        <property name="parameter" value="tags"/>
+        <property name="selectedTagClass" value="tcloudselected"/>
+        <property name="nearByTagClass" value="tcloudnearBy"/>
+    </renderer>
+
+    <renderer mode="input" type="java.lang.String" layout="tag-cloud" class="pt.ist.fenix.ui.renderers.TagInputCloudRenderer">
+        <property name="textClasses" value="smalltxt color888"/>
+    </renderer>
+</renderers-config>

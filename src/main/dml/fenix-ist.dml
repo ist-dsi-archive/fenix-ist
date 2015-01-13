@@ -1,17 +1,71 @@
-package pt.ist.fenix;
+package pt.ist.fenix.domain;
+
+enum pt.ist.fenix.domain.accessControl.PersistentGroupMembersType as PersistentGroupMembersType;
+
+valueType pt.ist.fenix.domain.accounting.events.export.PrintedPaymentCodes as PrintedPaymentCodes {
+    externalizeWith {
+        String exportAsString();
+    }
+    
+    internalizeWith importFromString();
+}
 
 class user.management.IstUsernameCounter {
     long lastValue;
 }
 
 class cgd.CgdCardCounter {
-	int year;
-	int count;
+    int year;
+    int count;
 }
 
 class cgd.CgdCard {
-	int serialNumber;
+    int serialNumber;
 }
+
+class student.importation.DgesBaseProcess extends .org.fenixedu.academic.domain.QueueJobWithFile {
+    EntryPhase entryPhase;
+}
+
+class student.importation.DgesStudentImportationProcess extends student.importation.DgesBaseProcess {
+}
+
+class student.importation.DgesStudentImportationFile extends .org.fenixedu.academic.domain.File {
+}
+
+class student.importation.ExportDegreeCandidaciesByDegreeForPasswordGeneration extends student.importation.DgesBaseProcess {
+}
+
+class student.importation.ExportExistingStudentsFromImportationProcess extends student.importation.DgesBaseProcess {
+}
+
+class accounting.events.export.DebtsFile extends .org.fenixedu.academic.domain.File {
+    String errors;
+}
+
+class accounting.events.export.SIBSOutgoingPaymentFile extends accounting.events.export.DebtsFile {
+    DateTime successfulSentDate;
+    PrintedPaymentCodes printedPaymentCodes;
+}
+
+class accounting.events.export.SIBSOutgoingPaymentQueueJob extends .org.fenixedu.academic.domain.QueueJob {
+    DateTime lastSuccessfulSentPaymentFileDate;
+} 
+
+class UnitFile extends .org.fenixedu.academic.domain.File {
+    String description;
+}
+
+class UnitFileTag  {
+    String name;
+}
+
+class accessControl.PersistentGroupMembers  {
+    String name;
+    PersistentGroupMembersType type;
+}
+
+class accessControl.PersistentMembersLinkGroup extends .org.fenixedu.bennu.core.domain.groups.PersistentGroup;
 
 relation BennuHasIstUsernameCounter {
     .org.fenixedu.bennu.core.domain.Bennu playsRole bennu {
@@ -25,24 +79,155 @@ relation BennuCgdCardCounter {
         multiplicity 1..1;
     }
     cgd.CgdCardCounter playsRole cgdCardCounter {
-    	multiplicity *;
+        multiplicity *;
     }
 }
 
 relation CgdCardCounterCgdCard {
     cgd.CgdCardCounter playsRole cgdCardCounter {
-    	multiplicity 1..1;
+        multiplicity 1..1;
     }
     cgd.CgdCard playsRole cgdCard {
-    	multiplicity *;
+        multiplicity *;
     }
 }
 
 relation CgdCardUser {
     cgd.CgdCard playsRole cgdCard {
-    	multiplicity *;
+        multiplicity *;
     }
     .org.fenixedu.bennu.core.domain.User playsRole user {
-    	multiplicity 1..1;
+        multiplicity 1..1;
     }
+}
+
+relation DgesBaseProcessExecutionYear {
+    .org.fenixedu.academic.domain.ExecutionYear playsRole executionYear;
+    student.importation.DgesBaseProcess playsRole DgesBaseProcess {
+        multiplicity *;
+    }
+}
+
+relation ImportCandidaciesFromDgesProcessDgesImportationStudentFile {
+    student.importation.DgesStudentImportationProcess playsRole dgesStudentImportationProcess;
+    student.importation.DgesStudentImportationFile playsRole dgesStudentImportationFile;
+}
+
+relation DgesStudentImportationProcessCampus {
+    .org.fenixedu.spaces.domain.Space playsRole dgesStudentImportationForCampus;
+    student.importation.DgesStudentImportationProcess playsRole dgesStudentImportationProcess {
+        multiplicity*;
+    }
+}
+
+relation DgesStudentImportationProcessStudentCandidacy {
+    student.importation.DgesStudentImportationProcess playsRole dgesStudentImportationProcess;
+    .org.fenixedu.academic.domain.candidacy.StudentCandidacy playsRole studentCandidacy {
+        multiplicity *;
+    }
+}
+
+relation SIBSOutgoingPaymentFileExecutionYear {
+    .org.fenixedu.academic.domain.ExecutionYear playsRole executionYear;
+    accounting.events.export.SIBSOutgoingPaymentFile playsRole sIBSOutgoingPaymentFiles {
+        multiplicity *;
+    }
+}
+
+relation UnitUnitFileTag {
+    UnitFileTag playsRole unitFileTags {
+        multiplicity *;
+    }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit;
+}
+
+relation FileTagging {
+    UnitFileTag playsRole unitFileTags {
+        multiplicity *;
+    }
+    UnitFile playsRole taggedFiles {
+        multiplicity *;
+    }
+}
+
+relation UnitFilePerson {
+    .org.fenixedu.academic.domain.Person playsRole uploader;
+    UnitFile playsRole uploadedFiles {
+        multiplicity *;
+    }
+}
+
+relation UnitFileTagRootDomainObject {
+    UnitFileTag playsRole unitFileTags {
+        multiplicity *;
+    }
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+}
+
+relation UnitFileUnit {
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit;
+    UnitFile playsRole files {
+        multiplicity *;
+    }
+}
+
+relation RootDomainObjectPersistentGroupMembers {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    accessControl.PersistentGroupMembers playsRole persistentGroupMembers {
+        multiplicity *;
+    }
+}
+
+relation PersistentGroupMembersPerson {
+    .org.fenixedu.academic.domain.Person playsRole persons {
+        multiplicity *;
+    }
+    accessControl.PersistentGroupMembers playsRole persistentGroups {
+        multiplicity *;
+    }
+}
+
+relation PersistentGroupMembersUnit {
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit;
+    accessControl.PersistentGroupMembers playsRole persistentGroups {
+        multiplicity *;
+    }
+}
+
+relation PersistentMembersLinkGroupPersistentGroupMembers {
+    public accessControl.PersistentMembersLinkGroup playsRole membersLinkGroup {
+        multiplicity 0..1;
+    }
+    public accessControl.PersistentGroupMembers playsRole persistentGroupMembers {
+        multiplicity 1..1;
+    }
+}
+
+/**
+ * Former Remote Plugin
+ */
+
+package pt.ist.fenixframework.plugins.remote.domain;
+
+class RemoteSystem {
+}
+
+class RemoteHost {
+    String name;
+    Strings url;
+    String username;
+    String password;
+    Boolean allowInvocationAccess;
+}
+
+relation RemoteSystemRemoteHost {
+    RemoteSystem playsRole remoteSystem;
+    RemoteHost playsRole remoteHosts {
+        multiplicity *;
+    }
+}
+
+relation RemoteSystemDomainRoot {
+    RemoteSystem playsRole remoteSystem;
+    .pt.ist.fenixframework.DomainRoot playsRole domainRoot;
 }

@@ -25,12 +25,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.injectionCode.AccessControl;
-import net.sourceforge.fenixedu.util.Bundle;
-import net.sourceforge.fenixedu.util.FenixConfigurationManager;
-
 import org.apache.commons.validator.EmailValidator;
+import org.fenixedu.academic.FenixEduAcademicConfiguration;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.predicate.AccessControl;
+import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.rest.BennuRestResource;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -40,6 +39,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.ist.fenix.domain.LegacyRoleUtils;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.base.Objects;
@@ -113,7 +113,7 @@ public class SupportFormResource extends BennuRestResource {
         generateLabel(builder, "Roles").append('[');
         Person person = AccessControl.getPerson();
         if (person != null) {
-            builder.append(String.join(", ", person.getMainRoles()));
+            builder.append(LegacyRoleUtils.mainRolesStr(person.getUser()));
         }
         builder.append("]\n");
 
@@ -163,7 +163,7 @@ public class SupportFormResource extends BennuRestResource {
     private void sendEmail(String from, String subject, String body, SupportBean bean) {
         Properties props = new Properties();
         props.put("mail.smtp.host",
-                Objects.firstNonNull(FenixConfigurationManager.getConfiguration().getMailSmtpHost(), "localhost"));
+                Objects.firstNonNull(FenixEduAcademicConfiguration.getConfiguration().getMailSmtpHost(), "localhost"));
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage message = new MimeMessage(session);
         try {
