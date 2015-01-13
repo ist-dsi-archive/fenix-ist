@@ -1,0 +1,15 @@
+{% macro contactView(contact,type,showDefault=false,showType=false,ctxPath='') %}
+	{% if type == 'phone' %}
+		{{ contact.number }}
+	{% elseif type == 'email' %}
+		<a href="{{ 'mailto:' + contact.value }}">{{ contact.value }}</a>
+	{% elseif type == 'website' %}
+		<a href="{{ contact.presentationValue }}">{{ contact.presentationValue }}</a>
+	{% endif %}
+	{% if showType %}
+		{{ '(' + contact.type + ')' }}
+	{% endif %}
+	{% if showDefault and contact.default %}
+		{{ '(' + i18n('resources.HomepageResources','label.homepage.contact.default') + ')' }}
+	{% endif %}
+{% endmacro %}

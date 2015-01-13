@@ -1,0 +1,88 @@
+{
+    "type": "fenixedu-units-theme",
+    "name": "FenixEDU CMS Units Theme",
+    "description": "This is the FenixEDU theme for Units",
+    "extends": "fenixedu-learning-theme",
+    "templates": {
+        "members": {
+            "name": "Members",
+            "description": "Members of the Research Unit",
+            "file": "members.html"
+        },
+        "subunits": {
+            "name": "Subunits",
+            "description": "Subunits of a Research Unit",
+            "file": "subunits.html"
+        },
+        "unitHomepage": {
+            "name": "Unit Homepage",
+            "description": "Homepage for a unit site",
+            "file": "unitHomepage.html"
+        },
+        "unitOrganization": {
+            "name": "Unit Organization",
+            "description": "Organization of a Research Unit",
+            "file": "unitOrganization.html"
+        },
+        "teachers": {
+            "name": "Scientific Area Teachers",
+            "description": "Teachers of a Scientific Area",
+            "file": "teachers.html"
+        },
+        "employees": {
+            "name": "Unit Employees",
+            "description": "Employees of a Unit",
+            "file": "employees.html"
+        },
+        "courses": {
+            "name": "Scientific Area Courses",
+            "description": "Courses of a Scientific Area",
+            "file": "courses.html"
+        },
+        "departmentFaculty": {
+            "name": "Department Faculty",
+            "description": "Department Faculty",
+            "file": "departmentFaculty.html"
+        },
+        "employeesByArea": {
+            "name": "Emplyoees by Area",
+            "description": "Shows employees organized by area",
+            "file": "employeesByArea.html"
+        },
+        "departmentCourses": {
+            "name": "Courses for a department",
+            "description": "Shows courses for a department",
+            "file": "departmentCourses.html"
+        },
+        "departmentDegrees": {
+            "name": "Degrees for a department",
+            "description": "Shows degrees for a department",
+            "file": "departmentDegrees.html"
+        },
+        "competenceCourse": {
+            "name": "Competence Course",
+            "description": "Specific competence course based on path parameter",
+            "file": "competenceCourse.html"
+        },
+        "publications": {
+            "name": "Publications",
+            "description": "Publications",
+            "file": "publications.html"
+        },
+        "unitHomepageWithIntroFloat": {
+            "name": "Unit Homepage with intro float",
+            "description": "Unit homepage",
+            "file": "unitHomepageWithIntroFloat.html"
+        },
+        "unitHomepageWithIntroBanner": {
+            "name": "Unit Homepage with intro banner",
+            "description": "Unit Homepage with an intro and banner",
+            "file": "unitHomepageWithIntroBanner.html"
+        },
+        "unitHomepageWithBannerIntro": {
+            "name": "Unit Homepage with banner intro",
+            "description": "Unit Homepage with an intro and banner",
+            "file": "unitHomepageWithBannerIntro.html"
+        }
+    }
+}

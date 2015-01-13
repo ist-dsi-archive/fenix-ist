@@ -1,0 +1,48 @@
+{% macro unitLink(unit) %}
+	 {% if unit.webAddress is not empty %}
+	 	<a href="{{ unit.webAddress }}">{{ unit.name }}</a>
+	 {% else %}
+	 	{{ unit.name }}
+	 {% endif %}
+{% endmacro %}
+
+{%	macro listNonAggregateUnits(unitList, separator=',') %}
+	{% set first=true %}
+	{% for unit in unitList %}
+		{% if not unit.aggregateUnit %}
+			{% if first %}
+				{% set first=false %}
+			{% else %}
+				{{ separator | raw }}
+			{% endif %}
+			{{ unitLink(unit) }}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+{% macro listUnitAndParents(unit, firstSeparator='<br/>', separator=',') %}
+	{{ unitLink(unit) }}
+	{% if unit.parentUnits is not empty %}
+		{{ firstSeparator | raw }}
+		{{ listNonAggregateUnits(unit.parentUnits, separator) }}
+	{% endif %}
+{% endmacro %}
+
+{% macro listUnitTree(unit, separator='<br/>') %}
+	{{ unitLink(unit) }}
+	{% if unit.parentUnitsPath is not empty %}
+		{{ separator | raw }}
+		{{ listNonAggregateUnits(unit.parentUnitsPath | reverse, separator) }}
+	{% endif %}
+{% endmacro %}
+
+{% macro researchUnitsList(units) %}
+	{% for unit in units %}
+		{% if loop.index != 0 %}
+			<td>&nbsp;</td>
+		{% endif %}
+		<td>
+			{{ listUnitAndParents(unit) }}
+		</td>
+	{% endfor %}
+{% endmacro %}

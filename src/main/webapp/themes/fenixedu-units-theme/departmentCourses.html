@@ -1,0 +1,20 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% block content %}
+    {% for scientificAreaUnit in scientificAreaUnits %}
+        {% if scientificAreaUnit.hasCompetenceCourses %}
+            <h2><small>{{ scientificAreaUnit.name.content }}</small></h2>
+            {% for competenceCourseGroupUnit in scientificAreaUnit.competenceCourseGroupUnits %}
+                {% if competenceCourseGroupUnit.hasCompetenceCourses %}
+                    <h3>{{ competenceCourseGroupUnit.name.content }}</h3>
+                    <ul class="list-unstyled">
+                        {% for competenceCourse in competenceCourseGroupUnit.competenceCourses %}
+                            <li><a href="{{ competenceCourse.url }}">{{ competenceCourse.name.content }} ({{ competenceCourse.acronym }})</a></li>
+                        {% endfor %}
+                    </ul>
+                    <hr/>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

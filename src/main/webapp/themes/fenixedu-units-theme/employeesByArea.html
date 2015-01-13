@@ -1,0 +1,25 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% import "fenixedu-units-theme/personCard.html" %}
+
+{% block content %}
+    {% for areaEmployees in entries(employeesByArea) %}
+        <h3 class="page-header">{{areaEmployees.key.name}}</h3>
+
+        {% for employee in areaEmployees.value %}
+            {{ personCard(employee.person) }}
+            <hr/>
+        {% endfor %}
+
+    {% endfor %}
+
+    {% if hasEmployeesNoArea %}
+        <h3 class="page-header">{{ i18n('resources.PublicDepartmentResources','link.teacher.area.noArea') }}</h3>
+
+        {% lazyFor employee in employeesNoArea %}
+            {{ personCard(employee.person) }}
+            <hr/>
+        {% endLazyFor %}
+    {% endif %}
+
+{% endblock content %}

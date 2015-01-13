@@ -1,0 +1,132 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% macro timeFor(type, time, timeInterval) %}
+    {% if time > 0.0 %}
+        <p><label>{{ i18n('resources.BolonhaManagerResources', type) }}: </label>{{ time }} h/{{ i18n('resources.BolonhaManagerResources', timeInterval) }}</p>
+    {% endif %}
+{% endmacro %}
+
+{% macro bibliographicReferences(references) %}
+    {% for bibliographicReference in references %}
+        <p>
+            <label>{{ i18n('resources.BolonhaManagerResources', 'title') }}</label>
+            <a href='{{ bibliographicReference.url }}'> {{ bibliographicReference.title }}</a>
+        </p>
+        <p>
+            <label>{{ i18n('resources.BolonhaManagerResources', 'author') }}</label>
+            <a href='{{ bibliographicReference.url }}'> {{ bibliographicReference.authors }}</a>
+        </p>
+        <p>
+            <label>{{ i18n('resources.BolonhaManagerResources', 'year') }}</label>
+            <a href='{{ bibliographicReference.url }}'> {{ bibliographicReference.year }}</a>
+        </p>
+        <p>
+            <label>{{ i18n('resources.BolonhaManagerResources', 'reference') }}</label>
+            <a href='{{ bibliographicReference.url }}'> {{ bibliographicReference.reference }}</a>
+        </p>
+        <hr/>
+    {% else %}
+        <p>{{ i18n('resources.BolonhaManagerResources', 'noBibliographicReferences') }}</p>
+    {% endfor %}
+{% endmacro %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <h2 style="margin-top: 0px;">{{ competenceCourse.name.content }}</h2>
+        </div>
+        <div class="col-md-2">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    {{ competenceCourse.executionSemester.qualifiedName }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    {% for semesterUrl in entries(executionSemesterUrls) %}
+                        <li><a href='{{ semesterUrl.value }}'>{{ semesterUrl.key.qualifiedName }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>{{ i18n('resources.BolonhaManagerResources', 'area') }}</h3>
+    {% for scientificAreaUnit in competenceCourse.competenceCourseGroupUnit.parentUnits %}
+        <p>{{ scientificAreaUnit.name }} > {{ competenceCourse.competenceCourseGroupUnit.name }}</p>
+    {% endfor %}
+
+    <h3>{{ i18n('resources.BolonhaManagerResources', 'activeCurricularPlans') }}</h3>
+    {% for curricularCourse in competenceCourse.associatedCurricularCourses %}
+        <p>
+            <a href="{{ curricularCourse.parentDegreeCurricularPlan.degree.site }}">
+                {{ curricularCourse.parentDegreeCurricularPlan.name }}
+            </a>
+            >
+            <a href="{{ request.url + '/publico/degreeSite/viewCurricularCourse.faces?' +
+                        'degreeID=' + curricularCourse.parentDegreeCurricularPlan.degree.externalId +
+                        'degreeCurricularPlanID=' + curricularCourse.parentDegreeCurricularPlan.externalId +
+                        'curricularCourseID=' + curricularCourse.externalId }}">
+                {{ curricularCourse.oneFullName }}
+            </a>
+        </p>
+    {% else %}
+        <p>{{ i18n('resources.BolonhaManagerResources', 'noCurricularCourses') }}</p>
+    {% endfor %}
+
+    {% if competenceCourse.competenceCourseLevel is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'competenceCourseLevel') }}</h3>
+        <p>{{ competenceCourse.competenceCourseLevel.content }}</p>
+    {% endif %}
+
+    <h3>{{ i18n('resources.BolonhaManagerResources', 'type') }}</h3>
+    <p>{{ i18n('resources.BolonhaManagerResources', competenceCourse.isBasic ? 'basic' : 'nonBasic') }}</p>
+
+    {% if competenceCourse.regime is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'regime') }}</h3>
+        <p>{{ competenceCourse.regime }}</p>
+    {% endif %}
+
+    <h3>{{ i18n('resources.BolonhaManagerResources', 'lessonHours') }}</h3>
+    {% for competenceCourseLoad in competenceCourse.courseLoads %}
+        <h4><small>{{ competenceCourseLoad.order }}º {{ i18n('resources.BolonhaManagerResources', 'semester') }}</small></h4>
+        {{ timeFor('theoreticalLesson', competenceCourseLoad.theoreticalHours, 'lowerCase.week') }}
+        {{ timeFor('problemsLesson', competenceCourseLoad.problemsHours, 'lowerCase.week') }}
+        {{ timeFor('laboratorialLesson', competenceCourseLoad.laboratorialHours, 'lowerCase.week') }}
+        {{ timeFor('seminary', competenceCourseLoad.seminaryHours, 'lowerCase.week') }}
+        {{ timeFor('fieldWork', competenceCourseLoad.fieldWorkHours, 'lowerCase.week') }}
+        {{ timeFor('trainingPeriod', competenceCourseLoad.trainingPeriodHours, 'lowerCase.week') }}
+        {{ timeFor('tutorialOrientation', competenceCourseLoad.tutorialOrientationHours, 'lowerCase.week') }}
+        {{ timeFor('autonomousWork', competenceCourseLoad.autonomousWorkHours, 'lowerCase.semester') }}
+    {% endfor %}
+    <p><label>{{ i18n('resources.BolonhaManagerResources','ectsCredits') }}: </label>{{ competenceCourse.ectsCredits }}</p>
+
+    {% if competenceCourse.objectives is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'objectives') | raw }}</h3>
+        <p>{{ competenceCourse.objectives.content }}</p>
+    {% endif %}
+
+    {% if competenceCourse.program is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'program') | raw }}</h3>
+        <p>{{ competenceCourse.program.content }}</p>
+    {% endif %}
+
+    {% if competenceCourse.evaluationMethod is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'evaluationMethod') | raw }}</h3>
+        <p>{{ competenceCourse.evaluationMethod.content }}</p>
+    {% endif %}
+
+    {% if competenceCourse.mainBibliographicReferences is not empty or competenceCourse.secondaryBibliographicReferences is not empty %}
+        <h3>{{ i18n('resources.BolonhaManagerResources', 'bibliographicReference') }}</h3>
+
+        {% if competenceCourse.mainBibliographicReferences is not empty %}
+            <h3><small>{{ i18n('resources.EnumerationResources', 'MAIN') }}</small></h3>
+            {{ bibliographicReferences(competenceCourse.mainBibliographicReferences) }}
+        {% endif %}
+
+        {% if competenceCourse.secondaryBibliographicReferences is not empty %}
+            <h3><small>{{ i18n('resources.EnumerationResources', 'SECONDARY') }}</small></h3>
+            {{ bibliographicReferences(competenceCourse.secondaryBibliographicReferences) }}
+        {% endif %}
+    {% endif %}
+
+
+{% endblock content %}

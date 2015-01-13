@@ -1,0 +1,9 @@
+{% extends "fenixedu-units-theme/base.html" %}
+
+{% import "fenixedu-units-theme/personCard.html" %}
+
+{% block content %}
+
+{{ personsCards(employees, i18n('resources.SiteResources', 'label.employees')) }}
+
+{% endblock content %}

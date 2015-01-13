@@ -1,0 +1,34 @@
+{% extends "fenixedu-units-theme/unitHomepage.html" %}
+
+{% block unitHeader %}
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="introduction">
+				{% if showIntroduction %}
+					{% if site.description is not empty %}
+						{{ site.description.content | raw }}
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="banner">
+				{% if showBanner %}
+
+					<a href="{{ link is not empty ? link : '#' }}">
+						<img class="img-responsive" src="{{ mainImage }}" alt="banner">
+					</a>
+
+					<br />
+				{% endif %}
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+
+{% endblock unitHeader %}

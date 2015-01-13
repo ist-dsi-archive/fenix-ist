@@ -1,0 +1,60 @@
+package pt.ist.fenix.domain;
+
+class unit.UnitSite extends .org.fenixedu.cms.domain.Site {}
+
+class homepage.HomepageSite extends .org.fenixedu.cms.domain.Site {
+    boolean showActiveStudentCurricularPlans;
+    boolean showAlumniDegrees;
+    boolean showCategory;
+    boolean showCurrentAttendingExecutionCourses;
+    boolean showCurrentExecutionCourses;
+    boolean showPhoto;
+    boolean showResearchUnitHomepage;
+    boolean showUnit;
+    String researchUnitHomepage;
+    LocalizedString researchUnitName;
+}
+
+class homepage.components.ResearcherComponent extends .org.fenixedu.cms.domain.component.Component  {
+	String titleKey;
+	String titleBundle;
+	String dataKey;
+}
+
+class accessControl.PersistentManagersOfUnitSiteGroup extends .org.fenixedu.bennu.core.domain.groups.PersistentGroup;
+
+relation HomepageHasOwner {
+    homepage.HomepageSite playsRole homepage {
+        multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.Person playsRole owner {
+        multiplicity 1..1;
+    }
+}
+
+relation UnitSiteHasUnit {
+    unit.UnitSite playsRole site {
+    	    multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.organizationalStructure.Unit playsRole unit {
+    	    multiplicity 1..1;
+    }
+}
+
+relation UserBookmarks {
+    .org.fenixedu.bennu.core.domain.User playsRole bookmarkedBy {
+        multiplicity *;
+    }
+    .org.fenixedu.cms.domain.Category playsRole bookmarks {
+        multiplicity *;
+    }
+}
+
+relation PersistentManagersOfUnitSiteGroupUnitSite {
+    public accessControl.PersistentManagersOfUnitSiteGroup playsRole managersOfUnitSiteGroup {
+        multiplicity 0..1;
+    }
+    public unit.UnitSite playsRole unitSite {
+        multiplicity 1..1;
+    }
+}

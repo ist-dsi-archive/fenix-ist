@@ -1,0 +1,51 @@
+{% extends "fenixedu-units-theme/base.html" %}
+{% import "fenixedu-units-theme/personCard.html" %}
+
+{% block header %}
+    <script src="{{staticDir}}/js/bootstrap.min.js"></script>
+{% endblock header %}
+
+{% block content %}
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active"><a href="#category" role="tab" data-toggle="tab">{{ i18n('resources.PublicDepartmentResources','link.teacher.byCategories') }}</a></li>
+        <li><a href="#area" role="tab" data-toggle="tab">{{ i18n('resources.PublicDepartmentResources','link.teacher.byAreas') }}</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="category">
+            {% for categoryTeachers in entries(teachersByCategory) %}
+
+                <h3 class="page-header">{{categoryTeachers.key.name.content}}</h3>
+
+                {% for teacher in categoryTeachers.value %}
+                    {{ personCard(teacher.person) }}
+                    <hr/>
+                {% endfor %}
+
+            {% endfor %}
+        </div>
+
+        <div class="tab-pane fade in" id="area">
+
+            {% for areaTeachers in entries(teachersByArea) %}
+
+                <h3 class="page-header">{{areaTeachers.key.nameI18n}}</h3>
+
+                {% for teacher in areaTeachers.value %}
+                    {{ personCard(teacher.person) }}
+                    <hr/>
+                {% endfor %}
+
+            {% endfor %}
+
+            {% if hasTeachersWithoutArea %}
+                <h3 class="page-header">{{ i18n('resources.PublicDepartmentResources','link.teacher.area.noArea') }}</h3>
+
+                {% lazyFor teacher in teachersWithoutArea %}
+                    {{ personCard(teacher.person) }}
+                    <hr/>
+                {% endLazyFor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
