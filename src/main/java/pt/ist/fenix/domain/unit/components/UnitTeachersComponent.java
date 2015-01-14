@@ -1,17 +1,27 @@
 package pt.ist.fenix.domain.unit.components;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.TeacherCategory;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
 
-@ComponentType(name = "departmentTeachers", description = "Teachers information for a Department")
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
+
+@ComponentType(name = "Unit Teachers", description = "Teachers information for a Department")
 public class UnitTeachersComponent extends UnitSiteComponent {
 
-    @Override
-    public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {}
-
-    //TODO: professionalCategory
-    /*
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
         Unit unit = unit(page);
@@ -21,14 +31,14 @@ public class UnitTeachersComponent extends UnitSiteComponent {
         globalContext.put("hasTeachersWithoutArea", teachersWithoutArea(unit).findAny().isPresent());
     }
 
-    private SortedMap<ProfessionalCategory, TreeSet<Teacher>> teachersByCategory(Unit unit) {
+    private SortedMap<TeacherCategory, TreeSet<Teacher>> teachersByCategory(Unit unit) {
         return unitTeachers(unit).filter(teacher -> teacher.getCategory() != null)
                 .collect(groupingBy(Teacher::getCategory, TreeMap::new, toCollection(sortedTeacherFactory)));
     }
 
     private SortedMap<Unit, TreeSet<Teacher>> teachersByArea(Unit unit) {
          return unitTeachers(unit).filter(hasScientificArea)
-                .collect(groupingBy(Teacher::getCurrentSectionOrScientificArea, mapFactory, toCollection(sortedTeacherFactory)));
+                .collect(groupingBy(teacher->teacher.getDepartment().getDepartmentUnit(), mapFactory, toCollection(sortedTeacherFactory)));
     }
 
     private Stream<Teacher> teachersWithoutArea(Unit unit) {
@@ -44,6 +54,5 @@ public class UnitTeachersComponent extends UnitSiteComponent {
 
     private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
 
-    Predicate<Teacher> hasScientificArea = teacher -> teacher.getCurrentSectionOrScientificArea() != null;
-    */
+    Predicate<Teacher> hasScientificArea = teacher -> teacher.getDepartment() != null && teacher.getDepartment().getDepartmentUnit() != null;
 }

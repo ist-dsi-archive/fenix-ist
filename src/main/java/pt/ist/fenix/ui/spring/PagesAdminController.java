@@ -3,6 +3,7 @@ package pt.ist.fenix.ui.spring;
 import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -10,11 +11,14 @@ import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
+import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.exceptions.CmsDomainException;
+import org.fenixedu.cms.ui.AdminSites;
 import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.ist.fenix.domain.homepage.HomepageSite;
 import pt.ist.fenixframework.FenixFramework;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -70,6 +75,33 @@ public class PagesAdminController {
         MenuItem menuItem =
                 service.edit(bean.getMenuItem(), bean.getTitle(), bean.getBody(), bean.getCanViewGroup(), bean.isVisible());
         return service.serialize(menuItem, true).toString();
+    }
+
+    @RequestMapping(value = "{menuItem}/addFile.json", method = RequestMethod.POST, produces = "application/json")
+    public @ResponseBody String addFileJson(Model model, @PathVariable Site site,
+            @PathVariable(value = "menuItem") String menuItemId, @RequestParam("attachment") MultipartFile[] attachments)
+            throws IOException {
+        MenuItem menuItem = FenixFramework.getDomainObject(menuItemId);
+
+        AdminSites.canEdit(menuItem.getMenu().getSite());
+
+        JsonArray array = new JsonArray();
+
+        Arrays.asList(attachments).stream().map((attachment) -> {
+            GroupBasedFile f = null;
+            try {
+                f = service.addPostFile(attachment.getName(), attachment, menuItem);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JsonObject obj = new JsonObject();
+            obj.addProperty("displayname", f.getDisplayName());
+            obj.addProperty("filename", f.getFilename());
+            obj.addProperty("url", FileDownloadServlet.getDownloadUrl(f));
+            return obj;
+        }).forEach(x -> array.add(x));
+
+        return array.toString();
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.PUT, consumes = JSON_VALUE)

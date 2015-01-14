@@ -13,7 +13,7 @@
 
     {% endfor %}
 
-    {% if hasEmployeesNoArea %}
+    {% if hasEmployeesNoArea is not empty and hasEmployeesNoArea %}
         <h3 class="page-header">{{ i18n('resources.PublicDepartmentResources','link.teacher.area.noArea') }}</h3>
 
         {% lazyFor employee in employeesNoArea %}

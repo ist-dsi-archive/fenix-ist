@@ -11,33 +11,36 @@
         {% set colSize = showEvents and events is not empty and showAnnouncements and announcements is not empty ? 6 : 12 %}
 
         {% if showAnnouncements and announcements is not empty %}
-            <div class="col-md-{{ colSize }}">
-                <h3 class="text-center">{{ i18n('resources.FenixEduLearningResources', 'label.announcements') }}</h3>
-                <blockquote>
-                    {% for announcement in announcements %}
-                        <p>{{ viewPost(announcement) }}</p>
-                        <hr>
-                    {% else %}
-                        <h4>{{ i18n('resources.FenixEduLearningResources', 'label.announcements.empty') }}</h4>
-                    {% endfor %}
+        <div class="col-md-{{ colSize }}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ i18n('resources.FenixEduLearningResources', 'label.announcements') }}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <p>{{ viewPost(announcements | head) }}</p>
+                    <hr>
                     <a href="announcements">{{ i18n('resources.FenixEduLearningResources', 'label.announcements.all') }}</a>
-                </blockquote>
+                </div>
             </div>
+
+        </div>
         {% endif %}
 
         {% if showEvents and events is not empty %}
-            <div class="col-md-{{ colSize }}">
-                <h3 class="text-center">{{ i18n('resources.FenixEduLearningResources', 'label.events') }}</h3>
-                <blockquote>
-                    {% for event in events %}
-                        <p>{{ viewPost(event) }}</p>
-                        <hr>
-                    {% else %}
-                    <h4>{{ i18n('resources.FenixEduLearningResources', 'label.events.empty') }}</h4>
-                    {% endfor %}
-                    <a href="events">{{ i18n('resources.FenixEduLearningResources', 'label.events.all') }}</a>
-                </blockquote>
+        <div class="col-md-{{ colSize }}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ i18n('resources.FenixEduLearningResources', 'label.events') }}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <p>{{ viewPost(events | head) }}</p>
+                    <hr>
+                    <a href="events">{{ i18n('resources.FenixEduLearningResources', 'label.announcements.all') }}</a>
+                </div>
             </div>
+        </div>
         {% endif %}
 
     </div>

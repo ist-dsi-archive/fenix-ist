@@ -1,31 +1,18 @@
 package pt.ist.fenix.domain.unit;
 
+import org.fenixedu.academic.domain.Department;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.cms.domain.Menu;
+import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Site;
+import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.learning.domain.degree.components.ThesisComponent;
+import pt.ist.fenix.domain.unit.components.*;
+
 import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 import static org.fenixedu.cms.domain.component.Component.forType;
 
-import org.fenixedu.academic.domain.Department;
-import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.cms.domain.CMSTheme;
-import org.fenixedu.cms.domain.Menu;
-import org.fenixedu.cms.domain.Page;
-import org.fenixedu.cms.domain.component.Component;
-import org.fenixedu.cms.domain.component.ListCategoryPosts;
-import org.fenixedu.cms.domain.component.ViewPost;
-import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.learning.domain.degree.components.ThesisComponent;
-
-import pt.ist.fenix.domain.unit.components.CompetenceCourseComponent;
-import pt.ist.fenix.domain.unit.components.DepartmentCourses;
-import pt.ist.fenix.domain.unit.components.DepartmentDegrees;
-import pt.ist.fenix.domain.unit.components.DepartmentDissertationsComponent;
-import pt.ist.fenix.domain.unit.components.EmployeesComponent;
-import pt.ist.fenix.domain.unit.components.Organization;
-import pt.ist.fenix.domain.unit.components.SubUnits;
-import pt.ist.fenix.domain.unit.components.UnitHomepageComponent;
-import pt.ist.fenix.domain.unit.components.UnitReserachersComponent;
-import pt.ist.fenix.domain.unit.components.UnitTeachersComponent;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -50,35 +37,24 @@ public class DepartmentListener {
     private static final LocalizedString TITLE_DEPARTMENT = getLocalizedString(BUNDLE, "department");
 
     public static UnitSite create(Department department) {
-        final Unit unit = department.getDepartmentUnit();
-        final UnitSite newSite = new UnitSite(unit);
-
+        final UnitSite newSite = new UnitSite(department.getDepartmentUnit());
         final Menu menu = new Menu(newSite);
         menu.setName(MENU_TITLE);
-        final User user = Authenticate.getUser();
-        newSite.setTheme(CMSTheme.forType("fenixedu-units-theme"));
-
-        Component announcementsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("announcement", TITLE_ANNOUNCEMENTS));
-        Component eventsComponent = new ListCategoryPosts(newSite.getOrCreateCategoryForSlug("event", TITLE_EVENTS));
-
-        Page initialPage = Page.create(newSite, menu, null, TITLE_HOMEPAGE, true, "unitHomepage", user, forType(UnitHomepageComponent.class));
-        Page.create(newSite, menu, null, TITLE_EVENTS, true, "category", user, eventsComponent);
-        Page.create(newSite, menu, null, TITLE_ANNOUNCEMENTS, true, "category", user, announcementsComponent);
-
-        Page.create(newSite, menu, null, TITLE_SUBUNITS, true, "subunits", user, forType(SubUnits.class));
-        Page.create(newSite, menu, null, TITLE_ORGANIZATION, true, "unitOrganization", user, forType(Organization.class));
-        Page.create(newSite, menu, null, TITLE_TEACHERS, true, "departmentFaculty", user, forType(UnitTeachersComponent.class));
-        Page.create(newSite, menu, null, TITLE_EMPLOYEES, true, "employeesByArea", user, forType(EmployeesComponent.class));
-        Page.create(newSite, menu, null, TITLE_DEGREES, true, "departmentDegrees", user, forType(DepartmentDegrees.class));
-        Page.create(newSite, menu, null, TITLE_COURES, true, "departmentCourses", user, forType(DepartmentCourses.class));
-        Page.create(newSite, menu, null, TITLE_THESES, true, "dissertations", user, forType(DepartmentDissertationsComponent.class));
-        Page.create(newSite, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user, forType(UnitReserachersComponent.class));
-        Page.create(newSite, null, null, TITLE_THESIS, true, "dissertation", user, forType(ThesisComponent.class));
-        Page.create(newSite, null, null, TITLE_COURSE, true, "competenceCourse", user, forType(CompetenceCourseComponent.class));
-        Page.create(newSite, null, null, TITLE_VIEW_POST, true, "view", user, forType(ViewPost.class));
-
-        newSite.setInitialPage(initialPage);
-
+        createDefaultContents(newSite, menu, Authenticate.getUser());
         return newSite;
+    }
+
+    public static void createDefaultContents(Site site, Menu menu, User user) {
+        UnitsListener.createDefaultContents(site, menu, user);
+        Page.create(site, menu, null, TITLE_SUBUNITS, true, "subunits", user, forType(SubUnits.class));
+        Page.create(site, menu, null, TITLE_ORGANIZATION, true, "unitOrganization", user, forType(Organization.class));
+        Page.create(site, menu, null, TITLE_TEACHERS, true, "departmentFaculty", user, forType(UnitTeachersComponent.class));
+        Page.create(site, menu, null, TITLE_EMPLOYEES, true, "employeesByArea", user, forType(UnitEmployees.class));
+        Page.create(site, menu, null, TITLE_DEGREES, true, "departmentDegrees", user, forType(DepartmentDegrees.class));
+        Page.create(site, menu, null, TITLE_COURES, true, "departmentCourses", user, forType(UnitCourses.class));
+        Page.create(site, menu, null, TITLE_THESES, true, "dissertations", user, forType(DepartmentDissertationsComponent.class));
+        Page.create(site, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(site, null, null, TITLE_THESIS, true, "dissertation", user, forType(ThesisComponent.class));
+        Page.create(site, null, null, TITLE_COURSE, true, "competenceCourse", user, forType(CompetenceCourseComponent.class));
     }
 }

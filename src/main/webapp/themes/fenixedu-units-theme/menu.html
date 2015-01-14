@@ -1,0 +1,69 @@
+{% macro menuChildren(menuItems) %}
+  {% if menuItems is not empty %}
+    <ul class="nav nav-pills nav-stacked list-unstyled children">
+      {% lazyFor item in menuItems %}
+          {% if item.isFolder %}
+            {{ menuFolder(item) }}
+          {% else %}
+            {{ menuItem(item) }}
+          {% endif %}
+      {% endLazyFor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% macro menuItem(item) %}
+  <li class="menuItem {{ item.isActive equals true ? 'open' : '' }} {{ item.isOpen equals true ? 'active' : '' }}">
+    <a href="{{ item.address }}">
+      {{ item.name.content }}
+    </a>
+    {{ menuChildren(item.children) }}
+  </li>
+{% endmacro %}
+
+{% macro menuFolder(folder) %}
+    {% if folder.children is not empty %}
+    <li class="menuFolder {{ folder.isOpen equals true ? 'active' : '' }}">
+      <p>{{ folder.name.content }}</p>
+      {{ menuChildren(folder.children)}}
+    </li>   
+    {% endif %}
+{% endmacro %}
+
+<nav class="col-sm-3">
+  <!-- REGULAR MENU -->
+    <div class="pull-right" style="margin-top: 6px">
+        {% for locale in app.supportedLocales %}
+            <a class="locale-changer {% if locale == app.locale %}active{% endif %}" title="{{locale.displayName}}" onclick="setLang('{{locale}}')">{{locale.language}}</a>
+        {% endfor %}
+    </div>
+
+    <div class="sidebar-module">
+        <h5 class="menu-header">Menu</h5>
+        {% if menus.top is not empty %}
+            {{ menuChildren(menus.top.children) }}
+        {% endif %}
+        {% if menus.side is not empty %}
+            {{ menuChildren(menus.side.children) }}
+        {% endif %}
+    </div>
+
+    <div class="sidebar-module">
+        <h4>Subscribe</h4>
+
+        {% lazyFor cat in site.siteObject.site.categoriesToShow %}
+          <p><img src="{{staticDir}}/images/rss.svg" height="16"/> <a href="{{cat.rssUrl}}">{{cat.name.content}}</a></p>
+        {% endLazyFor %}
+    </div>
+</nav>
+
+<script type="text/javascript">
+  $('.menuFolder:not(.open)>.children').hide();
+  $('.menuFolder>p').click(function(event){
+    $(this).parent().toggleClass('open');
+    $(this).parent().children('.children').slideToggle();
+    event.preventDefault();
+  });
+</script>
+
+<script>setLang=function(l){$.post('{{request.contextPath}}/api/bennu-core/profile/locale/'+l.replace('_', '-')).always(function(){location.reload();});}</script>

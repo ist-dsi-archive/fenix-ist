@@ -2,8 +2,17 @@
     "type": "fenixedu-units-theme",
     "name": "FenixEDU CMS Units Theme",
     "description": "This is the FenixEDU theme for Units",
-    "extends": "fenixedu-learning-theme",
     "templates": {
+        "category": {
+            "name": "Category Posts",
+            "description": "Posts for a give category",
+            "file": "category.html"
+        },
+        "view": {
+            "name": "View Post",
+            "description": "A page where you can read a post in particular",
+            "file": "view.html"
+        },
         "members": {
             "name": "Members",
             "description": "Members of the Research Unit",
@@ -63,11 +72,6 @@
             "name": "Competence Course",
             "description": "Specific competence course based on path parameter",
             "file": "competenceCourse.html"
-        },
-        "publications": {
-            "name": "Publications",
-            "description": "Publications",
-            "file": "publications.html"
         },
         "unitHomepageWithIntroFloat": {
             "name": "Unit Homepage with intro float",

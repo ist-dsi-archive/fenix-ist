@@ -38,7 +38,7 @@
 
             {% endfor %}
 
-            {% if hasTeachersWithoutArea %}
+            {% if hasTeachersWithoutArea is not empty and hasTeachersWithoutArea %}
                 <h3 class="page-header">{{ i18n('resources.PublicDepartmentResources','link.teacher.area.noArea') }}</h3>
 
                 {% lazyFor teacher in teachersWithoutArea %}

@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-@ComponentType(name = "departmentDegrees", description = "Degrees information for a Department")
+@ComponentType(name = "Department Degrees", description = "Degrees information for a Department")
 public class DepartmentDegrees extends UnitSiteComponent {
 
     @Override public void handle(Page page, TemplateContext componentContext, TemplateContext global) {
