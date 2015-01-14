@@ -87,6 +87,16 @@
             "name": "Unit Homepage with banner intro",
             "description": "Unit Homepage with an intro and banner",
             "file": "unitHomepageWithBannerIntro.html"
+        },
+        "dissertations": {
+            "name": "Dissertations",
+            "description": "Dissertations",
+            "file": "dissertations.html"
+        },
+        "dissertation": {
+            "name": "Dissertation",
+            "description": "Details of a specific dissertation",
+            "file": "dissertation.html"
         }
     }
 }
