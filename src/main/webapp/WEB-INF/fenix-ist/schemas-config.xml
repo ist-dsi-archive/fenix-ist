@@ -24,7 +24,7 @@
     <schema name="edit-publication-collaborators" type="pt.ist.fenixedu.contracts.domain.organizationalStructure.ResearchUnit" bundle="RESEARCHER_RESOURCES">
         <slot name="publicationCollaborators" layout="option-select">
             <property name="classes" value="nobullet noindent" />
-            <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.PeopleForUnitGroups" />
+            <property name="providerClass" value="pt.ist.fenix.ui.renderers.providers.PeopleForUnitGroups" />
             <property name="saveOptions" value="true" />
             <property name="eachLayout" value="name-with-alias" />
             <property name="sortBy" value="name" />
@@ -129,7 +129,7 @@
     <schema name="edit-uploaders" type="org.fenixedu.academic.domain.organizationalStructure.Unit" bundle="RESEARCHER_RESOURCES">
         <slot name="allowedPeopleToUploadFiles" key="label.uploaders" layout="option-select">
             <property name="classes" value="nobullet noindent" />
-            <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.PeopleForUnitGroups" />
+            <property name="providerClass" value="pt.ist.fenix.ui.renderers.providers.PeopleForUnitGroups" />
             <property name="saveOptions" value="true" />
             <property name="eachLayout" value="name-with-alias" />
             <property name="sortBy" value="name" />
@@ -156,7 +156,7 @@
         </slot>
         <slot name="people" layout="option-select" key="label.members">
                 <property name="classes" value="nobullet noindent"/>
-                <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.PeopleForUnitGroups"/>
+                <property name="providerClass" value="pt.ist.fenix.ui.renderers.providers.PeopleForUnitGroups"/>
                 <property name="saveOptions" value="true"/>
                 <property name="eachLayout" value="name-with-alias"/>
                 <property name="sortBy" value="name"/>
@@ -210,9 +210,10 @@
 
     <schema name="view.persistent.group" type="pt.ist.fenix.domain.accessControl.PersistentGroupMembers" bundle="RESEARCHER_RESOURCES">
         <slot name="name" key="label.groupName" />
-        <slot name="persons" key="label.members">
+        <slot name="persons" layout="flowLayout" key="label.members">
             <property name="eachLayout" value="values" />
             <property name="eachSchema" value="showNickName" />
+            <property name="htmlSeparator" value=", "/>
             <property name="sortBy" value="name" />
         </slot>
     </schema>

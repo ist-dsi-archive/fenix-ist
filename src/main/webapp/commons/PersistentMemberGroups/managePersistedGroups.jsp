@@ -83,9 +83,10 @@
 			</td>
 			<td>
 				<fr:view name="unit" property="allowedPeopleToUploadFiles">
-					<fr:layout>
+                   <fr:layout name="flowLayout">
 						<fr:property name="eachLayout" value="values"/>
 						<fr:property name="eachSchema" value="showNickName"/>
+						<fr:property name="htmlSeparator" value=", "/>
 					</fr:layout>	
 				</fr:view>
 			</td>
