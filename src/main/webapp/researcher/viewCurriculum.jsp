@@ -67,7 +67,8 @@
 			<fr:property name="bundle" value="RESEARCHER_RESOURCES"/>
 		</fr:layout>
 		</fr:edit>
-
+    </td>                         
+    <td>
 		<html:submit><bean:message key="label.filter" bundle="RESEARCHER_RESOURCES"/></html:submit>
 	</td>
 </tr>
@@ -121,9 +122,7 @@
     <logic:iterate id="lecture" name="lectures" type="org.fenixedu.academic.domain.ExecutionCourse">
 		<li>
 		
-		<app:contentLink name="lecture" property="site" target="blank">
-				<fr:view name="lecture" property="nome"/>
-		</app:contentLink>
+		 <fr:view name="lecture" property="nome"/>
 		 (<fr:view name="lecture" property="executionYear.year"/>, <fr:view name="lecture" property="executionPeriod.name"/>, <fr:view name="lecture" property="degreePresentationString"/>)</li>
 	</logic:iterate>
 	</ul>
