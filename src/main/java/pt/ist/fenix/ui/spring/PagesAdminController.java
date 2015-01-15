@@ -142,7 +142,7 @@ public class PagesAdminController {
         MenuItem menuItem = getDomainObject(updateMessage.get("menuItemId").getAsString());
         GroupBasedFile attachment = getDomainObject(updateMessage.get("fileId").getAsString());
         service.updateAttachment(menuItem, attachment, updateMessage.get("position").getAsInt(), updateMessage.get("group")
-                .getAsInt(), updateMessage.get("name").getAsString());
+                .getAsInt(), updateMessage.get("name").getAsString(), updateMessage.get("visible").getAsBoolean());
         return getAttachments(menuItem.getExternalId());
     }
 

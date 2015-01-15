@@ -1,5 +1,14 @@
 var teacherApp = angular.module('pagesApp', ['bennuToolkit', 'angularFileUpload']);
 
+teacherApp.directive('tooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            window.tooltip.apply($(element));
+        }
+    };
+});
+
 teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($scope, $http, $upload) {
 
     $scope.selectedFile = undefined;
@@ -171,7 +180,7 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
     });
 
     $scope.updateFile = function(file, newPosition) {
-        var msg = { menuItemId: $scope.selected.key, fileId: file.externalId, position: newPosition, name: file.name, group: file.group };
+        var msg = { menuItemId: $scope.selected.key, fileId: file.externalId, position: newPosition, name: file.name, group: file.group, visible: file.visible };
         $scope.error = null;
         $scope.saving = true;
         $http.put($scope.context + "/attachment", msg)

@@ -102,7 +102,8 @@
                                 <tbody>
                                 <tr  ng-repeat="file in selected.files">
                                     <td class="center">
-                                        {{ $index + 1 }}
+                                        <span ng-if="file.visible">{{ $index + 1 }}</span>
+                                        <em ng-if="!file.visible">Invisível</em>
                                     </td>
 
                                     <td>
@@ -117,11 +118,11 @@
                                     </td>
 
                                     <td ng-init="file.position = $index">
-                                        <a href="#" class="btn btn-default btn-xs" ng-click="selectFile(file)" data-toggle="modal" data-target="#fileEditModal"><span class="glyphicon glyphicon-pencil"></span></a>
-                                        <a href="#" class="btn btn-default btn-xs" ng-click="updateFile(file, file.position+1)" ng-disabled="$last"><span class="glyphicon glyphicon-chevron-down"></span></a>
-                                        <a href="#" class="btn btn-default btn-xs" ng-click="updateFile(file, file.position-1)" ng-disabled="$first"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                                        <a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#fileDeleteModal" ng-click="selectFile(file)"><span class="glyphicon glyphicon-trash"></span></a>
-                                        <a href="{{ file.downloadUrl }}" target="_blank" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-download-alt"></span></a>
+                                        <a href="#" class="btn btn-default btn-xs" ng-click="selectFile(file)" data-toggle="modal" data-target="#fileEditModal" data-toggle="tooltip" title="<spring:message code='action.edit'/>" tooltip><span class="glyphicon glyphicon-pencil"></span></a>
+                                        <a href="#" class="btn btn-default btn-xs" ng-show="file.visible" ng-click="updateFile(file, file.position+1)" ng-disabled="$last || file.last" data-toggle="tooltip" title="<spring:message code='action.move.down'/>" tooltip><span class="glyphicon glyphicon-chevron-down"></span></a>
+                                        <a href="#" class="btn btn-default btn-xs" ng-show="file.visible" ng-click="updateFile(file, file.position-1)" ng-disabled="$first" data-toggle="tooltip" title="<spring:message code='action.move.up'/>" tooltip><span class="glyphicon glyphicon-chevron-up"></span></a>
+                                        <a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#fileDeleteModal" ng-click="selectFile(file)"><span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="<spring:message code='action.delete'/>" tooltip></span></a>
+                                        <a href="{{ file.downloadUrl }}" target="_blank" class="btn btn-default btn-xs" data-toggle="tooltip" title="Download" tooltip><span class="glyphicon glyphicon-download-alt"></span> </a>
                                     </td>
 
                                 </tr>
@@ -155,6 +156,16 @@
                                                         <label>
                                                         <input type="radio" ng-checked="$index == selectedFile.group" />
                                                         {{ group.name }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2"><spring:message code="label.visible"/></label>
+                                                <div class="col-sm-10">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" ng-model="selectedFile.visible"/>
                                                         </label>
                                                     </div>
                                                 </div>

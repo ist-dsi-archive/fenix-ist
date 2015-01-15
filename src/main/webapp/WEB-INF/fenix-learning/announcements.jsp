@@ -25,13 +25,14 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 <c:set var="context" scope="session" value="${pageContext.request.contextPath}/teacher/${executionCourse.externalId}/announcements"/>
 
 
-<h2 class="page-header">
+<h2>
     <spring:message code="label.announcements"/>
     <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-primary pull-right" role="button">
         <spring:message code="action.create"/>
     </a>
 </h2>
 
+<hr />
 <c:choose>
     <c:when test="${not empty announcements}">
         <c:forEach var="announcement" items="${announcements}">
@@ -214,9 +215,7 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
     </form>
 </div>
 
-${portal.toolkit()}Encaminha-se o email sobre mudanças no horário do autocarro que faz a ligação entre os dois campi (Alameda e Taguspark), enviado à comunidade Taguspark na passada sexta-feira.
-
-
+${portal.toolkit()}
 
 <script>
     function submitFiles(files, cb,postslug) {

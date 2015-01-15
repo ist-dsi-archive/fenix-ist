@@ -21,6 +21,7 @@ import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.Post;
+import org.fenixedu.cms.domain.PostFile;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.StaticPost;
 import org.fenixedu.commons.i18n.I18N;
@@ -67,7 +68,6 @@ public class PagesAdminService {
     }
 
     @Atomic(mode = Atomic.TxMode.WRITE)
-
     protected MenuItem edit(MenuItem menuItem, LocalizedString name, LocalizedString body, Group canViewGroup, Boolean visible) {
         name = Post.sanitize(name);
         body = Post.sanitize(body);
@@ -211,21 +211,35 @@ public class PagesAdminService {
     }
 
     protected JsonElement serializeAttachments(Page page) {
-        Post.Attachments postFiles = postForPage(page).getAttachments();
+        Post post = postForPage(page);
         JsonArray filesJson = new JsonArray();
-        for (GroupBasedFile postFile : postFiles.getFiles()) {
-            JsonObject postFileJson = new JsonObject();
-            postFileJson.addProperty("name", postFile.getDisplayName());
-            postFileJson.addProperty("filename", postFile.getFilename());
-            postFileJson.addProperty("externalId", postFile.getExternalId());
-            postFileJson.addProperty("creationDate", postFile.getCreationDate().toString());
-            postFileJson.addProperty("contentType", postFile.getContentType());
-            postFileJson.addProperty("size", postFile.getSize());
-            postFileJson.addProperty("downloadUrl", FileDownloadServlet.getDownloadUrl(postFile));
-            postFileJson.addProperty("group", canViewGroupIndex(page, postFile.getAccessGroup()));
-            filesJson.add(postFileJson);
+        for (GroupBasedFile postFile : post.getAttachments().getFiles()) {
+            JsonObject json = describeFile(page, postFile);
+            json.addProperty("visible", true);
+            filesJson.add(json);
+        }
+        if (filesJson.size() > 0) {
+            filesJson.get(filesJson.size() - 1).getAsJsonObject().addProperty("last", true);
+        }
+        for (GroupBasedFile postFile : post.getPostFiles().getFiles()) {
+            JsonObject json = describeFile(page, postFile);
+            json.addProperty("visible", false);
+            filesJson.add(json);
         }
         return filesJson;
+    }
+
+    private JsonObject describeFile(Page page, GroupBasedFile file) {
+        JsonObject postFileJson = new JsonObject();
+        postFileJson.addProperty("name", file.getDisplayName());
+        postFileJson.addProperty("filename", file.getFilename());
+        postFileJson.addProperty("externalId", file.getExternalId());
+        postFileJson.addProperty("creationDate", file.getCreationDate().toString());
+        postFileJson.addProperty("contentType", file.getContentType());
+        postFileJson.addProperty("size", file.getSize());
+        postFileJson.addProperty("downloadUrl", FileDownloadServlet.getDownloadUrl(file));
+        postFileJson.addProperty("group", canViewGroupIndex(page, file.getAccessGroup()));
+        return postFileJson;
     }
 
     @Atomic(mode = Atomic.TxMode.WRITE)
@@ -251,16 +265,35 @@ public class PagesAdminService {
 
     @Atomic(mode = Atomic.TxMode.WRITE)
     public void updateAttachment(MenuItem menuItem, GroupBasedFile attachment, int newPosition, int groupPosition,
-            String displayName) {
-        Post.Attachments attachments = postForPage(menuItem.getPage()).getAttachments();
-        int currentPosition = attachments.getFiles().indexOf(attachment);
-        attachment.setAccessGroup(permissionGroups(menuItem.getMenu().getSite()).get(groupPosition));
+            String displayName, boolean visible) {
         if (displayName != null) {
             attachment.setDisplayName(displayName);
         }
-        if (currentPosition != newPosition) {
-            attachments.move(currentPosition, newPosition);
+        attachment.setAccessGroup(permissionGroups(menuItem.getMenu().getSite()).get(groupPosition));
+
+        Post post = postForPage(menuItem.getPage());
+
+        if (visible) {
+            Post.Attachments attachments = post.getAttachments();
+            if (attachment.getPostFile() != null) {
+                int currentPosition = attachments.getFiles().indexOf(attachment);
+                if (currentPosition != newPosition) {
+                    attachments.move(currentPosition, newPosition);
+                }
+            } else {
+                attachment.setPost(null);
+                PostFile postFile = new PostFile();
+                postFile.setIndex(attachments.getFiles().size() + 1);
+                postFile.setPost(post);
+                postFile.setFiles(attachment);
+            }
+        } else {
+            if (attachment.getPostFile() != null) {
+                attachment.getPostFile().delete();
+            }
+            attachment.setPost(post);
         }
+
     }
 
     public Stream<Page> dynamicPages(Site site) {

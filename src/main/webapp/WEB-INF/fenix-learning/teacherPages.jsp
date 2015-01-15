@@ -26,6 +26,9 @@ along with FenixEdu CMS.  If not, see <http://www.gnu.org/licenses/>.
 
 ${portal.angularToolkit()}
 <link href="${pageContext.request.contextPath}/static/lib/fancytree/skin-lion/ui.fancytree.css" rel="stylesheet" type="text/css">
+<script>
+window.tooltip = $.fn.tooltip;
+</script>
 <script src="${pageContext.request.contextPath}/static/lib/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/static/lib/fancytree/jquery.fancytree-all.min.js" type="text/javascript"></script>
 
@@ -36,6 +39,7 @@ ${portal.angularToolkit()}
 <script src="${pageContext.request.contextPath}/static/lib/angular-file-upload/angular-file-upload.min.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/static/pages.js" type="text/javascript"></script>
 
-<h1><spring:message code="label.pages.management"/></h1>
+<h2><spring:message code="label.pages.management"/></h2>
+<hr />
 
 <%@include file="contents.jsp" %>
