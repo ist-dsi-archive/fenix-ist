@@ -24,7 +24,28 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
 
     $scope.selectFile = function(file) {
         $scope.selectedFile = file;
-    }
+    };
+
+    $scope.onImageAdded = function (files, callback, el) {
+
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            $scope.upload = $upload.upload({
+                url: context + '/' + $scope.selected.key + '/addFile.json',
+                method: 'POST',
+                file: file,
+                fileName: file.name
+            }).progress(function (evt) {
+                console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :' + evt.config.file.name);
+            }).success(function (data, status, headers, config) {
+                var urls = [];
+                urls.push(data.downloadUrl);
+                callback(urls);
+            });
+        }
+
+    };
 
     var add = function (item, parent) {
         var isFolder = item.children && item.children.length > 0;
@@ -104,10 +125,10 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
     };
 
     $scope.move = function(item, insertAfter) {
-        $http.put($scope.context + '/move', 
+        $http.put($scope.context + '/move',
             { menuItemId: item.key, parent: item.menuItemParentId, insertAfter: insertAfter ? insertAfter.key : null }).success(function (data) {
-            item.position = data.position;
-        });
+                item.position = data.position;
+            });
     }
 
     $http.get($scope.context + "/data").success(function (data) {

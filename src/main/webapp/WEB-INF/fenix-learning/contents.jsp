@@ -38,7 +38,8 @@
                                 <input type="text" id="title" name="title" ng-localized-string="selected.title" required class="form-control" placeholder="<spring:message code="label.title"/>"/>
 
                                 <label for="body"><spring:message code="label.content"/></label>
-                                <textarea bennu-localized-string ng-html-editor="selected.body" id="body" class="form-control"></textarea>
+                                <textarea bennu-localized-string ng-html-editor="selected.body" ng-on-image-added="onImageAdded"
+                                          id="body" class="form-control"></textarea>
 
                                 <div>
                                     <div class="pull-left">
