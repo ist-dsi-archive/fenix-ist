@@ -12,7 +12,7 @@ import pt.ist.fenix.domain.homepage.HomepageSite;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ComponentType(name = "unitResearchers", description = "Researchers for a Unit")
+@ComponentType(name = "Unit Researchers", description = "Researchers for a Unit")
 public class UnitReserachersComponent extends UnitSiteComponent {
 
     @Override

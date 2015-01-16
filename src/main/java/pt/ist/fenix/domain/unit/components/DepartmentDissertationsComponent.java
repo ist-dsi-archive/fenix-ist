@@ -1,5 +1,14 @@
 package pt.ist.fenix.domain.unit.components;
 
+import static org.fenixedu.academic.domain.Degree.COMPARATOR_BY_DEGREE_TYPE_AND_NAME_AND_ID;
+import static org.fenixedu.academic.domain.ExecutionYear.COMPARATOR_BY_YEAR;
+import static org.fenixedu.learning.domain.DissertationsUtils.allThesesByYear;
+import static org.fenixedu.learning.domain.DissertationsUtils.getThesisStateMapping;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.SortedMap;
+
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.organizationalStructure.DepartmentUnit;
@@ -7,17 +16,10 @@ import org.fenixedu.academic.domain.thesis.Thesis;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
+import org.fenixedu.learning.domain.degree.components.DegreeSiteComponent;
+import org.fenixedu.learning.domain.degree.components.ThesisComponent;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedMap;
-
-import static org.fenixedu.academic.domain.Degree.COMPARATOR_BY_DEGREE_TYPE_AND_NAME_AND_ID;
-import static org.fenixedu.academic.domain.ExecutionYear.COMPARATOR_BY_YEAR;
-import static org.fenixedu.learning.domain.DissertationsUtils.allThesesByYear;
-import static org.fenixedu.learning.domain.DissertationsUtils.getThesisStateMapping;
-
-@ComponentType(name = "departmentDissertations", description = "Dissertations information for a Department")
+@ComponentType(name = "Department Dissertations", description = "Dissertations information for a Department")
 public class DepartmentDissertationsComponent extends UnitSiteComponent {
 
     @Override
@@ -31,6 +33,8 @@ public class DepartmentDissertationsComponent extends UnitSiteComponent {
             globalContext.put("years", allThesesByYear.keySet().stream().sorted(COMPARATOR_BY_YEAR));
             globalContext.put("degrees", degrees.stream().sorted(COMPARATOR_BY_DEGREE_TYPE_AND_NAME_AND_ID));
             globalContext.put("states", getThesisStateMapping());
+            Page thesisPage = DegreeSiteComponent.pageForComponent(page.getSite(), ThesisComponent.class).get();
+            globalContext.put("dissertationUrl", thesisPage.getAddress());
         }
     }
 
