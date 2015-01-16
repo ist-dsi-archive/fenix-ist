@@ -1,9 +1,9 @@
 {% macro unitLink(unit) %}
-	 {% if unit.webAddress is not empty %}
+	 <p>{% if unit.webAddress is not empty %}
 	 	<a href="{{ unit.webAddress }}">{{ unit.name }}</a>
 	 {% else %}
 	 	{{ unit.name }}
-	 {% endif %}
+	 {% endif %}</p>
 {% endmacro %}
 
 {%	macro listNonAggregateUnits(unitList, separator=',') %}
@@ -20,7 +20,7 @@
 	{% endfor %}
 {% endmacro %}
 
-{% macro listUnitAndParents(unit, firstSeparator='<br/>', separator=',') %}
+{% macro listUnitAndParents(unit, firstSeparator='', separator=',') %}
 	{{ unitLink(unit) }}
 	{% if unit.parentUnits is not empty %}
 		{{ firstSeparator | raw }}
@@ -28,7 +28,7 @@
 	{% endif %}
 {% endmacro %}
 
-{% macro listUnitTree(unit, separator='<br/>') %}
+{% macro listUnitTree(unit, separator='') %}
 	{{ unitLink(unit) }}
 	{% if unit.parentUnitsPath is not empty %}
 		{{ separator | raw }}
@@ -39,10 +39,10 @@
 {% macro researchUnitsList(units) %}
 	{% for unit in units %}
 		{% if loop.index != 0 %}
-			<td>&nbsp;</td>
+			
 		{% endif %}
-		<td>
+		<p>
 			{{ listUnitAndParents(unit) }}
-		</td>
+		</p>
 	{% endfor %}
 {% endmacro %}

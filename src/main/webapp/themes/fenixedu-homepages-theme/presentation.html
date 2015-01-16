@@ -6,44 +6,31 @@
 {% import "fenixedu-homepages-theme/courseView.html" %}
 
 {% macro presentationRow(title, content) %}
-	<tr>
-		<th>{{ i18n('resources.HomepageResources', title) }}:</th>
-		<td>
-			{{ content | raw }}
-		</td>
-	</tr>
+	<div class="row" style="border-bottom:1px solid #ddd; padding-top:20px; padding-bottom:20px;">
+		<div class="col-sm-3" style="font-weight:700">{{ i18n('resources.HomepageResources', title) }}</div>
+		<div class="col-sm-6">{{ content | raw }}</div>
+	</div>		
 {% endmacro %}
 
 {% macro presentationContactRows(title, contacts, type, ctxPath='') %}
 	{% for contact in contacts %}
-		<tr>
-			{% if loop.index == 0 %}
-				<th rowspan="{{ contacts | length }}">{{ i18n('resources.HomepageResources', title) }}:</th>
-			{% endif %}
-			<td>
-				{{ contactView(contact,type,showDefault=(contacts | length > 1),ctxPath=ctxPath) }}
-			</td>
-		</tr>
+		<div class="row" style="border-bottom:1px solid #ddd; padding-top:20px; padding-bottom:20px;">
+			<div class="col-sm-3" style="font-weight:700">{{ i18n('resources.HomepageResources', title) }}</div>
+			<div class="col-sm-6">{{ contactView(contact,type,showDefault=(contacts | length > 1),ctxPath=ctxPath) }}</div>
+		</div>	
 	{% endfor %}
 {% endmacro %}
 
 {% block content %}
-	<h1 id="no">
-		{{ownerName}}
-	</h1>
-
-	<table class="thleft">
-		<!-- photo -->
 		{% if ownerAvatarUrl is not empty %}
-		<tr>
-			<th></th>
-			<td>
-				<div>
-					<img class="img-circle" alt="{{ i18n('resources.ImageResources','personPhoto') }}" src="{{ ownerAvatarUrl }}" style="padding: 1em 0;"/>
+				<div style="float:right;position:relative; top:-155px; ">
+					<img class="img-circle" alt="{{ i18n('resources.ImageResources','personPhoto') }}" src="{{ ownerAvatarUrl }}" style="border:1px solid #009ee2; "/>
 				</div>
-			</td>
-		</tr>
 		{% endif %}
+	
+	
+		<!-- photo -->
+		
 
 		<!-- working unit -->
 		{% if workingUnit is not null %}
@@ -97,5 +84,5 @@
 			{{ presentationRow('label.homepage.showCurrentExecutionCourses', courseList(teachingCourses)) }}
 		{% endif %}
 
-	</table>
+
 {% endblock content %}

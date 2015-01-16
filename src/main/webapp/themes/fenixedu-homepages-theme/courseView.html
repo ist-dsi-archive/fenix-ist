@@ -4,7 +4,7 @@
 		{% set course = course.executionCourse %}
 	{% endif %}
 	{% if course.site is not empty %}
-		<a href="{{ course.site.fullUrl }}">
+		<a href="{{ course.site }}">
 			{{ course.name }}
 		</a>
 	{% else %}
@@ -14,9 +14,9 @@
 
 {% macro courseList(courses, separator=',') %}
 	{% for course in courses %}
-		{% if loop.index != 0 %}
-			{{ separator | raw }}
+		<p>{% if loop.index != 0 %}
+			
 		{% endif %}
-		{{ courseLink(course) }}
+		{{ courseLink(course) }}</p>
 	{% endfor %}
 {% endmacro %}

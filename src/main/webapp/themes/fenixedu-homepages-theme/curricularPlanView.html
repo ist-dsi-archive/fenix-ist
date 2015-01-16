@@ -19,9 +19,9 @@
 
 {% macro curricularPlanDegreeList(curricularPlans, separator=',') %}
 	{% for curricularPlan in curricularPlans %}
-		{% if loop.index != 0 %}
-			{{ separator | raw }}
+		<p>{% if loop.index != 0 %}
+			
 		{% endif %}
-		{{ curricularPlanDegreeLink(curricularPlan) }}
+		{{ curricularPlanDegreeLink(curricularPlan) }}</p>
 	{% endfor %}
 {% endmacro %}
