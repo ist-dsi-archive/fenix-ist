@@ -14,6 +14,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.contacts.PartyContact;
 import org.fenixedu.academic.domain.contacts.PartyContactType;
+import org.fenixedu.academic.domain.contacts.WebAddress;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
@@ -83,7 +84,10 @@ public class PresentationComponent extends HomepageSiteComponent {
         global.put("personalPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.PERSONAL));
         global.put("workPhones", getSortedFilteredContacts(owner.getPhones(), PartyContactType.WORK));
         global.put("mobilePhones", getSortedFilteredContacts(owner.getMobilePhones()));
-        global.put("websites", getSortedFilteredContacts(owner.getWebAddresses()));
+        global.put(
+                "websites",
+                getSortedFilteredContacts(owner.getWebAddresses()).stream().map(WebAddress.class::cast)
+                        .filter(addr -> !addr.getUrl().equals(page.getSite().getFullUrl())).collect(Collectors.toList()));
 
         if (site.getShowCurrentExecutionCourses() && owner.getTeacher() != null
                 && owner.getEmployee().getCurrentWorkingContract() != null) {

@@ -8,6 +8,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.cms.domain.Category;
 
 import pt.ist.fenixframework.FenixFramework;
 
@@ -30,6 +31,10 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
             for (; !unit.getUnitFileTagsSet().isEmpty(); unit.getUnitFileTagsSet().iterator().next().delete()) {
                 ;
             }
+        });
+
+        FenixFramework.getDomainModel().registerDeletionListener(Category.class, cat -> {
+            cat.getBookmarkedBySet().clear();
         });
     }
 

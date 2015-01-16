@@ -4,7 +4,7 @@
 		{% set course = course.executionCourse %}
 	{% endif %}
 	{% if course.site is not empty %}
-		<a href="{{ course.site }}">
+		<a href="{{ course.site.fullUrl }}">
 			{{ course.name }}
 		</a>
 	{% else %}

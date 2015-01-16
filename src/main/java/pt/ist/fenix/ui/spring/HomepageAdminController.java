@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accessControl.AllAlumniGroup;
+import org.fenixedu.academic.domain.contacts.PartyContact;
+import org.fenixedu.academic.domain.contacts.PartyContactType;
+import org.fenixedu.academic.domain.contacts.WebAddress;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
@@ -65,6 +68,27 @@ public class HomepageAdminController {
             homepage.setResearchUnitHomepage(researchUnitHomepage);
             homepage.setResearchUnitName(researchUnitName);
             homepage.setPublished(published);
+            String url = homepage.getFullUrl();
+            if (published) {
+                boolean foundAddress = false;
+                for (PartyContact contact : homepage.getOwner().getPartyContacts(WebAddress.class)) {
+                    WebAddress address = (WebAddress) contact;
+                    if (address.getUrl().equals(url)) {
+                        address.setDefaultContact(true);
+                        foundAddress = true;
+                    } else {
+                        address.setDefaultContact(false);
+                    }
+                }
+                if (!foundAddress) {
+                    WebAddress.createWebAddress(homepage.getOwner(), url, PartyContactType.INSTITUTIONAL, true);
+                }
+            } else {
+                WebAddress address = homepage.getOwner().getDefaultWebAddress();
+                if (address != null && address.getUrl().equals(homepage.getFullUrl())) {
+                    address.setDefaultContact(false);
+                }
+            }
             homepage.setShowUnit(showUnit);
             homepage.setShowCurrentExecutionCourses(showCurrentExecutionCourses);
             homepage.setShowCurrentAttendingExecutionCourses(showCurrentAttendingExecutionCourses);
