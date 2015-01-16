@@ -22,6 +22,12 @@ import static java.util.stream.Collectors.toCollection;
 @ComponentType(name = "Unit Teachers", description = "Teachers information for a Department")
 public class UnitTeachersComponent extends UnitSiteComponent {
 
+    private static Supplier<TreeSet<Teacher>> sortedTeacherFactory = () -> Sets
+                    .newTreeSet(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
+    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
+    Predicate<Teacher> hasScientificArea = teacher -> teacher.getDepartment() != null
+                    && teacher.getDepartment().getDepartmentUnit() != null;
+
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
         Unit unit = unit(page);
@@ -32,13 +38,15 @@ public class UnitTeachersComponent extends UnitSiteComponent {
     }
 
     private SortedMap<TeacherCategory, TreeSet<Teacher>> teachersByCategory(Unit unit) {
-        return unitTeachers(unit).filter(teacher -> teacher.getCategory() != null)
-                .collect(groupingBy(Teacher::getCategory, TreeMap::new, toCollection(sortedTeacherFactory)));
+        return unitTeachers(unit).filter(teacher -> teacher.getCategory() != null).collect(
+                        groupingBy(Teacher::getCategory, TreeMap::new, toCollection(sortedTeacherFactory)));
     }
 
     private SortedMap<Unit, TreeSet<Teacher>> teachersByArea(Unit unit) {
-         return unitTeachers(unit).filter(hasScientificArea)
-                .collect(groupingBy(teacher->teacher.getDepartment().getDepartmentUnit(), mapFactory, toCollection(sortedTeacherFactory)));
+        return unitTeachers(unit).filter(hasScientificArea)
+                .collect(
+                        groupingBy(teacher -> teacher.getDepartment().getDepartmentUnit(), mapFactory,
+                                toCollection(sortedTeacherFactory)));
     }
 
     private Stream<Teacher> teachersWithoutArea(Unit unit) {
@@ -46,13 +54,7 @@ public class UnitTeachersComponent extends UnitSiteComponent {
     }
 
     private Stream<Teacher> unitTeachers(Unit unit) {
-        return unit.getDepartment().getAllCurrentTeachers().stream().sorted(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
+        return unit.getDepartmentUnit().getDepartment().getAllCurrentTeachers().stream()
+                .sorted(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
     }
-
-    private static Supplier<TreeSet<Teacher>> sortedTeacherFactory = () ->
-            Sets.newTreeSet(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
-
-    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
-
-    Predicate<Teacher> hasScientificArea = teacher -> teacher.getDepartment() != null && teacher.getDepartment().getDepartmentUnit() != null;
 }
