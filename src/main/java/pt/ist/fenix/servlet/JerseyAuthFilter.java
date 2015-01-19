@@ -76,11 +76,11 @@ public class JerseyAuthFilter implements Filter {
         Boolean found = Boolean.FALSE;
         for (final RemoteHost remoteHost : RemoteSystem.getInstance().getRemoteHostsSet()) {
             if (remoteHost.matches(url, username, password)) {
-                logger.info("[Jersey Server Invoke by client " + url);
+                logger.debug("[Jersey Server Invoke by client " + url);
                 found = Boolean.TRUE;
             }
         }
-        logger.info("[Jersey Server] Invoke by client " + url);
+        logger.debug("[Jersey Server] Invoke by client " + url);
         return found;
     }
 
