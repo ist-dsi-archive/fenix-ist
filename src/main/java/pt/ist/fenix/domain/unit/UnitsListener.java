@@ -1,5 +1,8 @@
 package pt.ist.fenix.domain.unit;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -11,11 +14,8 @@ import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.cms.domain.component.ListCategoryPosts;
 import org.fenixedu.cms.domain.component.ViewPost;
 import org.fenixedu.commons.i18n.LocalizedString;
-import pt.ist.fenix.domain.unit.UnitSite;
-import pt.ist.fenix.domain.unit.components.UnitHomepageComponent;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
+import pt.ist.fenix.domain.unit.components.UnitHomepageComponent;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -42,8 +42,8 @@ public class UnitsListener {
                 new ListCategoryPosts(site.getOrCreateCategoryForSlug("announcement", TITLE_ANNOUNCEMENTS));
         Component eventsComponent = new ListCategoryPosts(site.getOrCreateCategoryForSlug("event", TITLE_EVENTS));
 
-        Page initialPage = Page.create(site, menu, null, TITLE_HOMEPAGE, true, "unitHomepage", user,
-                forType(UnitHomepageComponent.class));
+        Page initialPage =
+                Page.create(site, menu, null, TITLE_HOMEPAGE, true, "unitHomepage", user, forType(UnitHomepageComponent.class));
         Page.create(site, menu, null, TITLE_EVENTS, true, "category", user, eventsComponent);
         Page.create(site, menu, null, TITLE_ANNOUNCEMENTS, true, "category", user, announcementsComponent);
         Page.create(site, null, null, TITLE_VIEW_POST, true, "view", user, forType(ViewPost.class));

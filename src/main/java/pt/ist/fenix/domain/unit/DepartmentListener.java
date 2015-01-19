@@ -1,5 +1,8 @@
 package pt.ist.fenix.domain.unit;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -8,11 +11,16 @@ import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.learning.domain.degree.components.ThesisComponent;
-import pt.ist.fenix.domain.unit.components.*;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
-
+import pt.ist.fenix.domain.unit.components.CompetenceCourseComponent;
+import pt.ist.fenix.domain.unit.components.DepartmentDegrees;
+import pt.ist.fenix.domain.unit.components.DepartmentDissertationsComponent;
+import pt.ist.fenix.domain.unit.components.Organization;
+import pt.ist.fenix.domain.unit.components.SubUnits;
+import pt.ist.fenix.domain.unit.components.UnitCourses;
+import pt.ist.fenix.domain.unit.components.UnitEmployees;
+import pt.ist.fenix.domain.unit.components.UnitReserachersComponent;
+import pt.ist.fenix.domain.unit.components.UnitTeachersComponent;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -53,7 +61,8 @@ public class DepartmentListener {
         Page.create(site, menu, null, TITLE_DEGREES, true, "departmentDegrees", user, forType(DepartmentDegrees.class));
         Page.create(site, menu, null, TITLE_COURES, true, "departmentCourses", user, forType(UnitCourses.class));
         Page.create(site, menu, null, TITLE_THESES, true, "dissertations", user, forType(DepartmentDissertationsComponent.class));
-        Page.create(site, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(site, menu, null, TITLE_PUBLICATIONS, true, "researcherSection", user,
+                forType(UnitReserachersComponent.class));
         Page.create(site, null, null, TITLE_THESIS, true, "dissertation", user, forType(ThesisComponent.class));
         Page.create(site, null, null, TITLE_COURSE, true, "competenceCourse", user, forType(CompetenceCourseComponent.class));
     }

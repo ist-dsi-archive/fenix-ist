@@ -1,6 +1,15 @@
 package pt.ist.fenix.domain.unit.components;
 
-import com.google.common.collect.ImmutableMap;
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.fenixedu.academic.domain.ExecutionYear.readCurrentExecutionYear;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.academic.domain.Person;
@@ -13,24 +22,17 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
+
 import pt.ist.fenixedu.contracts.domain.Employee;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static org.fenixedu.academic.domain.ExecutionYear.readCurrentExecutionYear;
+import com.google.common.collect.ImmutableMap;
 
 @ComponentType(name = "unitCourses", description = "Courses of a Unit")
 public class UnitCourses extends UnitSiteComponent {
 
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
-        if(unit(page) instanceof DepartmentUnit) {
+        if (unit(page) instanceof DepartmentUnit) {
             DepartmentUnit departmentUnit = ofNullable((DepartmentUnit) unit(page)).orElseGet(() -> getPersonDepartmentUnit());
             globalContext.put("scientificAreaUnits", getScientificAreaUnits(departmentUnit));
             globalContext.put("department", departmentUnit.getDepartment());
@@ -41,25 +43,25 @@ public class UnitCourses extends UnitSiteComponent {
     }
 
     public List<Map> getScientificAreaUnits(Unit unit) {
-        return unit.getSubUnits().stream().filter(Unit::isScientificAreaUnit)
-                .map(ScientificAreaUnit.class::cast)
-                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID)
-                .map(subunit -> wrap((ScientificAreaUnit) subunit))
+        return unit.getSubUnits().stream().filter(Unit::isScientificAreaUnit).map(ScientificAreaUnit.class::cast)
+                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID).map(subunit -> wrap((ScientificAreaUnit) subunit))
                 .collect(toList());
     }
 
     public Map wrap(ScientificAreaUnit scientificAreaUnit) {
-        List<Map> competenceCoursesWraps = scientificAreaUnit.getCompetenceCourseGroupUnits().stream().map(this::wrap).collect(toList());
-        return ImmutableMap.of("name", scientificAreaUnit.getNameI18n().toLocalizedString(),
-                "competenceCourseGroupUnits", competenceCoursesWraps,
-                "hasCompetenceCourses", competenceCoursesWraps.stream().anyMatch(wrap -> (boolean) wrap.get("hasCompetenceCourses")));
+        List<Map> competenceCoursesWraps =
+                scientificAreaUnit.getCompetenceCourseGroupUnits().stream().map(this::wrap).collect(toList());
+        return ImmutableMap.of("name", scientificAreaUnit.getNameI18n().toLocalizedString(), "competenceCourseGroupUnits",
+                competenceCoursesWraps, "hasCompetenceCourses",
+                competenceCoursesWraps.stream().anyMatch(wrap -> (boolean) wrap.get("hasCompetenceCourses")));
     }
 
     public Map wrap(CompetenceCourseGroupUnit competenceCourseGroupUnit) {
-        List<CompetenceCourse> competenceCourses = competenceCourseGroupUnit.getCompetenceCoursesByExecutionYear(readCurrentExecutionYear());
-        return ImmutableMap.of("name", competenceCourseGroupUnit.getNameI18n().toLocalizedString(),
-                "competenceCourses", approvedCompetenceCourses(competenceCourses).map(this::wrap).collect(toList()),
-                "hasCompetenceCourses", approvedCompetenceCourses(competenceCourses).count() > 0);
+        List<CompetenceCourse> competenceCourses =
+                competenceCourseGroupUnit.getCompetenceCoursesByExecutionYear(readCurrentExecutionYear());
+        return ImmutableMap.of("name", competenceCourseGroupUnit.getNameI18n().toLocalizedString(), "competenceCourses",
+                approvedCompetenceCourses(competenceCourses).map(this::wrap).collect(toList()), "hasCompetenceCourses",
+                approvedCompetenceCourses(competenceCourses).count() > 0);
     }
 
     private Stream<CompetenceCourse> approvedCompetenceCourses(Collection<CompetenceCourse> competenceCourses) {
@@ -67,9 +69,9 @@ public class UnitCourses extends UnitSiteComponent {
     }
 
     public Map wrap(CompetenceCourse competenceCourse) {
-        return ImmutableMap.of("name", competenceCourse.getNameI18N().toLocalizedString(),
-                "acronym", competenceCourse.getAcronym(), "url", format("course/%s", competenceCourse.getExternalId()),
-                "approved", competenceCourse.isApproved());
+        return ImmutableMap.of("name", competenceCourse.getNameI18N().toLocalizedString(), "acronym",
+                competenceCourse.getAcronym(), "url", format("course/%s", competenceCourse.getExternalId()), "approved",
+                competenceCourse.isApproved());
     }
 
     public DepartmentUnit getPersonDepartmentUnit() {

@@ -1,5 +1,12 @@
 package pt.ist.fenix.domain.unit.components;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
 import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.PostMetadata;
@@ -9,13 +16,6 @@ import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.domain.component.PostsPresentationBean;
 import org.fenixedu.cms.domain.wraps.Wrap;
 import org.fenixedu.cms.rendering.TemplateContext;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 @ComponentType(name = "Unit Homepage", description = "Provides the latest events and announcements")
 public class UnitHomepageComponent implements CMSComponent {

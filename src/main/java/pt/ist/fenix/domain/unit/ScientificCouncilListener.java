@@ -1,5 +1,8 @@
 package pt.ist.fenix.domain.unit;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -7,10 +10,8 @@ import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.commons.i18n.LocalizedString;
-import pt.ist.fenix.domain.unit.components.Organization;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
+import pt.ist.fenix.domain.unit.components.Organization;
 
 /**
  * Created by borgez on 24-11-2014.

@@ -85,8 +85,9 @@ public class ExportIRSDeclarations extends CronTask {
             try {
                 final IRSCustomDeclaration customDeclaration = new IRSCustomDeclaration(exportIRSDeclaration.getDeclarationDTO());
                 addUnitCoordinatorSignature(customDeclaration);
-                final byte[] report = ReportsUtils.generateReport(customDeclaration.getReportTemplateKey(), customDeclaration.getParameters(),
-                        customDeclaration.getDataSource()).getData();
+                final byte[] report =
+                        ReportsUtils.generateReport(customDeclaration.getReportTemplateKey(), customDeclaration.getParameters(),
+                                customDeclaration.getDataSource()).getData();
 
                 new AnnualIRSDeclarationDocument(exportIRSDeclaration.getPerson(), null, customDeclaration.getReportFileName()
                         + ".pdf", report, YEAR_TO_PROCESS);

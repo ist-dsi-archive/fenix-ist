@@ -1,15 +1,21 @@
 package pt.ist.fenix.domain.unit;
 
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
+import static org.fenixedu.cms.domain.component.Component.forType;
+
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.cms.domain.*;
+import org.fenixedu.cms.domain.Menu;
+import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Site;
 import org.fenixedu.commons.i18n.LocalizedString;
-import pt.ist.fenix.domain.unit.components.*;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-import static org.fenixedu.cms.domain.component.Component.forType;
+import pt.ist.fenix.domain.unit.components.Organization;
+import pt.ist.fenix.domain.unit.components.SubUnits;
+import pt.ist.fenix.domain.unit.components.UnitComponent;
+import pt.ist.fenix.domain.unit.components.UnitReserachersComponent;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -35,6 +41,7 @@ public class ResearchUnitListener {
         Page.create(site, menu, null, MEMBERS_TITLE, true, "members", user, forType(UnitComponent.class));
         Page.create(site, menu, null, SUBUNITS_TITLE, true, "subunits", user, forType(SubUnits.class));
         Page.create(site, menu, null, ORGANIZATION_TITLE, true, "unitOrganization", user, forType(Organization.class));
-        Page.create(site, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user, forType(UnitReserachersComponent.class));
+        Page.create(site, menu, null, PUBLICATIONS_TITLE, true, "researcherSection", user,
+                forType(UnitReserachersComponent.class));
     }
 }
