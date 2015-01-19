@@ -14,10 +14,13 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.organizationalStructure.DepartmentUnit;
 import org.fenixedu.academic.domain.thesis.Thesis;
 import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
 import org.fenixedu.learning.domain.degree.components.DegreeSiteComponent;
 import org.fenixedu.learning.domain.degree.components.ThesisComponent;
+
+import pt.ist.fenix.domain.unit.UnitSite;
 
 @ComponentType(name = "Department Dissertations", description = "Dissertations information for a Department")
 public class DepartmentDissertationsComponent extends UnitSiteComponent {
@@ -36,6 +39,10 @@ public class DepartmentDissertationsComponent extends UnitSiteComponent {
             Page thesisPage = DegreeSiteComponent.pageForComponent(page.getSite(), ThesisComponent.class).get();
             globalContext.put("dissertationUrl", thesisPage.getAddress());
         }
+    }
+
+    public static boolean supportsSite(Site site) {
+        return site instanceof UnitSite && ((UnitSite) site).getUnit() instanceof DepartmentUnit;
     }
 
 }

@@ -7,7 +7,6 @@ import org.fenixedu.cms.domain.component.CMSComponent;
 import org.fenixedu.cms.exceptions.ResourceNotFoundException;
 
 import pt.ist.fenix.domain.homepage.HomepageSite;
-import pt.ist.fenix.domain.unit.UnitSite;
 
 /**
  * Created by borgez on 02-12-2014.
@@ -25,8 +24,7 @@ public abstract class HomepageSiteComponent implements CMSComponent {
         throw new ResourceNotFoundException();
     }
 
-
-    protected boolean supportsSite(Site site) {
+    public static boolean supportsSite(Site site) {
         return site instanceof HomepageSite;
     }
 }

@@ -1,6 +1,7 @@
 package pt.ist.fenix.domain.homepage.components;
 
 import org.fenixedu.cms.domain.Page;
+import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.ComponentParameter;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.domain.component.DynamicComponent;
@@ -34,6 +35,10 @@ public class ResearcherComponent extends ResearcherComponent_Base {
         global.put("language", I18N.getLocale().toLanguageTag());
         global.put("dataKey", getDataKey());
         global.put("titleKey", getTitleKey());
+    }
+
+    public static boolean supportsSite(Site site) {
+        return site instanceof HomepageSite;
     }
 
 }

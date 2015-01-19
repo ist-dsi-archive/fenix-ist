@@ -17,7 +17,7 @@ public abstract class UnitSiteComponent implements CMSComponent {
         throw new ResourceNotFoundException();
     }
 
-    protected boolean supportsSite(Site site) {
+    public static boolean supportsSite(Site site) {
         return site instanceof UnitSite;
     }
 
