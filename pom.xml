@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -42,11 +43,11 @@
                         <configuration>
                             <target>
                                 <zip
-                                        destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-homepages-theme.zip"
-                                        basedir="${project.basedir}/src/main/webapp/themes/fenixedu-homepages-theme"></zip>
+                                    destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-homepages-theme.zip"
+                                    basedir="${project.basedir}/src/main/webapp/themes/fenixedu-homepages-theme"></zip>
                                 <zip
-                                        destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-units-theme.zip"
-                                        basedir="${project.basedir}/src/main/webapp/themes/fenixedu-units-theme"></zip>
+                                    destfile="${project.build.directory}/classes/META-INF/resources/WEB-INF/fenixedu-units-theme.zip"
+                                    basedir="${project.basedir}/src/main/webapp/themes/fenixedu-units-theme"></zip>
                             </target>
                         </configuration>
                         <goals>
@@ -62,12 +63,12 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-academic</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
             <artifactId>fenixedu-ist-giaf-contracts</artifactId>
-            <version>4.0.0.RC1</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
@@ -92,17 +93,17 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-id-cards</artifactId>
-            <version>2.0.0.RC1</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
             <artifactId>fenixedu-ist-vigilancies</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
             <artifactId>fenixedu-ist-tutorship</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
@@ -112,7 +113,7 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-learning</artifactId>
-            <version>1.0.0.RC1</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
