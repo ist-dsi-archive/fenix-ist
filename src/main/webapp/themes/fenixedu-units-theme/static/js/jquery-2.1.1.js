@@ -1,17 +1,21 @@
-/*!
- * jQuery JavaScript Library v2.1.1
- * http://jquery.com/
+/*
+ * Copyright © ${project.inceptionYear} Instituto Superior Técnico
  *
- * Includes Sizzle.js
- * http://sizzlejs.com/
+ * This file is part of Fenix IST.
  *
- * Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
+ * Fenix IST is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Date: 2014-05-01T17:11Z
+ * Fenix IST is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Fenix IST.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {

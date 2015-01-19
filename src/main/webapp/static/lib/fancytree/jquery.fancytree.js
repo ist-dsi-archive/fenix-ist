@@ -1,16 +1,21 @@
-/*!
- * jquery.fancytree.js
- * Dynamic tree view control, with support for lazy loading of branches.
- * https://github.com/mar10/fancytree/
+/*
+ * Copyright © ${project.inceptionYear} Instituto Superior Técnico
  *
- * Copyright (c) 2006-2014, Martin Wendt (http://wwWendt.de)
- * Released under the MIT license
- * https://github.com/mar10/fancytree/wiki/LicenseInfo
+ * This file is part of Fenix IST.
  *
- * @version 2.6.0
- * @date 2014-11-29T08:33
+ * Fenix IST is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fenix IST is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Fenix IST.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /** Core Fancytree module.
  */
 
