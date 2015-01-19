@@ -38,7 +38,7 @@ public class LegacyRSSAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         DomainObject obj = FenixFramework.getDomainObject(request.getParameter("announcementBoardId"));
-        if (FenixFramework.isDomainObjectValid(obj) && obj instanceof Category) {
+        if (obj instanceof Category && FenixFramework.isDomainObjectValid(obj)) {
             Category cat = (Category) obj;
             response.setHeader("Location", cat.getRssUrl());
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);

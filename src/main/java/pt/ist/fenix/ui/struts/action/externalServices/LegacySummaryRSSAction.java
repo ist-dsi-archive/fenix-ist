@@ -39,7 +39,7 @@ public class LegacySummaryRSSAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         DomainObject obj = FenixFramework.getDomainObject(request.getParameter("id"));
-        if (FenixFramework.isDomainObjectValid(obj) && obj instanceof ExecutionCourse) {
+        if (obj instanceof ExecutionCourse && FenixFramework.isDomainObjectValid(obj)) {
             ExecutionCourse course = (ExecutionCourse) obj;
             Category cat = course.getSite().categoryForSlug("summary");
             response.setHeader("Location", cat.getRssUrl());
