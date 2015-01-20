@@ -40,6 +40,7 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
+import org.fenixedu.learning.domain.degree.components.DegreeSiteComponent;
 
 import pt.ist.fenixedu.contracts.domain.Employee;
 
@@ -50,35 +51,38 @@ public class UnitCourses extends UnitSiteComponent {
 
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
+        String courseComponentUrl =
+                DegreeSiteComponent.pageForComponent(page.getSite(), CompetenceCourse.class).get().getAddress();
         if (unit(page) instanceof DepartmentUnit) {
             DepartmentUnit departmentUnit = ofNullable((DepartmentUnit) unit(page)).orElseGet(() -> getPersonDepartmentUnit());
-            globalContext.put("scientificAreaUnits", getScientificAreaUnits(departmentUnit));
+            globalContext.put("scientificAreaUnits", getScientificAreaUnits(departmentUnit, courseComponentUrl));
             globalContext.put("department", departmentUnit.getDepartment());
             globalContext.put("departmentUnit", departmentUnit);
         } else {
-            globalContext.put("scientificAreaUnits", getScientificAreaUnits(unit(page)));
+            globalContext.put("scientificAreaUnits", getScientificAreaUnits(unit(page), courseComponentUrl));
         }
     }
 
-    public List<Map> getScientificAreaUnits(Unit unit) {
+    public List<Map> getScientificAreaUnits(Unit unit, String courseComponentUrl) {
         return unit.getSubUnits().stream().filter(Unit::isScientificAreaUnit).map(ScientificAreaUnit.class::cast)
-                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID).map(subunit -> wrap((ScientificAreaUnit) subunit))
-                .collect(toList());
+                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID)
+                .map(subunit -> wrap((ScientificAreaUnit) subunit, courseComponentUrl)).collect(toList());
     }
 
-    public Map wrap(ScientificAreaUnit scientificAreaUnit) {
+    public Map wrap(ScientificAreaUnit scientificAreaUnit, String courseComponentUrl) {
         List<Map> competenceCoursesWraps =
-                scientificAreaUnit.getCompetenceCourseGroupUnits().stream().map(this::wrap).collect(toList());
+                scientificAreaUnit.getCompetenceCourseGroupUnits().stream()
+                        .map(competenceCourseGroupUnit -> wrap(competenceCourseGroupUnit, courseComponentUrl)).collect(toList());
         return ImmutableMap.of("name", scientificAreaUnit.getNameI18n().toLocalizedString(), "competenceCourseGroupUnits",
                 competenceCoursesWraps, "hasCompetenceCourses",
                 competenceCoursesWraps.stream().anyMatch(wrap -> (boolean) wrap.get("hasCompetenceCourses")));
     }
 
-    public Map wrap(CompetenceCourseGroupUnit competenceCourseGroupUnit) {
+    public Map wrap(CompetenceCourseGroupUnit competenceCourseGroupUnit, String courseComponentUrl) {
         List<CompetenceCourse> competenceCourses =
                 competenceCourseGroupUnit.getCompetenceCoursesByExecutionYear(readCurrentExecutionYear());
         return ImmutableMap.of("name", competenceCourseGroupUnit.getNameI18n().toLocalizedString(), "competenceCourses",
-                approvedCompetenceCourses(competenceCourses).map(this::wrap).collect(toList()), "hasCompetenceCourses",
+                approvedCompetenceCourses(competenceCourses).map(competenceCourse->wrap(competenceCourse, courseComponentUrl).collect(toList()), "hasCompetenceCourses",
                 approvedCompetenceCourses(competenceCourses).count() > 0);
     }
 
@@ -86,10 +90,10 @@ public class UnitCourses extends UnitSiteComponent {
         return competenceCourses.stream().filter(CompetenceCourse::isApproved);
     }
 
-    public Map wrap(CompetenceCourse competenceCourse) {
+    public Map wrap(CompetenceCourse competenceCourse, String courseComponentUrl) {
         return ImmutableMap.of("name", competenceCourse.getNameI18N().toLocalizedString(), "acronym",
-                competenceCourse.getAcronym(), "url", format("course/%s", competenceCourse.getExternalId()), "approved",
-                competenceCourse.isApproved());
+                competenceCourse.getAcronym(), "url", format("%s/%s", courseComponentUrl, competenceCourse.getExternalId()),
+                "approved", competenceCourse.isApproved());
     }
 
     public DepartmentUnit getPersonDepartmentUnit() {
