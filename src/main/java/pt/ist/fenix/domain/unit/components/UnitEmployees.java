@@ -45,7 +45,8 @@ public class UnitEmployees extends UnitSiteComponent {
 
     private Predicate<Employee> isTeacher = employee -> RoleType.TEACHER.isMember(employee.getPerson().getUser());
     private static Predicate<Employee> hasWorkingPlace = employee -> employee.getCurrentWorkingPlace() != null;
-    private static Supplier<TreeMap<Unit, TreeSet<Employee>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
+    private static Supplier<TreeMap<Unit, TreeSet<Employee>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID
+            .reversed());
     private static Supplier<TreeSet<Employee>> sortedEmployeesFactory = () -> Sets.newTreeSet((e1, e2) -> e1.getPerson()
             .compareTo(e2.getPerson()));
 
