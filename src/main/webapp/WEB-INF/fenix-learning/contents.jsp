@@ -59,7 +59,7 @@
 
                                 <label for="body"><spring:message code="label.content"/></label>
                                 <textarea bennu-localized-string ng-html-editor="selected.body" ng-on-image-added="onImageAdded"
-                                          id="body" class="form-control"></textarea>
+                                          id="body" toolbar="size,style,colors,lists,align,links,table,image,undo,fullscreen,source" class="form-control"></textarea>
 
                                 <div>
                                     <div class="pull-left">

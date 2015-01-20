@@ -34,6 +34,7 @@ window.tooltip = $.fn.tooltip;
 
 <script type="text/javascript">
     context = "${context}";
+    $.fn.tooltip = window.tooltip;
 </script>
 
 <script src="${pageContext.request.contextPath}/static/lib/angular-file-upload/angular-file-upload.min.js" type="text/javascript"></script>
