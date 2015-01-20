@@ -65,8 +65,8 @@ public class UnitCourses extends UnitSiteComponent {
 
     public List<Map> getScientificAreaUnits(Unit unit, String courseComponentUrl) {
         return unit.getSubUnits().stream().filter(Unit::isScientificAreaUnit).map(ScientificAreaUnit.class::cast)
-                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID)
-                .map(subunit -> wrap((ScientificAreaUnit) subunit, courseComponentUrl)).collect(toList());
+                .sorted(ScientificAreaUnit.COMPARATOR_BY_NAME_AND_ID).map(subunit -> wrap(subunit, courseComponentUrl))
+                .collect(toList());
     }
 
     public Map wrap(ScientificAreaUnit scientificAreaUnit, String courseComponentUrl) {
@@ -82,8 +82,8 @@ public class UnitCourses extends UnitSiteComponent {
         List<CompetenceCourse> competenceCourses =
                 competenceCourseGroupUnit.getCompetenceCoursesByExecutionYear(readCurrentExecutionYear());
         return ImmutableMap.of("name", competenceCourseGroupUnit.getNameI18n().toLocalizedString(), "competenceCourses",
-                approvedCompetenceCourses(competenceCourses).map(competenceCourse->wrap(competenceCourse, courseComponentUrl).collect(toList()), "hasCompetenceCourses",
-                approvedCompetenceCourses(competenceCourses).count() > 0);
+                approvedCompetenceCourses(competenceCourses).map(competenceCourse -> wrap(competenceCourse, courseComponentUrl))
+                        .collect(toList()), "hasCompetenceCourses", approvedCompetenceCourses(competenceCourses).count() > 0);
     }
 
     private Stream<CompetenceCourse> approvedCompetenceCourses(Collection<CompetenceCourse> competenceCourses) {
