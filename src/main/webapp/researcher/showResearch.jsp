@@ -36,4 +36,4 @@
 
 <bean:define id="researchers" name="researchers" />
 
-<script src="<%= sotisURL %>/js/sotis-embedded.js" data-sotis-use="list" data-sotis-users="<%= researchers %>" data-sotis-links="yes" data-sotis-lang="<%= lang %>"></script>
+<script src="<%= sotisURL %>/js/sotis-embedded.js" data-sotis-use="publications" data-sotis-users="<%= researchers %>" data-sotis-links="yes" data-sotis-lang="<%= lang %>"></script>
