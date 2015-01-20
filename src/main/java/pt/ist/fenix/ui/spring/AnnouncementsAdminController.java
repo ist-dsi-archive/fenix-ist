@@ -81,7 +81,7 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
         if (page < 1) {
             page = 1;
         }
-        if (page > pages) {
+        if (pages > 0 && page > pages) {
             page = pages;
         }
         model.addAttribute("currentPage", page);
