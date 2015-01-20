@@ -98,6 +98,14 @@
                                         value='<c:out value="${announcement.body.json()}"/>'>
                                       <br/>
                                 </div>
+                                <div class="form-group">
+                                    <div class="checkbox">
+                                        <label class="control-label">
+                                            <spring:message code="label.visible" />
+                                            <input type="checkbox" name="active" value="true" ${announcement.active ? 'checked="checked"' : ''} />
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" data-dismiss="modal" class="btn btn-default">
@@ -169,6 +177,14 @@
 
                         <input bennu-localized-string bennu-html-editor toolbar="size,style,lists,align,links,table,undo,fullscreen,source" required-any name="body" id="body"
                                    placeholder="<spring:message code="label.announcement.content" />">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label class="control-label">
+                                <spring:message code="label.visible" />
+                                <input type="checkbox" name="active" value="true" checked="checked" />
+                            </label>
+                        </div>
                     </div>
 
                 </div>

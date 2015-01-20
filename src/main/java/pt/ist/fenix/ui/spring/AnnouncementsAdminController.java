@@ -137,20 +137,23 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public RedirectView create(@PathVariable ExecutionCourse executionCourse, @RequestParam LocalizedString name,
-            @RequestParam LocalizedString body) throws Exception {
+            @RequestParam LocalizedString body, @RequestParam(required = false, defaultValue = "false") boolean active)
+            throws Exception {
         Site site = executionCourse.getSite();
-        atomic(() -> Post.create(site, null, Post.sanitize(name), Post.sanitize(body), announcementsCategory(site), true,
+        atomic(() -> Post.create(site, null, Post.sanitize(name), Post.sanitize(body), announcementsCategory(site), active,
                 getUser()));
         return viewAll(executionCourse);
     }
 
     @RequestMapping(value = "{postSlug}/edit", method = RequestMethod.POST)
     public RedirectView edit(@PathVariable ExecutionCourse executionCourse, @PathVariable String postSlug,
-            @RequestParam LocalizedString name, @RequestParam LocalizedString body) {
+            @RequestParam LocalizedString name, @RequestParam LocalizedString body, @RequestParam(required = false,
+                    defaultValue = "false") boolean active) {
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> {
             post.setName(Post.sanitize(name));
             post.setBody(Post.sanitize(body));
+            post.setActive(active);
         });
         return viewAll(executionCourse);
     }
