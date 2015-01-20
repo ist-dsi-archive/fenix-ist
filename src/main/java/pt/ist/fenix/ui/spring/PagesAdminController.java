@@ -18,25 +18,17 @@
  */
 package pt.ist.fenix.ui.spring;
 
-import static pt.ist.fenixframework.FenixFramework.getDomainObject;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.core.domain.exceptions.BennuCoreDomainException;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
-import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.exceptions.CmsDomainException;
-import org.fenixedu.cms.ui.AdminSites;
 import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,13 +38,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import pt.ist.fenix.domain.homepage.HomepageSite;
 import pt.ist.fenixframework.FenixFramework;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+
+import static pt.ist.fenixframework.FenixFramework.getDomainObject;
 
 @RestController
 @RequestMapping("/pages/{siteId}/admin")
@@ -95,31 +88,14 @@ public class PagesAdminController {
         return service.serialize(menuItem, true).toString();
     }
 
-    @RequestMapping(value = "{menuItem}/addFile.json", method = RequestMethod.POST, produces = "application/json")
-    public @ResponseBody String addFileJson(Model model, @PathVariable Site site,
-            @PathVariable(value = "menuItem") String menuItemId, @RequestParam("attachment") MultipartFile[] attachments)
-            throws IOException {
+    @RequestMapping(value = "{menuItemId}/addFile.json", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String addFileJson(@PathVariable("menuItemId") String menuItemId,
+                    @RequestParam("file") MultipartFile file) throws IOException {
         MenuItem menuItem = FenixFramework.getDomainObject(menuItemId);
-
-        AdminSites.canEdit(menuItem.getMenu().getSite());
-
-        JsonArray array = new JsonArray();
-
-        Arrays.asList(attachments).stream().map((attachment) -> {
-            GroupBasedFile f = null;
-            try {
-                f = service.addPostFile(attachment.getName(), attachment, menuItem);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            JsonObject obj = new JsonObject();
-            obj.addProperty("displayname", f.getDisplayName());
-            obj.addProperty("filename", f.getFilename());
-            obj.addProperty("url", FileDownloadServlet.getDownloadUrl(f));
-            return obj;
-        }).forEach(x -> array.add(x));
-
-        return array.toString();
+        GroupBasedFile addedFile = service.addPostFile(file, menuItem);
+        return service.describeFile(menuItem.getPage(), addedFile).toString();
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.PUT, consumes = JSON_VALUE)
@@ -160,7 +136,7 @@ public class PagesAdminController {
         MenuItem menuItem = getDomainObject(updateMessage.get("menuItemId").getAsString());
         GroupBasedFile attachment = getDomainObject(updateMessage.get("fileId").getAsString());
         service.updateAttachment(menuItem, attachment, updateMessage.get("position").getAsInt(), updateMessage.get("group")
-                .getAsInt(), updateMessage.get("name").getAsString(), updateMessage.get("visible").getAsBoolean());
+                        .getAsInt(), updateMessage.get("name").getAsString(), updateMessage.get("visible").getAsBoolean());
         return getAttachments(menuItem.getExternalId());
     }
 

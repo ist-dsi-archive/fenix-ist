@@ -247,7 +247,7 @@ public class PagesAdminService {
         return filesJson;
     }
 
-    private JsonObject describeFile(Page page, GroupBasedFile file) {
+    protected JsonObject describeFile(Page page, GroupBasedFile file) {
         JsonObject postFileJson = new JsonObject();
         postFileJson.addProperty("name", file.getDisplayName());
         postFileJson.addProperty("filename", file.getFilename());
@@ -260,13 +260,12 @@ public class PagesAdminService {
         return postFileJson;
     }
 
-    @Atomic(mode = Atomic.TxMode.WRITE)
-    protected GroupBasedFile addPostFile(String name, MultipartFile multipartFile, MenuItem menuItem) throws IOException {
-        Post post = postForPage(menuItem.getPage());
-        GroupBasedFile file =
-                new GroupBasedFile(name, multipartFile.getOriginalFilename(), multipartFile.getBytes(), AnyoneGroup.get());
-        post.getPostFiles().putFile(file);
-        return file;
+    @Atomic
+    protected GroupBasedFile addPostFile(MultipartFile attachment, MenuItem menuItem) throws IOException {
+        GroupBasedFile f = new GroupBasedFile(attachment.getOriginalFilename(), attachment.getOriginalFilename(),
+                        attachment.getBytes(), AnyoneGroup.get());
+        postForPage(menuItem.getPage()).getPostFiles().putFile(f);
+        return f;
     }
 
     private final Predicate<MenuItem> isStaticPage = menuItem -> menuItem.getPage() != null
@@ -274,11 +273,17 @@ public class PagesAdminService {
                     .map(component -> ((StaticPost) component).getPost()).filter(post -> post != null).findFirst().isPresent();
 
     @Atomic(mode = Atomic.TxMode.WRITE)
-    public void delete(MenuItem menuItem, GroupBasedFile attachment) {
-        Post.Attachments attachments = postForPage(menuItem.getPage()).getAttachments();
-        int attachmentPosition = attachments.getFiles().indexOf(attachment);
-        attachments.removeFile(attachmentPosition);
-        attachment.delete();
+    public void delete(MenuItem menuItem, GroupBasedFile file) {
+        Post post = postForPage(menuItem.getPage());
+        Post.Attachments attachments = post.getAttachments();
+        int attachmentPosition = attachments.getFiles().indexOf(file);
+        if(attachmentPosition != -1) {
+            attachments.removeFile(attachmentPosition);
+            file.delete();
+        } else if (post.getPostFiles().getFiles().indexOf(file) != -1) {
+            post.getPostFiles().removeFile(file);
+            file.delete();
+        }
     }
 
     @Atomic(mode = Atomic.TxMode.WRITE)
