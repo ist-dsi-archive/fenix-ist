@@ -26,9 +26,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Photograph;
-import org.fenixedu.academic.domain.accessControl.ActiveStudentsGroup;
-import org.fenixedu.academic.domain.accessControl.ActiveTeachersGroup;
-import org.fenixedu.academic.domain.accessControl.AlumniGroup;
 import org.fenixedu.academic.domain.contacts.EmailAddress;
 import org.fenixedu.academic.domain.contacts.MobilePhone;
 import org.fenixedu.academic.domain.contacts.PartyContact;
@@ -40,17 +37,12 @@ import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEn
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.UserProfile;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.idcards.domain.SantanderCardInformation;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.YearMonthDay;
 
-import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
-import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
-import pt.ist.fenixedu.contracts.domain.accessControl.ActiveResearchers;
+import pt.ist.fenix.domain.LegacyRoleUtils;
 import pt.ist.fenixedu.contracts.domain.organizationalStructure.Invitation;
 
 import com.google.common.io.BaseEncoding;
@@ -160,7 +152,7 @@ public class PersonInformationDTO {
         fillPersonalAndWorkContacts(person.getEmailAddresses(), this.personalEmails, this.workEmails);
 
         this.roles = new ArrayList<String>();
-        for (String role : calculateRoles(person.getUser())) {
+        for (String role : LegacyRoleUtils.mainRoleKeys(person.getUser())) {
             roles.add(role);
         }
 
@@ -327,14 +319,13 @@ public class PersonInformationDTO {
         this.userUID = userUID;
     }
 
-//
-//    public List<String> getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(List<String> roles) {
-//        this.roles = roles;
-//    }
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
     public String getPhoto() {
         return photo;
@@ -511,28 +502,4 @@ public class PersonInformationDTO {
     public void setSurName(String surName) {
         this.surName = surName;
     }
-
-    private List<String> calculateRoles(User user) {
-        List<String> roles = new ArrayList<>();
-        if (new ActiveTeachersGroup().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "TEACHER"));
-        }
-        if (new ActiveStudentsGroup().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "STUDENT"));
-        }
-        if (new ActiveGrantOwner().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"));
-        }
-        if (new ActiveEmployees().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"));
-        }
-        if (new ActiveResearchers().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "RESEARCHER"));
-        }
-        if (AlumniGroup.get().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "ALUMNI"));
-        }
-        return roles;
-    }
-
 }

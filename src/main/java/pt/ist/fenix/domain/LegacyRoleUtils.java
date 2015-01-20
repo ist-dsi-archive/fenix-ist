@@ -21,6 +21,7 @@ package pt.ist.fenix.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.accessControl.ActiveStudentsGroup;
 import org.fenixedu.academic.domain.accessControl.ActiveTeachersGroup;
@@ -34,30 +35,38 @@ import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
 import pt.ist.fenixedu.contracts.domain.accessControl.ActiveResearchers;
 
 public class LegacyRoleUtils {
-    public static List<String> mainRoles(User user) {
+    public static List<String> mainRoleKeys(User user) {
         List<String> roles = new ArrayList<>();
         if (new ActiveTeachersGroup().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "TEACHER"));
+            roles.add("TEACHER");
         }
         if (new ActiveStudentsGroup().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "STUDENT"));
+            roles.add("STUDENT");
         }
         if (new ActiveGrantOwner().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"));
+            roles.add("GRANT_OWNER");
         }
         if (new ActiveEmployees().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"));
+            roles.add("EMPLOYEE");
         }
         if (new ActiveResearchers().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "RESEARCHER"));
+            roles.add("RESEARCHER");
         }
         if (AlumniGroup.get().isMember(user)) {
-            roles.add(BundleUtil.getString(Bundle.ENUMERATION, "ALUMNI"));
+            roles.add("ALUMNI");
         }
         return roles;
     }
 
+    public static List<String> mainRoles(User user) {
+        return mainRolesStream(user).collect(Collectors.toList());
+    }
+
     public static String mainRolesStr(User user) {
         return mainRoles(user).stream().collect(Collectors.joining(", "));
+    }
+
+    private static Stream<String> mainRolesStream(User user) {
+        return mainRoleKeys(user).stream().map(r -> BundleUtil.getString(Bundle.ENUMERATION, r));
     }
 }
