@@ -23,8 +23,9 @@ import static java.util.stream.Collectors.toCollection;
 public class UnitTeachersComponent extends UnitSiteComponent {
 
     private static Supplier<TreeSet<Teacher>> sortedTeacherFactory = () -> Sets
-                    .newTreeSet(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
-    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
+                    .newTreeSet(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER.reversed());
+    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(
+                    Unit.COMPARATOR_BY_NAME_AND_ID.reversed());
     Predicate<Teacher> hasScientificArea = teacher -> teacher.getDepartment() != null
                     && teacher.getDepartment().getDepartmentUnit() != null;
 

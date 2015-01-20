@@ -9,6 +9,7 @@ import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
 import pt.ist.fenixedu.contracts.domain.Employee;
 
+import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -16,16 +17,19 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 @ComponentType(name = "Unit Employees", description = "Unit employees that are not teachers")
 public class UnitEmployees extends UnitSiteComponent {
 
-    private Predicate<Employee> isTeacher = employee -> RoleType.TEACHER.isMember(employee.getPerson().getUser());
+    private static final Comparator<Employee> personComparator = (e1, e2) -> e1.getPerson().compareTo(e2.getPerson());
     private static Predicate<Employee> hasWorkingPlace = employee -> employee.getCurrentWorkingPlace() != null;
-    private static Supplier<TreeMap<Unit, TreeSet<Employee>>> mapFactory = ()-> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID);
-    private static Supplier<TreeSet<Employee>> sortedEmployeesFactory = () ->
-            Sets.newTreeSet((e1, e2)->e1.getPerson().compareTo(e2.getPerson()));
+    private static Supplier<TreeMap<Unit, TreeSet<Employee>>> mapFactory = () -> Maps
+                    .newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID.reversed());
+    private static Supplier<TreeSet<Employee>> sortedEmployeesFactory = () -> Sets.newTreeSet(personComparator.reversed());
+    private Predicate<Employee> isTeacher = employee -> RoleType.TEACHER.isMember(employee.getPerson().getUser());
 
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
