@@ -217,4 +217,23 @@
         </slot>
     </schema>
 
+    <schema name="elections.selectDegreeTypeAndExecutionYear" bundle="PEDAGOGICAL_COUNCIL" type="pt.ist.fenix.ui.struts.action.pedagogicalCouncil.SendStudentEmailBean" >
+        <slot name="degreeType" key="label.degreeType" layout="menu-select-postback" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+            <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.pedagogicalCouncil.DegreeTypesForBolonhaDegrees"/> 
+            <property name="format" value="${localizedName}"/>
+            <property name="sortBy" value="academicPeriod"/>
+            <property name="saveOptions" value="true" />
+            <property name="nullOptionHidden" value="true" />
+            <property name="destination" value="post-back"/>
+        </slot>
+        <slot name="executionYear" key="label.executionYear" layout="menu-select-postback" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
+            <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.ExecutionYearsProvider"/> 
+            <property name="format" value="${year}"/>
+            <property name="sortBy" value="year"/>
+            <property name="saveOptions" value="true" />
+            <property name="nullOptionHidden" value="true" />
+            <property name="destination" value="post-back"/>
+        </slot>
+    </schema>
+
 </schemas>
