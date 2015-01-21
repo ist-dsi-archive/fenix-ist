@@ -52,7 +52,8 @@ public class UnitCourses extends UnitSiteComponent {
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
         String courseComponentUrl =
-                DegreeSiteComponent.pageForComponent(page.getSite(), CompetenceCourse.class).get().getAddress();
+                DegreeSiteComponent.pageForComponent(page.getSite(), CompetenceCourseComponent.class).map(Page::getAddress)
+                        .orElse("#");
         if (unit(page) instanceof DepartmentUnit) {
             DepartmentUnit departmentUnit = ofNullable((DepartmentUnit) unit(page)).orElseGet(() -> getPersonDepartmentUnit());
             globalContext.put("scientificAreaUnits", getScientificAreaUnits(departmentUnit, courseComponentUrl));
