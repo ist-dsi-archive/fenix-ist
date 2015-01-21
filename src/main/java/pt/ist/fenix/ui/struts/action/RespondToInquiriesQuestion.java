@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.academic.domain.inquiries.CurricularCourseInquiryTemplate;
 import org.fenixedu.academic.domain.inquiries.StudentInquiryTemplate;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -36,8 +37,8 @@ public class RespondToInquiriesQuestion extends FenixDispatchAction {
     public final ActionForward showQuestion(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        final StudentInquiryTemplate inquiryTemplate = StudentInquiryTemplate.getCurrentTemplate();
-        request.setAttribute("executionPeriod", inquiryTemplate == null ? null : inquiryTemplate.getExecutionPeriod());
+        final StudentInquiryTemplate inquiryTemplate = CurricularCourseInquiryTemplate.getCurrentTemplate();
+        request.setAttribute("inquiryTemplate", inquiryTemplate);
 
         return new ActionForward("/respondToInquiriesQuestion.jsp");
     }
