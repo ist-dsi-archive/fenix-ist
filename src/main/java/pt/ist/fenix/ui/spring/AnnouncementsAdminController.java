@@ -45,6 +45,9 @@ import org.fenixedu.cms.domain.Post;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.ui.AdminSites;
 import org.fenixedu.commons.i18n.LocalizedString;
+import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -137,23 +140,41 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public RedirectView create(@PathVariable ExecutionCourse executionCourse, @RequestParam LocalizedString name,
-            @RequestParam LocalizedString body, @RequestParam(required = false, defaultValue = "false") boolean active)
-            throws Exception {
+            @RequestParam LocalizedString body, @RequestParam(required = false, defaultValue = "false") boolean active,
+            @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) DateTime publicationStarts) throws Exception {
         Site site = executionCourse.getSite();
-        atomic(() -> Post.create(site, null, Post.sanitize(name), Post.sanitize(body), announcementsCategory(site), active,
-                getUser()));
+        atomic(() -> {
+            Post post =
+                    Post.create(site, null, Post.sanitize(name), Post.sanitize(body), announcementsCategory(site), active,
+                            getUser());
+            if (publicationStarts == null) {
+                post.setPublicationBegin(null);
+                post.setPublicationEnd(null);
+            } else {
+                post.setPublicationBegin(publicationStarts);
+                post.setPublicationEnd(DateTime.now().plusYears(20));
+            }
+        });
         return viewAll(executionCourse);
     }
 
     @RequestMapping(value = "{postSlug}/edit", method = RequestMethod.POST)
     public RedirectView edit(@PathVariable ExecutionCourse executionCourse, @PathVariable String postSlug,
             @RequestParam LocalizedString name, @RequestParam LocalizedString body, @RequestParam(required = false,
-                    defaultValue = "false") boolean active) {
+                    defaultValue = "false") boolean active,
+            @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) DateTime publicationStarts) {
         Post post = executionCourse.getSite().postForSlug(postSlug);
         atomic(() -> {
             post.setName(Post.sanitize(name));
             post.setBody(Post.sanitize(body));
             post.setActive(active);
+            if (publicationStarts == null) {
+                post.setPublicationBegin(null);
+                post.setPublicationEnd(null);
+            } else {
+                post.setPublicationBegin(publicationStarts);
+                post.setPublicationEnd(DateTime.now().plusYears(20));
+            }
         });
         return viewAll(executionCourse);
     }

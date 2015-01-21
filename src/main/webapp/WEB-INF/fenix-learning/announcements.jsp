@@ -38,11 +38,16 @@
         <c:forEach var="announcement" items="${announcements}">
             <div class="row">
                 <div class="col-sm-10">
-                    <h4><a href="${announcement.address}" target="_blank">${announcement.name.content}</a></h4>
+                    <h4>
+                        <a href="${announcement.address}" target="_blank">${announcement.name.content}</a>
+                    </h4>
                     <small>
                         <a href="mailto:${announcement.createdBy.email}">${announcement.createdBy.name}</a>
                           -
                         ${announcement.creationDate.toString('dd MMMM yyyy, HH:mm', locale)}
+                        <c:if test="${not empty announcement.publicationBegin && announcement.publicationBegin.isAfterNow()}">
+                            <span class="badge" style="font-size: 100%"><spring:message code="label.announcement.publication"/> ${announcement.publicationBegin.toString('dd MMMM yyyy, HH:mm', locale)}</span>
+                        </c:if>
                     </small>
                     <h5>
                         ${announcement.body.content}
@@ -104,6 +109,16 @@
                                             <spring:message code="label.visible" />
                                             <input type="checkbox" name="active" value="true" ${announcement.active ? 'checked="checked"' : ''} />
                                         </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        <spring:message code="label.announcement.publication.date"/>
+                                    </label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input bennu-datetime name="publicationStarts" value="${announcement.publicationBegin}">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -184,6 +199,16 @@
                                 <spring:message code="label.visible" />
                                 <input type="checkbox" name="active" value="true" checked="checked" />
                             </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            <spring:message code="label.announcement.publication.date"/>
+                        </label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input bennu-datetime name="publicationStarts">
+                            </div>
                         </div>
                     </div>
 
@@ -289,3 +314,6 @@ ${portal.toolkit()}
         return false;
     }
 </script>
+<style>
+.modal-backdrop{z-index: 900}.modal{z-index: 1000;}
+</style>
