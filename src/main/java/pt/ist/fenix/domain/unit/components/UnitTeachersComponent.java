@@ -21,6 +21,7 @@ package pt.ist.fenix.domain.unit.components;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 
+import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -35,16 +36,15 @@ import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 @ComponentType(name = "Unit Teachers", description = "Teachers information for a Department")
 public class UnitTeachersComponent extends UnitSiteComponent {
 
-    private static Supplier<TreeSet<Teacher>> sortedTeacherFactory = () -> Sets
-            .newTreeSet(Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER.reversed());
-    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> Maps.newTreeMap(Unit.COMPARATOR_BY_NAME_AND_ID
-            .reversed());
+    private static Supplier<TreeSet<Teacher>> sortedTeacherFactory = () -> new TreeSet<>(
+            Teacher.TEACHER_COMPARATOR_BY_CATEGORY_AND_NUMBER);
+    private static Supplier<TreeMap<Unit, TreeSet<Teacher>>> mapFactory = () -> new TreeMap<>(
+            Unit.COMPARATOR_BY_NAME_AND_ID.reversed());
+    private static final Supplier<TreeMap<TeacherCategory, TreeSet<Teacher>>> anotherMapFactory = () -> new TreeMap<>(
+            Comparator.reverseOrder());
     Predicate<Teacher> hasScientificArea = teacher -> teacher.getDepartment() != null
             && teacher.getDepartment().getDepartmentUnit() != null;
 
@@ -59,7 +59,7 @@ public class UnitTeachersComponent extends UnitSiteComponent {
 
     private SortedMap<TeacherCategory, TreeSet<Teacher>> teachersByCategory(Unit unit) {
         return unitTeachers(unit).filter(teacher -> teacher.getCategory() != null).collect(
-                groupingBy(Teacher::getCategory, TreeMap::new, toCollection(sortedTeacherFactory)));
+                groupingBy(Teacher::getCategory, anotherMapFactory, toCollection(sortedTeacherFactory)));
     }
 
     private SortedMap<Unit, TreeSet<Teacher>> teachersByArea(Unit unit) {
