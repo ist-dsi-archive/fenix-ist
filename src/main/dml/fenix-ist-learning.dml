@@ -54,7 +54,7 @@ relation PersistentManagersOfUnitSiteGroupUnitSite {
     public accessControl.PersistentManagersOfUnitSiteGroup playsRole managersOfUnitSiteGroup {
         multiplicity 0..1;
     }
-    public unit.UnitSite playsRole unitSite {
+    public .org.fenixedu.cms.domain.Site playsRole unitSite {
         multiplicity 1..1;
     }
 }

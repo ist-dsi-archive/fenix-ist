@@ -25,9 +25,8 @@ import org.fenixedu.bennu.core.annotation.GroupArgument;
 import org.fenixedu.bennu.core.annotation.GroupOperator;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.groups.PersistentGroup;
+import org.fenixedu.cms.domain.Site;
 import org.joda.time.DateTime;
-
-import pt.ist.fenix.domain.unit.UnitSite;
 
 import com.google.common.base.Objects;
 
@@ -36,24 +35,24 @@ public class ManagersOfUnitSiteGroup extends FenixGroup {
     private static final long serialVersionUID = 1045771762725375319L;
 
     @GroupArgument
-    private UnitSite site;
+    private Site site;
 
     private ManagersOfUnitSiteGroup() {
         super();
     }
 
-    private ManagersOfUnitSiteGroup(UnitSite site) {
+    private ManagersOfUnitSiteGroup(Site site) {
         this();
         this.site = site;
     }
 
-    public static ManagersOfUnitSiteGroup get(UnitSite site) {
+    public static ManagersOfUnitSiteGroup get(Site site) {
         return new ManagersOfUnitSiteGroup(site);
     }
 
     @Override
     public String[] getPresentationNameKeyArgs() {
-        return new String[] { site.getUnit().getName() };
+        return new String[] { site.getName().getContent() };
     }
 
     @Override

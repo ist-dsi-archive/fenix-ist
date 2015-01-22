@@ -21,11 +21,10 @@ package pt.ist.fenix.domain.accessControl;
 import java.util.Optional;
 
 import org.fenixedu.bennu.core.groups.Group;
-
-import pt.ist.fenix.domain.unit.UnitSite;
+import org.fenixedu.cms.domain.Site;
 
 public class PersistentManagersOfUnitSiteGroup extends PersistentManagersOfUnitSiteGroup_Base {
-    protected PersistentManagersOfUnitSiteGroup(UnitSite site) {
+    protected PersistentManagersOfUnitSiteGroup(Site site) {
         super();
         setUnitSite(site);
     }
@@ -41,8 +40,9 @@ public class PersistentManagersOfUnitSiteGroup extends PersistentManagersOfUnitS
         super.gc();
     }
 
-    public static PersistentManagersOfUnitSiteGroup getInstance(final UnitSite site) {
+    public static PersistentManagersOfUnitSiteGroup getInstance(final Site site) {
         return singleton(() -> Optional.ofNullable(site.getManagersOfUnitSiteGroup()),
                 () -> new PersistentManagersOfUnitSiteGroup(site));
     }
+
 }
