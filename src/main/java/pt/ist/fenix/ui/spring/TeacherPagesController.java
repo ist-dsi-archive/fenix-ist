@@ -31,7 +31,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.RedirectView;
+import pt.ist.fenixframework.FenixFramework;
+
+import java.util.Optional;
+
+import static pt.ist.fenixframework.FenixFramework.atomic;
 
 @Controller
 @RequestMapping("/teacher/{executionCourse}/pages")
@@ -48,6 +55,15 @@ public class TeacherPagesController extends ExecutionCourseController {
         model.addAttribute("professorship", professorship);
         model.addAttribute("site", executionCourse.getSite());
         return new TeacherPagesView();
+    }
+
+    @RequestMapping(value = "options", method = RequestMethod.POST)
+    public RedirectView editOptions(@PathVariable ExecutionCourse executionCourse,
+            @RequestParam(required = false, defaultValue = "") String alternativeSite) {
+        Professorship professorship = executionCourse.getProfessorship(AccessControl.getPerson());
+        AccessControl.check(person -> professorship != null && professorship.getPermissions().getSections());
+        atomic(() -> executionCourse.getSite().setAlternativeSite(alternativeSite));
+        return new RedirectView(String.format("/teacher/%s/pages", executionCourse.getExternalId()), true);
     }
 
     @Override

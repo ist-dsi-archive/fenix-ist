@@ -23,6 +23,7 @@
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr"%>
 
 <c:set var="context" scope="session" value="${pageContext.request.contextPath}/pages/${site.externalId}/admin"/>
+<c:set var="teacherContext" scope="request" value="${pageContext.request.contextPath}/teacher/${executionCourse.externalId}/pages"/>
 
 ${portal.angularToolkit()}
 <link href="${pageContext.request.contextPath}/static/lib/fancytree/skin-lion/ui.fancytree.css" rel="stylesheet" type="text/css">
@@ -40,7 +41,45 @@ window.tooltip = $.fn.tooltip;
 <script src="${pageContext.request.contextPath}/static/lib/angular-file-upload/angular-file-upload.min.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/static/pages.js" type="text/javascript"></script>
 
-<h2><spring:message code="label.pages.management"/></h2>
+<h2>
+    <spring:message code="label.pages.management"/>
+    <a data-toggle="modal" data-target="#optionsModal" data-toggle="tooltip"
+       href="#" class="btn btn-default btn-xs pull-right"  title="<spring:message code='action.edit'/>" tooltip>
+        <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> <spring:message code="label.homepage.options" /></a>
+</h2>
 <hr />
+
+<div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"><spring:message code="action.close"/></span></button>
+                <h4>Settings</h4>
+            </div>
+            <form role="form" method="post" action="${teacherContext}/options" class="form-horizontal" id="homepage-publish-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">
+                            <spring:message code='label.alternativeSite'/>
+                        </label>
+                        <div class="col-sm-10">
+                            <input name="alternativeSite" type="text" class="form-control" type="url"
+                                   value="${site.alternativeSite}" placeholder="<spring:message code='label.alternativeSite.placeholder'/>" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <spring:message code="action.save"/>
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
 
 <%@include file="contents.jsp" %>
