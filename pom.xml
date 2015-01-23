@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-academic</artifactId>
-            <version>4.0.3</version>
+            <version>4.0.6</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-academic-thesis</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 
