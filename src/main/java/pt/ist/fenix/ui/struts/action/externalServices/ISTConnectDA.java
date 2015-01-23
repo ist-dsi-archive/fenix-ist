@@ -19,7 +19,6 @@
 package pt.ist.fenix.ui.struts.action.externalServices;
 
 import java.io.IOException;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -30,15 +29,21 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.domain.UserProfile;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import pt.ist.fenix.FenixIstConfiguration;
-import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
+import pt.ist.fenix.domain.LegacyRoleUtils;
 import pt.ist.fenixframework.FenixFramework;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 @Mapping(module = "external", path = "/connect", scope = "request", parameter = "method")
 public class ISTConnectDA extends ExternalInterfaceDispatchAction {
@@ -68,33 +73,36 @@ public class ISTConnectDA extends ExternalInterfaceDispatchAction {
         return null;
     }
 
+    /**
+     * Known usages: IST official site to collect role information and Barra to collect role information and names
+     */
     public ActionForward getBasicUserData(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         if (doLogin(mapping, actionForm, request, response)) {
             final String istID = (String) getFromRequest(request, "istID");
-            final Person person = Person.readPersonByUsername(istID);
+            UserProfile profile = User.findByUsername(istID).getProfile();
 
-            final JSONObject jsonObject = new JSONObject();
+            final JsonObject jsonObject = new JsonObject();
 
-            if (person != null) {
-                jsonObject.put("externalId", person.getExternalId());
-                jsonObject.put("className", person.getClass().getName());
-                jsonObject.put("email", person.getEmailForSendingEmails());
+            if (profile != null) {
+                // probably not used:
+                jsonObject.addProperty("externalId", profile.getPerson().getExternalId());
+                jsonObject.addProperty("className", Person.class.getName());
 
-                jsonObject.put("partyName", person.getPartyName().toString());
-                jsonObject.put("nickname", person.getNickname());
+                // probably used
+                jsonObject.addProperty("email", profile.getEmail());
+                jsonObject.addProperty("partyName", profile.getFullName());
+                jsonObject.addProperty("nickname", profile.getDisplayName());
 
-                JSONArray jsonList = new JSONArray();
-                Stream.of(RoleType.TEACHER, RoleType.RESEARCHER, RoleType.STUDENT, RoleType.STUDENT)
-                        .filter(role -> role.actualGroup().isMember(person.getUser()))
-                        .forEach(roleType -> jsonList.add(roleType.name()));
-                if (new ActiveEmployees().isMember(person.getUser())) {
-                    jsonList.add("EMPLOYEE");
+                JsonArray roles = new JsonArray();
+                for (String role : LegacyRoleUtils.mainRoleKeys(profile.getUser())) {
+                    roles.add(new JsonPrimitive(role));
                 }
-                jsonObject.put("roles", jsonList);
+                jsonObject.add("roles", roles);
             }
-
-            writeJSONObject(response, jsonObject);
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                outputStream.write(new Gson().toJson(jsonObject).getBytes());
+            }
         } else {
             response.sendError(404, "Not authorized");
         }
