@@ -28,8 +28,8 @@
 {% endmacro %}
 
 {% macro curricularPlanDegreeLink(curricularPlan) %}
-	{% if curricularPlan.degree.site is not empty %}
-		<a href="{{ curricularPlan.degree.site }}">
+	{% if curricularPlan.degree.siteUrl is not empty %}
+		<a href="{{ curricularPlan.degree.siteUrl }}">
 			{{ curricularPlanDegreeName(curricularPlan) }}
 		</a>
 	{% else %}

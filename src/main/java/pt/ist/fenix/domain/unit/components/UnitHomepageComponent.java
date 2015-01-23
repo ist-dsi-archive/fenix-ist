@@ -29,11 +29,11 @@ import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.PostMetadata;
 import org.fenixedu.cms.domain.Site;
-import org.fenixedu.cms.domain.component.CMSComponent;
-import org.fenixedu.cms.domain.component.ComponentType;
-import org.fenixedu.cms.domain.component.PostsPresentationBean;
+import org.fenixedu.cms.domain.component.*;
 import org.fenixedu.cms.domain.wraps.Wrap;
 import org.fenixedu.cms.rendering.TemplateContext;
+import org.fenixedu.learning.domain.degree.DegreeSite;
+import org.fenixedu.learning.domain.degree.components.DegreeSiteComponent;
 
 @ComponentType(name = "Unit Homepage", description = "Provides the latest events and announcements")
 public class UnitHomepageComponent implements CMSComponent {
@@ -59,6 +59,23 @@ public class UnitHomepageComponent implements CMSComponent {
         global.put("showPersonalizedLogo", metadata.getAsBoolean("showPersonalizedLogo").orElse(false));
         global.put("showAnnouncements", metadata.getAsBoolean("showAnnouncements").orElse(true));
         global.put("showEvents", metadata.getAsBoolean("showEvents").orElse(true));
+        global.put("announcementsUrl", pageForCategory(page.getSite(), "announcement").get().getAddress());
+        global.put("eventsUrl", pageForCategory(page.getSite(), "event").get().getAddress());
+    }
+
+    public static Optional<Page> pageForCategory(Site site, String categorySlug) {
+        for (Page page : site.getPagesSet()) {
+            for (Component component : page.getComponentsSet()) {
+                if (isCategoryComponentForSlug(component, categorySlug)) {
+                    return Optional.of(page);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean isCategoryComponentForSlug(Component component, String slug) {
+        return component instanceof ListCategoryPosts && ((ListCategoryPosts) component).getCategory().getSlug().equals(slug);
     }
 
     private PostMetadata metadata(Site site) {

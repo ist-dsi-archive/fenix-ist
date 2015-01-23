@@ -23,8 +23,8 @@
 		{# for wrapper classes #}
 		{% set course = course.executionCourse %}
 	{% endif %}
-	{% if course.site is not empty %}
-		<a href="{{ course.site }}">
+	{% if course.siteUrl is not empty %}
+		<a href="{{ course.siteUrl }}">
 			{{ course.name }}
 		</a>
 	{% else %}
