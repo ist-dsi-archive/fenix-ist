@@ -42,7 +42,7 @@ import org.fenixedu.idcards.domain.SantanderCardInformation;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.YearMonthDay;
 
-import pt.ist.fenix.domain.LegacyRoleUtils;
+import pt.ist.fenixedu.contracts.domain.LegacyRoleUtils;
 import pt.ist.fenixedu.contracts.domain.organizationalStructure.Invitation;
 
 import com.google.common.io.BaseEncoding;

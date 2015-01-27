@@ -57,7 +57,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ist.fenix.domain.LegacyRoleUtils;
+import pt.ist.fenixedu.contracts.domain.LegacyRoleUtils;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.base.Objects;

@@ -37,7 +37,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import pt.ist.fenix.FenixIstConfiguration;
-import pt.ist.fenix.domain.LegacyRoleUtils;
+import pt.ist.fenixedu.contracts.domain.LegacyRoleUtils;
 import pt.ist.fenixframework.FenixFramework;
 
 import com.google.gson.Gson;

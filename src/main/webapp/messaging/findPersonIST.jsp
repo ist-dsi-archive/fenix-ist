@@ -24,7 +24,7 @@
 <%@page import="org.fenixedu.bennu.core.domain.User"%>
 <%@page import="pt.ist.fenixedu.contracts.domain.Employee"%>
 <%@page import="org.fenixedu.academic.domain.student.Student"%>
-<%@page import="pt.ist.fenix.domain.LegacyRoleUtils"%>
+<%@page import="pt.ist.fenixedu.contracts.domain.LegacyRoleUtils"%>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
