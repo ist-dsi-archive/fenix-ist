@@ -1,5 +1,15 @@
 package pt.ist.fenix.api;
 
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+
 import org.fenixedu.bennu.core.rest.BennuRestResource;
 import org.fenixedu.cms.domain.Post;
 import org.fenixedu.cms.domain.Site;
@@ -7,19 +17,10 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 // DO NOT CHANGE THIS CLASS EVER AGAIN.
 
 @Path("/fenix-ist/oldNewsSyncService")
-public class OldNewsSyncService extends BennuRestResource{
+public class OldNewsSyncService extends BennuRestResource {
     private static final String EVENTS = "678604861135";
     private static final String NEWS = "678604861136";
 
@@ -29,7 +30,8 @@ public class OldNewsSyncService extends BennuRestResource{
     @GET
     @Produces("application/xml")
     @Path("/")
-    public Response get(@QueryParam("announcementBoardId") String announcementBoardId, @QueryParam("selectedYear") int selectedYear, @QueryParam("selectedMonth") int selectedMonth,
+    public Response get(@QueryParam("announcementBoardId") String announcementBoardId,
+            @QueryParam("selectedYear") int selectedYear, @QueryParam("selectedMonth") int selectedMonth,
             @QueryParam("language") String language) {
         Set<Post> posts;
         if (announcementBoardId.equals(EVENTS)) {
@@ -60,13 +62,17 @@ public class OldNewsSyncService extends BennuRestResource{
             result += "  <net.sourceforge.fenixedu.presentationTier.Action.externalServices.AnnouncementDTO>\n";
             result += "    <creationDate>" + post.getCreationDate().toString("dd/MM/yyyy HH:mm:ss") + "</creationDate>\n";
             result +=
-                    "    <referedSubjectBegin>" + post.getPublicationBegin().toString("dd/MM/yyyy HH:mm:ss")
-                            + "</referedSubjectBegin>\n";
+                    "    <referedSubjectBegin>" + post.getPublicationBegin() != null ? post.getPublicationBegin().toString(
+                            "dd/MM/yyyy HH:mm:ss") : "" + "</referedSubjectBegin>\n";
             result +=
-                    "    <publicationBegin>" + post.getPublicationBegin().toString("dd/MM/yyyy HH:mm:ss") + "</publicationBegin>\n";
-            result += "    <publicationEnd>" + post.getPublicationEnd().toString("dd/MM/yyyy HH:mm:ss") + "</publicationEnd>\n";
+                    "    <publicationBegin>" + post.getPublicationBegin() != null ? post.getPublicationBegin().toString(
+                            "dd/MM/yyyy HH:mm:ss") : "" + "</publicationBegin>\n";
             result +=
-                    "    <lastModification>" + post.getModificationDate().toString("dd/MM/yyyy HH:mm:ss") + "</lastModification>\n";
+                    "    <publicationEnd>" + post.getPublicationEnd() != null ? post.getPublicationEnd().toString(
+                            "dd/MM/yyyy HH:mm:ss") : "" + "</publicationEnd>\n";
+            result +=
+                    "    <lastModification>" + post.getModificationDate() != null ? post.getModificationDate().toString(
+                            "dd/MM/yyyy HH:mm:ss") : "" + "</lastModification>\n";
 
             result += "    <subject>" + post.getName().getContent(locale) + "</subject>\n";
             result += "    <keywords></keywords>\n";
@@ -90,4 +96,3 @@ public class OldNewsSyncService extends BennuRestResource{
 
     }
 }
-
