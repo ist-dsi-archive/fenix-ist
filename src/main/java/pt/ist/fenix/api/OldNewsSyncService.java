@@ -15,7 +15,6 @@ import org.fenixedu.cms.domain.Post;
 import org.fenixedu.cms.domain.Site;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.springframework.web.util.HtmlUtils;
 
 // DO NOT CHANGE THIS CLASS EVER AGAIN.
 
@@ -29,7 +28,6 @@ public class OldNewsSyncService extends BennuRestResource {
 
     @GET
     @Produces("application/xml")
-    @Path("/")
     public Response get(@QueryParam("announcementBoardId") String announcementBoardId,
             @QueryParam("selectedYear") int selectedYear, @QueryParam("selectedMonth") int selectedMonth,
             @QueryParam("language") String language) {
@@ -40,7 +38,7 @@ public class OldNewsSyncService extends BennuRestResource {
             posts = Site.fromSlug("tecnicolisboa").categoryForSlug("noticias").getPostsSet();
         }
         Locale locale;
-        if (language == "pt") {
+        if ("pt".equals(language)) {
             locale = PT;
         } else {
             locale = EN;
@@ -78,19 +76,19 @@ public class OldNewsSyncService extends BennuRestResource {
                             + (post.getModificationDate() != null ? post.getModificationDate().toString("dd/MM/yyyy HH:mm:ss") : "")
                             + "</lastModification>\n";
 
-            result += "    <subject>" + post.getName().getContent(locale) + "</subject>\n";
+            result += "    <subject><![CDATA[" + post.getName().getContent(locale) + "]]></subject>\n";
             result += "    <keywords></keywords>\n";
-            result += "    <body>" + HtmlUtils.htmlEscape(post.getBody().getContent(locale)) + "</body>\n";
+            result += "    <body><![CDATA[" + post.getBody().getContent(locale) + "]]></body>\n";
             result += "    <author>GCRP</author>\n";
             result += "    <authorEmail>gcrp@ist.utl.pt</authorEmail>\n";
             result += "    <place></place>";
             result += "    <visible>" + post.isVisible() + "</visible>\n";
-            result += "    <visible>" + post.getExternalId() + "</visible>\n";
+            result += "    <id>" + post.getExternalId() + "</id>\n";
             result += "    <photoUrl></photoUrl>\n";
             result += "    <campus>Alameda</campus>\n";
             result += "    <categories/>\n";
             result += "    <pressRelease>false</pressRelease>\n";
-            result += "    <sticky>" + false + "</visible>\n";
+            result += "    <sticky>" + false + "</sticky>\n";
             result += "    <priority>" + index++ + "</priority>\n";
             result += "  </net.sourceforge.fenixedu.presentationTier.Action.externalServices.AnnouncementDTO>\n";
         }
