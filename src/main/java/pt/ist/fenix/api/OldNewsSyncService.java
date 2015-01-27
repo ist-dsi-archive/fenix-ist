@@ -62,17 +62,21 @@ public class OldNewsSyncService extends BennuRestResource {
             result += "  <net.sourceforge.fenixedu.presentationTier.Action.externalServices.AnnouncementDTO>\n";
             result += "    <creationDate>" + post.getCreationDate().toString("dd/MM/yyyy HH:mm:ss") + "</creationDate>\n";
             result +=
-                    "    <referedSubjectBegin>" + post.getPublicationBegin() != null ? post.getPublicationBegin().toString(
-                            "dd/MM/yyyy HH:mm:ss") : "" + "</referedSubjectBegin>\n";
+                    "    <referedSubjectBegin>"
+                            + (post.getPublicationBegin() != null ? post.getPublicationBegin().toString("dd/MM/yyyy HH:mm:ss") : "")
+                            + "</referedSubjectBegin>\n";
             result +=
-                    "    <publicationBegin>" + post.getPublicationBegin() != null ? post.getPublicationBegin().toString(
-                            "dd/MM/yyyy HH:mm:ss") : "" + "</publicationBegin>\n";
+                    "    <publicationBegin>"
+                            + (post.getPublicationBegin() != null ? post.getPublicationBegin().toString("dd/MM/yyyy HH:mm:ss") : "")
+                            + "</publicationBegin>\n";
             result +=
-                    "    <publicationEnd>" + post.getPublicationEnd() != null ? post.getPublicationEnd().toString(
-                            "dd/MM/yyyy HH:mm:ss") : "" + "</publicationEnd>\n";
+                    "    <publicationEnd>"
+                            + (post.getPublicationEnd() != null ? post.getPublicationEnd().toString("dd/MM/yyyy HH:mm:ss") : "")
+                            + "</publicationEnd>\n";
             result +=
-                    "    <lastModification>" + post.getModificationDate() != null ? post.getModificationDate().toString(
-                            "dd/MM/yyyy HH:mm:ss") : "" + "</lastModification>\n";
+                    "    <lastModification>"
+                            + (post.getModificationDate() != null ? post.getModificationDate().toString("dd/MM/yyyy HH:mm:ss") : "")
+                            + "</lastModification>\n";
 
             result += "    <subject>" + post.getName().getContent(locale) + "</subject>\n";
             result += "    <keywords></keywords>\n";
