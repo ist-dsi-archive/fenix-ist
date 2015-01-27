@@ -50,7 +50,6 @@ import pt.ist.fenixWebFramework.renderers.components.HtmlLink;
 import pt.ist.fenixWebFramework.servlets.filters.contentRewrite.GenericChecksumRewriter;
 import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
 import pt.ist.fenixedu.contracts.domain.accessControl.DepartmentPresidentStrategy;
-import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalData;
 import pt.ist.fenixedu.teacher.domain.teacher.ReductionService;
 import pt.ist.fenixedu.teacher.domain.teacher.TeacherService;
 import pt.ist.fenixedu.teacher.domain.time.calendarStructure.TeacherCreditsFillingCE;
@@ -124,9 +123,7 @@ public abstract class BaseAuthenticationAction extends FenixAction {
         if (userView.getPerson() != null && userView.getPerson().getTeacher() != null
                 && RoleType.DEPARTMENT_MEMBER.isMember(userView)) {
             ExecutionSemester executionSemester = ExecutionSemester.readActualExecutionSemester();
-            if (executionSemester != null
-                    && (PersonProfessionalData.isTeacherActiveForSemester(userView.getPerson().getTeacher(), executionSemester) || userView
-                            .getPerson().getTeacher().hasTeacherAuthorization())) {
+            if (executionSemester != null && (userView.getPerson().getTeacher().hasTeacherAuthorization())) {
                 TeacherService teacherService =
                         TeacherService.getTeacherServiceByExecutionPeriod(userView.getPerson().getTeacher(), executionSemester);
                 return (teacherService == null || teacherService.getTeacherServiceLock() == null)
