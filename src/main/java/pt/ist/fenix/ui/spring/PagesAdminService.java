@@ -18,7 +18,29 @@
  */
 package pt.ist.fenix.ui.spring;
 
-import static java.util.Comparator.comparing;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import org.fenixedu.bennu.core.groups.AnyoneGroup;
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.groups.LoggedGroup;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.io.domain.GroupBasedFile;
+import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
+import org.fenixedu.cms.domain.*;
+import org.fenixedu.cms.domain.component.Component;
+import org.fenixedu.cms.domain.component.StaticPost;
+import org.fenixedu.commons.i18n.I18N;
+import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pt.ist.fenix.domain.homepage.HomepageSite;
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.Atomic.TxMode;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -28,38 +50,34 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.fenixedu.bennu.core.groups.AnyoneGroup;
-import org.fenixedu.bennu.core.groups.Group;
-import org.fenixedu.bennu.core.groups.LoggedGroup;
-import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.bennu.io.domain.GroupBasedFile;
-import org.fenixedu.bennu.io.servlets.FileDownloadServlet;
-import org.fenixedu.cms.domain.Category;
-import org.fenixedu.cms.domain.Menu;
-import org.fenixedu.cms.domain.MenuItem;
-import org.fenixedu.cms.domain.Page;
-import org.fenixedu.cms.domain.Post;
-import org.fenixedu.cms.domain.PostFile;
-import org.fenixedu.cms.domain.Site;
-import org.fenixedu.cms.domain.component.StaticPost;
-import org.fenixedu.commons.i18n.I18N;
-import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import pt.ist.fenix.domain.homepage.HomepageSite;
-import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.Atomic.TxMode;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import static java.util.Comparator.comparing;
 
 @Service
 public class PagesAdminService {
+
+    private final Predicate<MenuItem> isStaticPage =
+            menuItem -> menuItem.getPage() != null && menuItem.getPage().getComponentsSet().stream()
+                    .filter(StaticPost.class::isInstance).map(component -> ((StaticPost) component).getPost())
+                    .filter(post -> post != null).findFirst().isPresent();
+
+    protected static Stream<Page> dynamicPages(Site site) {
+        return site.getPagesSet().stream().filter(PagesAdminService::isDynamicPage)
+                .filter(page -> !site.getInitialPage().equals(page)).sorted(comparing(Page::getName));
+    }
+
+    protected static boolean isDynamicPage(Page page) {
+        return !page.getComponentsSet().stream().filter(StaticPost.class::isInstance).findAny().isPresent();
+    }
+
+    static List<Group> permissionGroups(Site site) {
+        if (site instanceof ExecutionCourseSite) {
+            return ((ExecutionCourseSite) site).getContextualPermissionGroups();
+        }
+        if (site instanceof HomepageSite) {
+            return ((HomepageSite) site).getContextualPermissionGroups();
+        }
+        return ImmutableList.of(AnyoneGroup.get(), LoggedGroup.get());
+    }
 
     @Atomic(mode = Atomic.TxMode.WRITE)
     protected void delete(MenuItem menuItem) {
@@ -92,6 +110,7 @@ public class PagesAdminService {
         if (!menuItem.getName().equals(name)) {
             menuItem.setName(name);
         }
+        Post post = postForPage(menuItem.getPage());
 
         if (visible != null) {
             menuItem.getPage().setPublished(visible);
@@ -101,7 +120,6 @@ public class PagesAdminService {
             menuItem.getPage().setName(name);
         }
 
-        Post post = postForPage(menuItem.getPage());
         if (post.getBody() == null && body != null || post.getBody() != null && !post.getBody().equals(body)) {
             post.setBody(body);
         }
@@ -268,10 +286,6 @@ public class PagesAdminService {
         return f;
     }
 
-    private final Predicate<MenuItem> isStaticPage = menuItem -> menuItem.getPage() != null
-            && menuItem.getPage().getComponentsSet().stream().filter(StaticPost.class::isInstance)
-                    .map(component -> ((StaticPost) component).getPost()).filter(post -> post != null).findFirst().isPresent();
-
     @Atomic(mode = Atomic.TxMode.WRITE)
     public void delete(MenuItem menuItem, GroupBasedFile file) {
         Post post = postForPage(menuItem.getPage());
@@ -319,27 +333,71 @@ public class PagesAdminService {
 
     }
 
-    public Stream<Page> dynamicPages(Site site) {
-        return site.getPagesSet().stream().filter(this::isDynamicPage).filter(page -> !site.getInitialPage().equals(page))
-                .sorted(comparing(Page::getName));
+    protected void copyStaticPage(MenuItem oldMenuItem, ExecutionCourseSite newSite, Menu newMenu, MenuItem newParent) {
+        if(oldMenuItem.getPage() != null) {
+            Page oldPage = oldMenuItem.getPage();
+            staticPost(oldPage).ifPresent(oldPost -> {
+                Page newPage = new Page(newSite);
+                newPage.setName(oldPage.getName());
+                newPage.setTemplate(newSite.getTheme().templateForType(oldPage.getTemplate().getType()));
+                newPage.setCreatedBy(oldPage.getCreatedBy());
+                newPage.setPublished(false);
+
+                for(Component component : oldPage.getComponentsSet()) {
+                    if(component instanceof StaticPost) {
+                        StaticPost staticPostComponent = (StaticPost) component;
+                        Post newPost = clonePost(staticPostComponent.getPost(), newSite);
+                        newPost.setActive(true);
+                        StaticPost newComponent = new StaticPost(newPost);
+                        newPage.addComponents(newComponent);
+                    }
+                }
+
+                MenuItem newMenuItem = MenuItem.create(newMenu, newPage, oldMenuItem.getName(), newParent);
+                newMenuItem.setPosition(oldMenuItem.getPosition());
+                newMenuItem.setUrl(oldMenuItem.getUrl());
+                newMenuItem.setFolder(oldMenuItem.getFolder());
+
+                oldMenuItem.getChildrenSet().stream().forEach(child->copyStaticPage(child, newSite, newMenu, newMenuItem));
+            });
+        }
     }
 
-    private boolean isDynamicPage(Page page) {
-        return !page.getComponentsSet().stream().filter(StaticPost.class::isInstance).findAny().isPresent();
+    private Post clonePost(Post oldPost, Site newSite) {
+        Post newPost = new Post(newSite);
+        newPost.setName(oldPost.getName());
+        newPost.setBody(oldPost.getBody());
+        newPost.setCreationDate(new DateTime());
+        newPost.setCreatedBy(oldPost.getCreatedBy());
+        newPost.setActive(oldPost.getActive());
+
+        for(Category oldCategory : oldPost.getCategoriesSet()) {
+            Category newCategory = newSite.getOrCreateCategoryForSlug(oldCategory.getSlug(), oldCategory.getName());
+            newPost.addCategories(newCategory);
+        }
+
+        for (int i = 0; i < oldPost.getAttachments().getFiles().size(); ++i) {
+            GroupBasedFile file = oldPost.getAttachments().getFiles().get(i);
+            GroupBasedFile attachmentCopy =
+                    new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), AnyoneGroup.get());
+            newPost.getAttachments().putFile(attachmentCopy, i);
+        }
+
+        for (GroupBasedFile file : oldPost.getPostFiles().getFiles()) {
+            GroupBasedFile postFileCopy =
+                    new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), AnyoneGroup.get());
+            newPost.getPostFiles().putFile(postFileCopy);
+        }
+        return newPost;
+    }
+
+    private Optional<Post> staticPost(Page page) {
+        return page.getComponentsSet().stream().filter(StaticPost.class::isInstance).map(StaticPost.class::cast)
+                .map(StaticPost::getPost).findFirst();
     }
 
     public JsonElement data(Site site, MenuItem item) {
         return postForPage(item.getPage()).getBody() != null ? postForPage(item.getPage()).getBody().json() : new JsonObject();
-    }
-
-    static List<Group> permissionGroups(Site site) {
-        if (site instanceof ExecutionCourseSite) {
-            return ((ExecutionCourseSite) site).getContextualPermissionGroups();
-        }
-        if (site instanceof HomepageSite) {
-            return ((HomepageSite) site).getContextualPermissionGroups();
-        }
-        return ImmutableList.of(AnyoneGroup.get(), LoggedGroup.get());
     }
 
 }

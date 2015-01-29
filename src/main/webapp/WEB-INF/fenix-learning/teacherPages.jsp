@@ -43,9 +43,13 @@ window.tooltip = $.fn.tooltip;
 
 <h2>
     <spring:message code="label.pages.management"/>
-    <a data-toggle="modal" data-target="#optionsModal" data-toggle="tooltip"
-       href="#" class="btn btn-default btn-xs pull-right"  title="<spring:message code='action.edit'/>" tooltip>
-        <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> <spring:message code="label.homepage.options" /></a>
+    <div class="button-group pull-right">
+        <a data-toggle="modal" data-target="#copyContentModal" href="#" class="btn btn-default">
+            <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> Importar Conteudo</a>
+
+        <a data-toggle="modal" data-target="#optionsModal" href="#" class="btn btn-default">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <spring:message code="label.homepage.options" /></a>
+    </div>
 </h2>
 <hr />
 
@@ -81,5 +85,50 @@ window.tooltip = $.fn.tooltip;
         </div>
     </div>
 </div>
+
+
+
+<div class="modal fade" id="copyContentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"><spring:message code="action.close"/></span></button>
+                <h4>Settings</h4>
+            </div>
+            <form role="form" method="post" action="${teacherContext}/copyContent" class="form-horizontal" id="homepage-publish-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">
+                            <spring:message code="label.import.previousSite"/>
+                        </label>
+
+                        <div class="col-sm-8">
+                            <select class="form-control" name="previousExecutionCourse">
+                                <option value="">- <spring:message code="label.select.site"/> -</option>
+                                <c:forEach var="ec" items="${previousExecutionCourses}">
+                                    <option value="${ec.externalId}" ${ec.externalId == previousExecutionCourse ? 'selected' : ''}>
+                                            ${ec.executionPeriod.qualifiedName}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-paste" aria-hidden="true"></span>
+                        <spring:message code="action.import"/>
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
 
 <%@include file="contents.jsp" %>
