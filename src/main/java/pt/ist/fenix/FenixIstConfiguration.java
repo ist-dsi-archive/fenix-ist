@@ -20,6 +20,7 @@ package pt.ist.fenix;
 
 import java.util.Map;
 
+import org.fenixedu.bennu.portal.domain.PortalConfiguration;
 import org.fenixedu.commons.configuration.ConfigurationInvocationHandler;
 import org.fenixedu.commons.configuration.ConfigurationManager;
 import org.fenixedu.commons.configuration.ConfigurationProperty;
@@ -89,7 +90,7 @@ public class FenixIstConfiguration {
     }
 
     public static boolean barraLogin() {
-        return barraLogin;
+        return barraLogin && "ashes-ist".equals(PortalConfiguration.getInstance().getTheme());
     }
 
     public static ConfigurationProperties getConfiguration() {
