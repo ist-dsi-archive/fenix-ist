@@ -97,6 +97,11 @@
             "name": "Dissertation",
             "description": "Details of a specific dissertation",
             "file": "dissertation.html"
+        },
+        "researcherSection": {
+            "name": "Publications",
+            "description": "Publications for a given unit",
+            "file": "researcherSection.html"
         }
     }
 }
