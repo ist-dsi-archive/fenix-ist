@@ -95,32 +95,26 @@ window.tooltip = $.fn.tooltip;
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only"><spring:message code="action.close"/></span></button>
-                <h4>Settings</h4>
+                <h4><spring:message code="label.import.previousSite"/></h4>
             </div>
             <form role="form" method="post" action="${teacherContext}/copyContent" class="form-horizontal" id="homepage-publish-form">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="control-label col-sm-2">
-                            <spring:message code="label.import.previousSite"/>
-                        </label>
-
-                        <div class="col-sm-8">
-                            <select class="form-control" name="previousExecutionCourse">
-                                <option value="">- <spring:message code="label.select.site"/> -</option>
-                                <c:forEach var="ec" items="${previousExecutionCourses}">
-                                    <option value="${ec.externalId}" ${ec.externalId == previousExecutionCourse ? 'selected' : ''}>
-                                            ${ec.executionPeriod.qualifiedName}
-                                    </option>
-                                </c:forEach>
-                            </select>
-                        </div>
+                        <select class="form-control" name="previousExecutionCourse">
+                            <option value="">- <spring:message code="label.select.site"/> -</option>
+                            <c:forEach var="ec" items="${previousExecutionCourses}">
+                                <option value="${ec.externalId}" ${ec.externalId == previousExecutionCourse ? 'selected' : ''}>
+                                        ${ec.executionPeriod.qualifiedName}
+                                </option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">
                         <span class="glyphicon glyphicon-paste" aria-hidden="true"></span>
-                        <spring:message code="action.import"/>
+                        <spring:message code="action.import.site"/>
                     </button>
                 </div>
             </form>
