@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebListener;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
+import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
@@ -46,6 +47,8 @@ import org.fenixedu.cms.domain.Category;
 
 import pt.ist.fenixframework.FenixFramework;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+
+import com.google.common.collect.Sets;
 
 @WebListener
 public class FenixEduISTLegacyContextListener implements ServletContextListener {
@@ -127,12 +130,17 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
                     Enrolment enrolment = e.getInstance();
 
                     if (enrolment.getCurricularCourse().isDissertation()) {
-                        Optional<StudentThesisCandidacy> opt =
-                                enrolment.getRegistration().getStudentThesisCandidacySet().stream()
-                                        .filter(candidacy -> candidacy.getAcceptedByAdvisor()).findFirst();
+                        Optional<StudentThesisCandidacy> hit =
+                                enrolment
+                                        .getRegistration()
+                                        .getStudentThesisCandidacySet()
+                                        .stream()
+                                        .filter(c -> partOf(enrolment.getCurricularCourse().getAssociatedExecutionCoursesSet(), c))
+                                        .filter(StudentThesisCandidacy::getAcceptedByAdvisor)
+                                        .min(StudentThesisCandidacy.COMPARATOR_BY_PREFERENCE_NUMBER);
 
-                        if (opt.isPresent()) {
-                            StudentThesisCandidacy candidacy = opt.get();
+                        if (hit.isPresent()) {
+                            StudentThesisCandidacy candidacy = hit.get();
                             ThesisProposal proposal = candidacy.getThesisProposal();
 
                             Thesis thesis =
@@ -152,6 +160,10 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
                     }
                 }));
 
+    }
+
+    private static boolean partOf(Set<ExecutionCourse> degrees, StudentThesisCandidacy studentThesisCandidacy) {
+        return Sets.intersection(degrees, studentThesisCandidacy.getThesisProposal().getExecutionDegreeSet()).isEmpty();
     }
 
     @Override
