@@ -59,8 +59,12 @@ public class UnitHomepageComponent implements CMSComponent {
         global.put("showPersonalizedLogo", metadata.getAsBoolean("showPersonalizedLogo").orElse(false));
         global.put("showAnnouncements", metadata.getAsBoolean("showAnnouncements").orElse(true));
         global.put("showEvents", metadata.getAsBoolean("showEvents").orElse(true));
-        global.put("announcementsUrl", pageForCategory(page.getSite(), "announcement").get().getAddress());
-        global.put("eventsUrl", pageForCategory(page.getSite(), "event").get().getAddress());
+        pageForCategory(page.getSite(), "announcement").ifPresent(announcementsPage -> {
+            global.put("announcementsUrl", announcementsPage.getAddress());
+        });
+        pageForCategory(page.getSite(), "event").ifPresent(eventsPage -> {
+            global.put("eventsUrl", eventsPage.getAddress());
+        });
     }
 
     public static Optional<Page> pageForCategory(Site site, String categorySlug) {
