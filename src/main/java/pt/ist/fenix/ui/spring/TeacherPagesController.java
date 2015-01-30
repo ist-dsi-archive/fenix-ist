@@ -96,8 +96,8 @@ public class TeacherPagesController extends ExecutionCourseController {
     private Stream<ExecutionCourse> previousExecutionCourses(ExecutionCourse executionCourse) {
         return executionCourse.getAssociatedCurricularCoursesSet().stream()
                 .flatMap(curricularCourse -> curricularCourse.getAssociatedExecutionCoursesSet().stream())
-                .filter(ec -> ec.getAcademicInterval().isBeforeNow())
-                .filter(ec -> ec.getSite() != null && ec.getSite().getPublished())
+                .filter(ec -> ec != executionCourse)
+                .filter(ec -> ec.getSite() != null).distinct()
                 .sorted(ExecutionCourse.EXECUTION_COURSE_COMPARATOR_BY_EXECUTION_PERIOD_AND_NAME.reversed());
     }
 

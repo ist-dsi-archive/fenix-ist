@@ -340,7 +340,7 @@ public class PagesAdminService {
                 Page newPage = new Page(newSite);
                 newPage.setName(oldPage.getName());
                 newPage.setTemplate(newSite.getTheme().templateForType(oldPage.getTemplate().getType()));
-                newPage.setCreatedBy(oldPage.getCreatedBy());
+                newPage.setCreatedBy(Authenticate.getUser());
                 newPage.setPublished(false);
 
                 for(Component component : oldPage.getComponentsSet()) {
@@ -368,7 +368,7 @@ public class PagesAdminService {
         newPost.setName(oldPost.getName());
         newPost.setBody(oldPost.getBody());
         newPost.setCreationDate(new DateTime());
-        newPost.setCreatedBy(oldPost.getCreatedBy());
+        newPost.setCreatedBy(Authenticate.getUser());
         newPost.setActive(oldPost.getActive());
 
         for(Category oldCategory : oldPost.getCategoriesSet()) {
