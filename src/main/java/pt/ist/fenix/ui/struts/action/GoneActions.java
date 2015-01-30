@@ -38,4 +38,15 @@ public class GoneActions extends Action {
     public static class OldDepartmentThesisDA extends GoneActions {
     }
 
+    @Mapping(path = "/chooseContextDANew", module = "publico")
+    public static class OldChooseContextDA extends GoneActions {
+    }
+
+    @Mapping(path = "/viewClassTimeTableNew", module = "publico")
+    public static class OldViewClassTimeTableDA extends GoneActions {
+    }
+
+    @Mapping(path = "/chooseExamsMapContextDANew", module = "publico")
+    public static class OldChooseExamsMapContextDA extends GoneActions {
+    }
 }
