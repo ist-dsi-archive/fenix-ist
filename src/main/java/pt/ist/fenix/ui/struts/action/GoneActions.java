@@ -9,6 +9,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 
+/*
+ * This class (and subclasses) exist only to signal search engines to remove these old URLs from their index.
+ * 
+ * After a while, this class can be deleted.
+ */
 public class GoneActions extends Action {
 
     @Override
@@ -48,5 +53,17 @@ public class GoneActions extends Action {
 
     @Mapping(path = "/chooseExamsMapContextDANew", module = "publico")
     public static class OldChooseExamsMapContextDA extends GoneActions {
+    }
+
+    @Mapping(path = "/showDegreeAnnouncements", module = "publico")
+    public static class OldShowDegreeAnnouncementsDA extends GoneActions {
+    }
+
+    @Mapping(path = "/siteViewer", module = "publico")
+    public static class OldViewSiteDA extends GoneActions {
+    }
+
+    @Mapping(path = "/department/events", module = "publico")
+    public static class OldDepartmentEventsDA extends GoneActions {
     }
 }
