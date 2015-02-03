@@ -40,12 +40,17 @@ import org.fenixedu.academic.thesis.domain.ThesisProposal;
 import org.fenixedu.academic.thesis.domain.ThesisProposalParticipant;
 import org.fenixedu.academic.thesis.domain.ThesisProposalsConfiguration;
 import org.fenixedu.academic.util.Bundle;
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.signals.DomainObjectEvent;
 import org.fenixedu.bennu.signals.Signal;
+import org.fenixedu.cms.domain.CMSFolder;
 import org.fenixedu.cms.domain.Category;
+import org.fenixedu.cms.domain.Site;
+import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
 
 import pt.ist.fenixframework.FenixFramework;
+import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 
 import com.google.common.collect.Sets;
@@ -120,6 +125,17 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
 
             thesisProposal.getThesisConfigurationSet().addAll(configs);
         }));
+
+        Site.getRelationFolderHasSites().addListener(new RelationAdapter<Site, CMSFolder>() {
+            @Override
+            public void afterAdd(Site site, CMSFolder folder) {
+                if (site instanceof ExecutionCourseSite && !folder.getFunctionality().getPath().equals("disciplinas")) {
+                    Bennu.getInstance().getCmsFolderSet().stream()
+                            .filter(x -> x.getFunctionality().getPath().equals("disciplinas")).findAny()
+                            .ifPresent(x -> site.setFolder(x));
+                }
+            }
+        });
 
         Signal.register(
                 Enrolment.SIGNAL_CREATED,
