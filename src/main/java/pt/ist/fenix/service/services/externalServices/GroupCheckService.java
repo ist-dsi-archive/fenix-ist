@@ -330,7 +330,7 @@ public class GroupCheckService {
             throw new NonExistingServiceException();
         }
 
-        if (groupCheckQuery.roleType.equals(RoleType.TEACHER)) {
+        if (groupCheckQuery.roleType.equals("TEACHER")) {
             return TeacherGroup.get(getDepartment(unitAcronyms), getExecutionYear(groupCheckQuery.year)).isMember(
                     person.getUser());
         } else if (groupCheckQuery.roleType.equals("EMPLOYEE")) {
