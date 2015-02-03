@@ -31,19 +31,21 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.MarkSheet;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
-import org.fenixedu.bennu.scheduler.custom.CustomTask;
+import org.fenixedu.bennu.scheduler.CronTask;
+import org.fenixedu.bennu.scheduler.annotation.Task;
 
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
-public class ReportCoursesWithoutMarksheet extends CustomTask {
+@Task(englishTitle = "Reports courses without marksheet", readOnly = true)
+public class ReportCoursesWithoutMarksheet extends CronTask {
 
     @Override
     public void runTask() throws Exception {
         final Spreadsheet spreadsheet = new Spreadsheet("DisciplinasSemPauta");
         spreadsheet.setHeader("Plano Curricular\t");
         spreadsheet.setHeader("Unidade Curricular\t");
-        spreadsheet.setHeader("Número Responsável\t");
+        spreadsheet.setHeader("IstID Responsável\t");
         spreadsheet.setHeader("Responsável\n");
 
         final Set<CurricularCourse> curricularCourses = new HashSet<CurricularCourse>();
@@ -57,7 +59,7 @@ public class ReportCoursesWithoutMarksheet extends CustomTask {
                         final Row row = spreadsheet.addRow();
                         row.setCell(curricularCourse.getDegreeCurricularPlan().getName());
                         row.setCell(curricularCourse.getName());
-                        row.setCell(responsible == null ? "" : responsible.getEmployee().getEmployeeNumber().toString());
+                        row.setCell(responsible == null ? "" : responsible.getUsername());
                         row.setCell(responsible == null ? "" : responsible.getName());
                     }
                 }
