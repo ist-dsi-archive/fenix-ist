@@ -23,6 +23,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://fenix-ashes.ist.utl.pt/fenix-renderers" prefix="fr" %>
+<%@page import="org.fenixedu.academic.domain.organizationalStructure.Unit"%>
+<%@page import="org.fenixedu.academic.domain.ExecutionYear"%>
 
 <html:html xhtml="true">
     <head>
@@ -82,7 +84,7 @@
                     </div>
                 </logic:equal>
 
-                <bean:message key="message.gratuity.payments.reminder.text" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" arg1="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionName().getContent()%>" bundle="APPLICATION_RESOURCES" />
+                <bean:message key="message.gratuity.payments.reminder.text" arg0="<%= Unit.getInstitutionAcronym() %>" arg1="<%= ExecutionYear.readCurrentExecutionYear().getName() %>" arg2="<%= Unit.getInstitutionName().getContent() %>" bundle="APPLICATION_RESOURCES" />
             </div>
 
             <div align="center">
