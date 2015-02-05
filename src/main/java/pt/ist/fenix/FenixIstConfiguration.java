@@ -87,6 +87,9 @@ public class FenixIstConfiguration {
                 description = "comma separated emails of persons who want to receive emails about merge of units.")
         public String getMergeUnitsEmails();
 
+        @ConfigurationProperty(key = "store.quota.warning.email",
+                description = "The email address to send notifications about the AFS store quotas.")
+        public String getStoreQuotaWarningEmail();
     }
 
     public static boolean barraLogin() {
