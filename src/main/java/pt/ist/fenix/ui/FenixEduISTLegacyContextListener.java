@@ -129,7 +129,8 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
         Site.getRelationFolderHasSites().addListener(new RelationAdapter<Site, CMSFolder>() {
             @Override
             public void afterAdd(Site site, CMSFolder folder) {
-                if (site instanceof ExecutionCourseSite && !folder.getFunctionality().getPath().equals("disciplinas")) {
+                if (site instanceof ExecutionCourseSite && folder != null
+                        && !folder.getFunctionality().getPath().equals("disciplinas")) {
                     Bennu.getInstance().getCmsFolderSet().stream()
                             .filter(x -> x.getFunctionality().getPath().equals("disciplinas")).findAny()
                             .ifPresent(x -> site.setFolder(x));
