@@ -26,6 +26,7 @@ import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.MenuItem;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.learning.domain.executionCourse.ExecutionCourseSite;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.RedirectView;
 import pt.ist.fenixframework.Atomic;
@@ -74,9 +76,16 @@ public class TeacherPagesController extends ExecutionCourseController {
 
     @RequestMapping(value = "copyContent", method = RequestMethod.POST)
     public RedirectView copyContent(@PathVariable ExecutionCourse executionCourse,
-            @RequestParam ExecutionCourse previousExecutionCourse) {
+            @RequestParam ExecutionCourse previousExecutionCourse, RedirectAttributes redirectAttributes) {
         canCopyContent(executionCourse, previousExecutionCourse);
-        copyContent(previousExecutionCourse.getSite(), executionCourse.getSite());
+        try {
+            copyContent(previousExecutionCourse.getSite(), executionCourse.getSite());
+        } catch (RuntimeException e) {
+            LoggerFactory.getLogger(TeacherPagesController.class).error("error importing site content", e);
+            //error occurred while importing content
+            redirectAttributes.addFlashAttribute("importError", true);
+            return new RedirectView(String.format("/teacher/%s/pages", executionCourse.getExternalId()), true);
+        }
         return new RedirectView(String.format("/teacher/%s/pages", executionCourse.getExternalId()), true);
     }
 
@@ -89,7 +98,7 @@ public class TeacherPagesController extends ExecutionCourseController {
         emptyPageParent.getPage().setPublished(false);
         emptyPageParent.setTop(newMenu);
         for(Menu oldMenu : from.getMenusSet()) {
-            oldMenu.getItemsSet().stream().forEach(menuItem -> service.copyStaticPage(menuItem, to, newMenu, emptyPageParent));
+            oldMenu.getToplevelItemsSorted().forEach(menuItem -> service.copyStaticPage(menuItem, to, newMenu, emptyPageParent));
         }
     }
 

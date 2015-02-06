@@ -45,13 +45,21 @@ window.tooltip = $.fn.tooltip;
     <spring:message code="label.pages.management"/>
     <div class="button-group pull-right">
         <a data-toggle="modal" data-target="#copyContentModal" href="#" class="btn btn-default">
-            <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> Importar Conteudo</a>
+            <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> <spring:message code="action.import.site"/> </a>
 
         <a data-toggle="modal" data-target="#optionsModal" href="#" class="btn btn-default">
             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <spring:message code="label.homepage.options" /></a>
     </div>
 </h2>
 <hr />
+<c:if test="${not empty importError}">
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only"></span>
+        <spring:message code="label.error"/> :
+        <spring:message code="label.error.tryAgain"/>
+    </div>
+</c:if>
 
 <div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -60,7 +68,7 @@ window.tooltip = $.fn.tooltip;
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only"><spring:message code="action.close"/></span></button>
-                <h4>Settings</h4>
+                <h4><spring:message code="label.settings"/></h4>
             </div>
             <form role="form" method="post" action="${teacherContext}/options" class="form-horizontal" id="homepage-publish-form">
                 <div class="modal-body">
