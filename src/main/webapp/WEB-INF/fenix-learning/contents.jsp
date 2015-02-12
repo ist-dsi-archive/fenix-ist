@@ -58,6 +58,21 @@
                                 <input type="text" id="title" name="title" ng-localized-string="selected.title" required class="form-control" placeholder="<spring:message code="label.title"/>"/>
 
                                 <label for="body"><spring:message code="label.content"/></label>
+
+                                <div class="btn-group" id="fileLinkBtnToolbar">
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="fileLinkBtn"
+                                            data-toggle="dropdown" aria-expanded="true" ng-disabled="selected.files.length == 0">
+                                        <spring:message code="label.link.toFile"/> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="fileLinkBtn">
+                                        <li role="presentation" ng-repeat="file in selected.files">
+                                            <a role="menuitem" tabindex="-1" href="#" ng-click="addFileLink(file)">
+                                                {{file.name}}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
                                 <textarea bennu-localized-string ng-html-editor="selected.body" ng-on-image-added="onImageAdded"
                                           id="body" toolbar="size,style,colors,lists,align,links,table,image,undo,fullscreen,source" class="form-control"></textarea>
 
