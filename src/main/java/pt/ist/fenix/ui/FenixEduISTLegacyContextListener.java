@@ -142,8 +142,6 @@ public class FenixEduISTLegacyContextListener implements ServletContextListener 
                 Enrolment.SIGNAL_CREATED,
                 ((DomainObjectEvent<Enrolment> e) -> {
 
-                    System.out.println("enrolment caught: " + e.getInstance().getCurricularCourse().isDissertation());
-
                     Enrolment enrolment = e.getInstance();
 
                     if (enrolment.getCurricularCourse().isDissertation()) {
