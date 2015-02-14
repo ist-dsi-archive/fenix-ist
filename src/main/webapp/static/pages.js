@@ -27,7 +27,7 @@ teacherApp.directive('tooltip', function(){
     };
 });
 
-teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($scope, $http, $upload) {
+teacherApp.controller('PagesCtrl', ['$scope', '$http', '$upload', function ($scope, $http, $upload) {
 
     $scope.selectedFile = undefined;
 
@@ -255,6 +255,17 @@ teacherApp.controller('PagesCtrl', [ '$scope', '$http', '$upload', function ($sc
             });
         }
     });
+
+    $scope.addFileLink = function (file) {
+        document.execCommand('createlink', false, file.downloadUrl);
+        setTimeout(function () {
+            $(".bennu-html-editor-editor").trigger("change");
+        }, 100);
+    };
+
+    setTimeout(function () {
+        $('.bennu-html-editor-toolbar.btn-toolbar').append($('#fileLinkBtnToolbar').detach());
+    }, 200);
 
 }]);
 
