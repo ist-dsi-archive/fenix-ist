@@ -69,4 +69,4 @@
        </div>
 </c:forEach>
 
-<style>.page-header,.page-header>h1{margin-top:0px;}</style>
+<style>.page-header,.page-header>h1{margin-top:0px;}.panel img{max-width:100%}</style>
