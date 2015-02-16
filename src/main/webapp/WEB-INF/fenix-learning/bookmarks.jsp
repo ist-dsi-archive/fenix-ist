@@ -62,6 +62,45 @@
 	</tbody>
 </table>
 </c:if>
+
+<c:if test="${not empty courses}">
+<h2><spring:message code="label.courses"/></h2>
+<table class="table table-condensed">
+	<thead>
+		<tr>
+			<th><spring:message code="channels.label.name"/></th>
+			<th></th>
+			<th><spring:message code="channels.label.bookmark"/></th>
+			<th>RSS</th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach var="course" items="${courses}">
+		<c:forEach var="category" items="${course.site.categoriesSet}">
+			<tr>
+				<td>${category.site.name.content}</td>
+				<td>${category.name.content}</td>
+				<td>
+					<c:choose>
+						<c:when test="${bookmarks.contains(category)}">
+							<spring:message code="label.yes"/> (<a href="${pageContext.request.contextPath}/learning/bookmarks/remove/${category.externalId}"><spring:message code="action.remove"/></a>)
+						</c:when>
+						<c:otherwise>
+							<spring:message code="label.no"/> (<a href="${pageContext.request.contextPath}/learning/bookmarks/add/${category.externalId}"><spring:message code="action.add"/></a>)
+						</c:otherwise>
+					</c:choose>
+				</td>
+				<td>
+					<a href="${category.rssUrl}" data-toggle="tooltip" title="${category.site.name.content} - ${category.name.content}" data-placement="left">
+						<img src="${pageContext.request.contextPath}/image/rss.svg" width="15" height="15" />
+					</a>
+				</td>
+			</tr>
+		</c:forEach>
+		</c:forEach>
+	</tbody>
+</table>
+</c:if>
 <script>$(function () {
   $('[data-toggle="tooltip"]').tooltip()
 });</script>

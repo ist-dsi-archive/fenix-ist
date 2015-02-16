@@ -21,6 +21,9 @@ package pt.ist.fenix.ui.spring;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.cms.domain.Category;
@@ -41,6 +44,16 @@ public class BookmarksController {
                 "bookmarks",
                 Authenticate.getUser().getBookmarksSet().stream()
                         .sorted(Comparator.comparing(cat -> cat.getSite().getName().getContent())).collect(Collectors.toList()));
+        final Student student = AccessControl.getPerson().getStudent();
+        if (student != null) {
+            model.addAttribute(
+                    "courses",
+                    student.getActiveRegistrationsIn(ExecutionSemester.readActualExecutionSemester())
+                            .stream()
+                            .flatMap(
+                                    registration -> registration.getAttendingExecutionCoursesForCurrentExecutionPeriod().stream())
+                            .collect(Collectors.toList()));
+        }
         return "fenix-learning/bookmarks";
     }
 
