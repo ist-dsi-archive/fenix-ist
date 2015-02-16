@@ -41,9 +41,9 @@ public class DepartmentDegrees extends UnitSiteComponent {
         Department department = unit(page).getDepartment();
         Predicate<Degree> isActive = Degree::isActive;
         global.put("activeTypes",
-                department.getDegreesSet().stream().filter(isActive).map(Degree::getDegreeType).collect(toList()));
+                department.getDegreesSet().stream().filter(isActive).map(Degree::getDegreeType).distinct().collect(toList()));
         global.put("inactiveTypes", department.getDegreesSet().stream().filter(isActive.negate()).map(Degree::getDegreeType)
-                .collect(toList()));
+                .distinct().collect(toList()));
         global.put("degreesByType", department.getDegreesSet().stream().collect(groupingBy(Degree::getDegreeType)));
     }
 
