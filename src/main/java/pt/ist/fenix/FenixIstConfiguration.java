@@ -54,6 +54,7 @@ public class FenixIstConfiguration {
         @ConfigurationProperty(key = "externalServices.koha.username")
         public String getExternalServicesKohaUsername();
 
+        @Deprecated
         @ConfigurationProperty(
                 key = "host.control.name.*",
                 description = "Comma separated hostname values that are allowed to access the url host.control.name. See HostAccessControl.isAllowed(name, request)")
@@ -100,6 +101,7 @@ public class FenixIstConfiguration {
         return ConfigurationInvocationHandler.getConfiguration(ConfigurationProperties.class);
     }
 
+    @Deprecated
     public static HostAccessControl getHostAccessControl() {
         return hostAccessControl;
     }
@@ -108,6 +110,7 @@ public class FenixIstConfiguration {
         barraLogin = state;
     }
 
+    @Deprecated
     private static HostAccessControl hostAccessControl = new HostAccessControl(getConfiguration().getHostControlName());
 
     private static boolean barraLogin = getConfiguration().barraAsAuthenticationBroker();

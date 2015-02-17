@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.service.services.exceptions.NonExistingServiceException;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 
-import pt.ist.fenix.FenixIstConfiguration;
 import pt.ist.fenix.service.services.externalServices.GroupCheckService;
 
 @Mapping(module = "external", path = "/groupCheck", scope = "request", parameter = "method")
@@ -57,20 +56,15 @@ public class GroupCheck extends ExternalInterfaceDispatchAction {
         String responseMessage = "";
         String responseCode;
 
-        if (!FenixIstConfiguration.getHostAccessControl().isAllowed(this, request)) {
-            responseCode = NOT_AUTHORIZED_CODE;
-        } else {
-            try {
-                Boolean result = GroupCheckService.run(query);
+        try {
+            Boolean result = GroupCheckService.run(query);
 
-                responseMessage = result.toString().toLowerCase();
-                responseCode = SUCCESS_CODE;
-            } catch (NonExistingServiceException e) {
-                responseCode = NON_EXISTING_GROUP_CODE;
-            } catch (Exception e) {
-                responseCode = UNEXPECTED_ERROR_CODE;
-            }
-
+            responseMessage = result.toString().toLowerCase();
+            responseCode = SUCCESS_CODE;
+        } catch (NonExistingServiceException e) {
+            responseCode = NON_EXISTING_GROUP_CODE;
+        } catch (Exception e) {
+            responseCode = UNEXPECTED_ERROR_CODE;
         }
 
         writeResponse(response, responseCode, responseMessage);

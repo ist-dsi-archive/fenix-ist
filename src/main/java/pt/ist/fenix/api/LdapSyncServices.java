@@ -157,8 +157,7 @@ public class LdapSyncServices extends BennuRestResource {
     }
 
     private void checkAccessControl() {
-        boolean authorized = FenixIstConfiguration.getHostAccessControl().isAllowed(LdapSyncServices.class.getName(), request);
-        authorized &=
+        boolean authorized =
                 Objects.equals(request.getHeader("__username__"), FenixIstConfiguration.getConfiguration()
                         .ldapSyncServicesUsername());
         authorized &=
