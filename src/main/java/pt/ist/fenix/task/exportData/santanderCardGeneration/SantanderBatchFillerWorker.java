@@ -57,6 +57,7 @@ import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
 import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
 import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.FenixFramework;
 
 public class SantanderBatchFillerWorker {
     private static String recordEnd = "*";
@@ -369,10 +370,18 @@ public class SantanderBatchFillerWorker {
         Map<String, CampusAddress> campi = getCampi();
         switch (role) {
         case "STUDENT":
-            try {
-                campus = person.getStudent().getLastActiveRegistration().getCampus();
-            } catch (NullPointerException npe) {
-                return null;
+            boolean matched = false;
+            if (person.getStudent() != null) {
+                final List<Registration> activeRegistrations = person.getStudent().getActiveRegistrations();
+                for (final Registration registration : activeRegistrations) {
+                    if (registration.isBolonha() && !registration.getDegreeType().isEmpty()) {
+                        matched = true;
+                        campus = person.getStudent().getLastActiveRegistration().getCampus();
+                    }
+                }
+            }
+            if (!matched) {
+                campus = FenixFramework.getDomainObject("2448131360897");
             }
             break;
         case "EMPLOYEE":
