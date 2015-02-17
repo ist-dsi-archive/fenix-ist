@@ -67,12 +67,14 @@ import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
 import org.fenixedu.academic.util.ContentType;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.domain.UserProfile;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import pt.ist.fenix.util.JsonUtils;
 import pt.ist.fenixedu.contracts.domain.Employee;
 import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
 import pt.ist.fenixedu.contracts.domain.organizationalStructure.ResearchUnit;
@@ -100,6 +102,25 @@ public class JerseyServices {
     @Path("hellofenix")
     public String hellofenix() {
         return "Hello!";
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("remotePerson")
+    public String readAllProfileData(@QueryParam("method") final String method) throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return Bennu.getInstance().getUserSet().stream().filter(u -> u.getProfile() != null)
+                .map(u -> toJsonObject(u.getProfile())).collect(JsonUtils.toJsonArray()).toString();
+    }
+
+    private JsonObject toJsonObject(final UserProfile up) {
+        final JsonObject object = new JsonObject();
+        object.addProperty("username", up.getUser().getUsername());
+        object.addProperty("givenNames", up.getGivenNames());
+        object.addProperty("familyNames", up.getFamilyNames());
+        object.addProperty("displayName", up.getDisplayName());
+        object.addProperty("email", up.getEmail());
+        return object;
     }
 
     @GET
