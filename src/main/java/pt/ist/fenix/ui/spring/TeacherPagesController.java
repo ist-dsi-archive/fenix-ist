@@ -18,9 +18,19 @@
  */
 package pt.ist.fenix.ui.spring;
 
+import static java.util.function.Predicate.isEqual;
+import static java.util.stream.Collectors.toList;
+import static org.fenixedu.academic.predicate.AccessControl.check;
+import static org.fenixedu.academic.predicate.AccessControl.getPerson;
+import static pt.ist.fenixframework.FenixFramework.atomic;
+
+import java.util.Locale;
+import java.util.stream.Stream;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
-import org.fenixedu.academic.ui.spring.controller.teacher.ExecutionCourseController;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
 import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.MenuItem;
@@ -37,17 +47,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.RedirectView;
+
 import pt.ist.fenixframework.Atomic;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
-import java.util.stream.Stream;
-
-import static java.util.function.Predicate.isEqual;
-import static java.util.stream.Collectors.toList;
-import static org.fenixedu.academic.predicate.AccessControl.check;
-import static org.fenixedu.academic.predicate.AccessControl.getPerson;
-import static pt.ist.fenixframework.FenixFramework.atomic;
 
 @Controller
 @RequestMapping("/teacher/{executionCourse}/pages")
@@ -67,8 +68,8 @@ public class TeacherPagesController extends ExecutionCourseController {
     }
 
     @RequestMapping(value = "options", method = RequestMethod.POST)
-    public RedirectView editOptions(@PathVariable ExecutionCourse executionCourse,
-            @RequestParam(required = false, defaultValue = "") String alternativeSite) {
+    public RedirectView editOptions(@PathVariable ExecutionCourse executionCourse, @RequestParam(required = false,
+            defaultValue = "") String alternativeSite) {
         hasAccess(executionCourse);
         atomic(() -> executionCourse.getSite().setAlternativeSite(alternativeSite));
         return new RedirectView(String.format("/teacher/%s/pages", executionCourse.getExternalId()), true);
@@ -92,12 +93,13 @@ public class TeacherPagesController extends ExecutionCourseController {
     @Atomic
     private void copyContent(ExecutionCourseSite from, ExecutionCourseSite to) {
         Menu newMenu = to.getMenusSet().stream().findAny().get();
-        LocalizedString newPageName = new LocalizedString().with(Locale.getDefault(),
-                from.getExecutionCourse().getExecutionPeriod().getQualifiedName());
+        LocalizedString newPageName =
+                new LocalizedString()
+                        .with(Locale.getDefault(), from.getExecutionCourse().getExecutionPeriod().getQualifiedName());
         MenuItem emptyPageParent = service.create(to, null, newPageName, new LocalizedString()).get();
         emptyPageParent.getPage().setPublished(false);
         emptyPageParent.setTop(newMenu);
-        for(Menu oldMenu : from.getMenusSet()) {
+        for (Menu oldMenu : from.getMenusSet()) {
             oldMenu.getToplevelItemsSorted().forEach(menuItem -> service.copyStaticPage(menuItem, to, newMenu, emptyPageParent));
         }
     }
@@ -105,8 +107,7 @@ public class TeacherPagesController extends ExecutionCourseController {
     private Stream<ExecutionCourse> previousExecutionCourses(ExecutionCourse executionCourse) {
         return executionCourse.getAssociatedCurricularCoursesSet().stream()
                 .flatMap(curricularCourse -> curricularCourse.getAssociatedExecutionCoursesSet().stream())
-                .filter(ec -> ec != executionCourse)
-                .filter(ec -> ec.getSite() != null).distinct()
+                .filter(ec -> ec != executionCourse).filter(ec -> ec.getSite() != null).distinct()
                 .sorted(ExecutionCourse.EXECUTION_COURSE_COMPARATOR_BY_EXECUTION_PERIOD_AND_NAME.reversed());
     }
 
@@ -125,6 +126,11 @@ public class TeacherPagesController extends ExecutionCourseController {
         return ManageExecutionCourseDA.class;
     }
 
+    @Override
+    Boolean getPermission(Professorship prof) {
+        return prof.getPermissions().getSections();
+    }
+
     public class TeacherPagesView extends JstlView {
 
         @Override
@@ -140,4 +146,5 @@ public class TeacherPagesController extends ExecutionCourseController {
         }
 
     }
+
 }

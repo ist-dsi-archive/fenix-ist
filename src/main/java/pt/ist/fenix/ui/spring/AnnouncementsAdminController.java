@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.academic.ui.spring.controller.teacher.ExecutionCourseController;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
 import org.fenixedu.bennu.core.groups.AnyoneGroup;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
@@ -194,6 +193,11 @@ public class AnnouncementsAdminController extends ExecutionCourseController {
     @Override
     protected Class<?> getFunctionalityType() {
         return ManageExecutionCourseDA.class;
+    }
+
+    @Override
+    Boolean getPermission(Professorship prof) {
+        return prof.getPermissions().getAnnouncements();
     }
 
     public class AnnouncementsAdminView extends JstlView {
