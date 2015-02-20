@@ -18,19 +18,20 @@
  */
 package pt.ist.fenix.domain.homepage;
 
-import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
-
 import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.contacts.PartyContactType;
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.cms.domain.CMSTheme;
-import org.fenixedu.cms.domain.Menu;
-import org.fenixedu.cms.domain.Page;
-import org.fenixedu.cms.domain.Site;
+import org.fenixedu.cms.domain.*;
 import org.fenixedu.cms.domain.component.Component;
 import org.fenixedu.commons.i18n.LocalizedString;
-
 import pt.ist.fenix.domain.homepage.components.PresentationComponent;
 import pt.ist.fenix.domain.homepage.components.ResearcherComponent;
+
+import java.util.Optional;
+
+import static org.fenixedu.academic.domain.contacts.WebAddress.createWebAddress;
+import static org.fenixedu.bennu.core.i18n.BundleUtil.getLocalizedString;
 
 /**
  * Created by borgez on 24-11-2014.
@@ -51,6 +52,8 @@ public class HomepageListener {
     private static final LocalizedString ACTIVITIES_TITLE = getLocalizedString(BUNDLE, ACTIVITIES_KEY);
     private static final LocalizedString PRIZES_TITLE = getLocalizedString(BUNDLE, PRIZES_KEY);
 
+    private static final String HOMEPAGE_FOLDER_PATH = "homepage";
+
     public static HomepageSite create(Person person) {
         HomepageSite newSite = new HomepageSite(person);
         Menu menu = new Menu(newSite);
@@ -58,6 +61,10 @@ public class HomepageListener {
 
         newSite.setTheme(CMSTheme.forType("fenixedu-homepages-theme"));
         createDefaultContents(newSite, menu, person.getUser());
+        getHomepageFolder().ifPresent(newSite::setFolder);
+        addContact(person, newSite);
+        newSite.setPublished(true);
+        newSite.setShowPhoto(true);
         return newSite;
     }
 
@@ -78,5 +85,14 @@ public class HomepageListener {
         Page.create(newSite, menu, null, PUBLICATIONS_TITLE, false, "researcherSection", user, publicationsComponent);
 
         newSite.setInitialPage(initialPage);
+    }
+
+    private static void addContact(Person owner, HomepageSite homepageSite) {
+        createWebAddress(owner, homepageSite.getFullUrl(), PartyContactType.INSTITUTIONAL, true);
+    }
+
+    private static Optional<CMSFolder> getHomepageFolder() {
+        return Bennu.getInstance().getCmsFolderSet().stream()
+                .filter(folder -> HOMEPAGE_FOLDER_PATH.equals(folder.getFunctionality().getPath())).findFirst();
     }
 }
