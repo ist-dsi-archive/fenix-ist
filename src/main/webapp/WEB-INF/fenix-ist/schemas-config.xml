@@ -236,4 +236,43 @@
         </slot>
     </schema>
 
+	<schema name="DocumentFieldsCustomization.edit" type="pt.ist.fenix.ui.struts.action.academicAdministration.CurriculumValidationDocumentRequestsManagementDispatchAction$DocumentFieldsCustomization" bundle="ACADEMIC_OFFICE_RESOURCES">
+		<slot name="conclusionDate" key="label.curriculum.validation.conclusion.date" />
+		<slot name="degreeDescription" key="label.curriclum.validation.degree.description" />
+		<slot name="graduatedTitle" key="label.curriculum.validation.graduated.title" />
+	</schema>
+	
+	<schema name="set.evaluation.curriculum.entry.read.only" type="org.fenixedu.academic.dto.degreeAdministrativeOffice.gradeSubmission.MarkSheetEnrolmentEvaluationBean" bundle="ACADEMIC_OFFICE_RESOURCES">
+		<slot name="enrolmentEvaluationTypeDescription" key="label.set.evaluation.type" read-only="true" />
+		<slot name="executionYearFullLabel" key="label.set.evaluation.execution.year" read-only="true" />
+		<slot name="gradeValue" key="label.set.evaluation.grade.value" read-only="true" />
+		<slot name="evaluationDate" key="label.set.evaluation.exam.date" read-only="true" />
+		<slot name="bookReference" key="label.set.evaluation.book.reference" read-only="true" />
+		<slot name="page" key="label.set.evaluation.page" read-only="true" />
+	</schema>
+	
+	<schema name="set.evaluation.curriculum.entry" type="org.fenixedu.academic.dto.degreeAdministrativeOffice.gradeSubmission.MarkSheetEnrolmentEvaluationBean" bundle="ACADEMIC_OFFICE_RESOURCES">
+		<slot name="enrolmentEvaluationTypeDescription" key="label.set.evaluation.type" read-only="true" />
+		<slot name="executionYearFullLabel" key="label.set.evaluation.execution.year" read-only="true" />
+		<slot name="gradeValue" key="label.set.evaluation.grade.value.simple" validator="org.fenixedu.academic.ui.struts.action.administrativeOffice.studentEnrolment.bolonha.validators.GradeValidator">
+			<property name="size" value="4" />
+		</slot>
+		<slot name="gradeScale" key="label.grade.scale.min" />
+		<slot name="evaluationDate" key="label.set.evaluation.exam.date">
+			<validator
+				class="pt.ist.fenixWebFramework.renderers.validators.DateValidator">
+				<property name="dateFormat" value="dd/MM/yyyy" />
+				<property name="message" value="error.invalid.date.format" />
+				<property name="key" value="true" />
+			</validator>
+		
+			<property name="size" value="10" />
+		</slot>
+		<slot name="bookReference" key="label.set.evaluation.book.reference" >
+			<property name="size" value="7" />
+		</slot>
+		<slot name="page" key="label.set.evaluation.page" >
+			<property name="size" value="3" />
+		</slot>	
+	</schema>
 </schemas>
