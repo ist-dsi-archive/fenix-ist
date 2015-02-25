@@ -18,19 +18,12 @@
  */
 package pt.ist.fenix.ui.spring;
 
-import static pt.ist.fenixframework.FenixFramework.atomic;
-
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accessControl.AllAlumniGroup;
 import org.fenixedu.academic.domain.contacts.PartyContact;
 import org.fenixedu.academic.domain.contacts.PartyContactType;
 import org.fenixedu.academic.domain.contacts.WebAddress;
 import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -40,8 +33,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
-
+import pt.ist.fenix.domain.homepage.HomepageListener;
 import pt.ist.fenix.domain.homepage.HomepageSite;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static pt.ist.fenixframework.FenixFramework.atomic;
 
 @SpringApplication(group = "logged", path = "personal-homepage", title = "application.homepage.admin")
 @SpringFunctionality(app = HomepageAdminController.class, title = "application.homepage.admin")
@@ -53,16 +52,23 @@ public class HomepageAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String options(Model model) {
-        model.addAttribute("homepage", getHomepage());
-        model.addAttribute("person", loggedPerson());
-        model.addAttribute("dynamicPages", service.dynamicPages(getHomepage()).collect(Collectors.toList()));
-        model.addAttribute("isAlumi", new AllAlumniGroup().isMember(Authenticate.getUser()));
+        Person person = loggedPerson();
+        HomepageSite homepage = person.getHomepage();
+
+        model.addAttribute("homepage", homepage);
+        model.addAttribute("person", person);
+
+        if (homepage != null) {
+            model.addAttribute("dynamicPages", service.dynamicPages(homepage).collect(toList()));
+            model.addAttribute("isAlumi", new AllAlumniGroup().isMember(person.getUser()));
+        }
+
         return "fenix-learning/homepageOptions";
     }
 
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public String content(Model model) {
-        model.addAttribute("homepage", getHomepage());
+        model.addAttribute("homepage", loggedPerson().getHomepage());
         return "fenix-learning/homepageContent";
     }
 
@@ -78,58 +84,64 @@ public class HomepageAdminController {
                     required = false, defaultValue = "false") Boolean showCurrentAttendingExecutionCourses, @RequestParam(
                     required = false, defaultValue = "false") Boolean showAlumniDegrees) {
         atomic(() -> {
-            HomepageSite homepage = getHomepage();
-            homepage.setShowPhoto(showPhoto);
-            homepage.setShowCategory(showCategory);
-            homepage.setShowResearchUnitHomepage(showResearchUnitHomepage);
-            homepage.setShowActiveStudentCurricularPlans(showActiveStudentCurricularPlans);
-            homepage.setResearchUnitHomepage(researchUnitHomepage);
-            homepage.setResearchUnitName(researchUnitName);
-            homepage.setPublished(published);
-            String url = homepage.getFullUrl();
-            if (published) {
-                boolean foundAddress = false;
-                for (PartyContact contact : homepage.getOwner().getPartyContacts(WebAddress.class)) {
-                    WebAddress address = (WebAddress) contact;
-                    if (address.getUrl().equals(url)) {
-                        address.setDefaultContact(true);
-                        foundAddress = true;
-                    } else {
-                        address.setDefaultContact(false);
-                    }
-                }
-                if (!foundAddress) {
-                    WebAddress.createWebAddress(homepage.getOwner(), url, PartyContactType.INSTITUTIONAL, true);
-                }
+            if (loggedPerson().getHomepage() == null) {
+                HomepageListener.create(loggedPerson());
             } else {
-                WebAddress address = homepage.getOwner().getDefaultWebAddress();
-                if (address != null && address.getUrl().equals(homepage.getFullUrl())) {
-                    address.setDefaultContact(false);
+                HomepageSite homepage = loggedPerson().getHomepage();
+                homepage.setShowPhoto(showPhoto);
+                homepage.setShowCategory(showCategory);
+                homepage.setShowResearchUnitHomepage(showResearchUnitHomepage);
+                homepage.setShowActiveStudentCurricularPlans(showActiveStudentCurricularPlans);
+                homepage.setResearchUnitHomepage(researchUnitHomepage);
+                homepage.setResearchUnitName(researchUnitName);
+                homepage.setPublished(published);
+                String url = homepage.getFullUrl();
+                if (published) {
+                    boolean foundAddress = false;
+                    for (PartyContact contact : homepage.getOwner().getPartyContacts(WebAddress.class)) {
+                        WebAddress address = (WebAddress) contact;
+                        if (address.getUrl().equals(url)) {
+                            address.setDefaultContact(true);
+                            foundAddress = true;
+                        } else {
+                            address.setDefaultContact(false);
+                        }
+                    }
+                    if (!foundAddress) {
+                        WebAddress.createWebAddress(homepage.getOwner(), url, PartyContactType.INSTITUTIONAL, true);
+                    } else {
+                        WebAddress address = homepage.getOwner().getDefaultWebAddress();
+                        if (address != null && address.getUrl().equals(homepage.getFullUrl())) {
+                            address.setDefaultContact(false);
+                        }
+                    }
+                    homepage.setShowUnit(showUnit);
+                    homepage.setShowCurrentExecutionCourses(showCurrentExecutionCourses);
+                    homepage.setShowCurrentAttendingExecutionCourses(showCurrentAttendingExecutionCourses);
+                    homepage.setShowAlumniDegrees(showAlumniDegrees);
                 }
             }
-            homepage.setShowUnit(showUnit);
-            homepage.setShowCurrentExecutionCourses(showCurrentExecutionCourses);
-            homepage.setShowCurrentAttendingExecutionCourses(showCurrentAttendingExecutionCourses);
-            homepage.setShowAlumniDegrees(showAlumniDegrees);
         });
         return new RedirectView("/personal-homepage", true);
     }
 
     @RequestMapping(value = "/activePages", method = RequestMethod.POST)
     public RedirectView editActivePages(HttpServletRequest request) {
-        atomic(() -> service.dynamicPages(getHomepage()).forEach(
-                page -> page.setPublished(request.getParameterMap().keySet().contains(page.getSlug()))));
+        HomepageSite homepage = loggedPerson().getHomepage();
+        if (homepage != null) {
+            atomic(() -> service.dynamicPages(homepage).forEach(
+                    page -> page.setPublished(request.getParameterMap().keySet().contains(page.getSlug()))));
+        }
         return new RedirectView("/personal-homepage", true);
-    }
-
-    private HomepageSite getHomepage() {
-        AccessControl.check((obj) -> loggedPerson().getHomepage() != null);
-        return loggedPerson().getHomepage();
     }
 
     private Person loggedPerson() {
         AccessControl.check((obj) -> AccessControl.getPerson() != null);
         return AccessControl.getPerson();
+    }
+
+    private HomepageSite getOrCreateHomepage() {
+        return ofNullable(loggedPerson().getHomepage()).orElseGet(() -> HomepageListener.create(loggedPerson()));
     }
 
 }
