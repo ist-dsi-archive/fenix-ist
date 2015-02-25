@@ -36,8 +36,7 @@ public class RespondToYearDelegateInquiriesQuestion extends FenixDispatchAction 
     public final ActionForward showQuestion(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        final DelegateInquiryTemplate inquiryTemplate = DelegateInquiryTemplate.getCurrentTemplate();
-        request.setAttribute("executionPeriod", inquiryTemplate == null ? null : inquiryTemplate.getExecutionPeriod());
+        request.setAttribute("inquiryTemplate", DelegateInquiryTemplate.getCurrentTemplate());
 
         return new ActionForward("/respondToYearDelegateInquiriesQuestion.jsp");
     }
