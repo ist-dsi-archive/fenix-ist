@@ -276,6 +276,7 @@
 					</fr:view>
 
 					<logic:present name="personalInfo" property="homepage">
+						<logic:equal name="personalInfo" property="homepage.published" value="true">
 						<tr>
 							<td class="ppleft2"><bean:message key="label.homepage" />
 							</td>
@@ -284,6 +285,7 @@
 									${personalInfo.homepage.fullUrl}
 								</html:link></td>
 						</tr>
+						</logic:equal>
 					</logic:present>
 
 					<logic:present name="personalInfo" property="student">
