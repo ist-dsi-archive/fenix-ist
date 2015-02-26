@@ -131,6 +131,7 @@ import org.fenixedu.academic.util.PeriodState;
 import org.fenixedu.academic.util.Season;
 import org.fenixedu.bennu.core.bootstrap.AdminUserBootstrapper.AdminUserSection;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.UserLoginPeriod;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.portal.domain.PortalBootstrapper.PortalSection;
 import org.fenixedu.commons.i18n.I18N;
@@ -1043,6 +1044,7 @@ public class CreateTestData {
 //        person.addPersonRoleByRoleType(RoleType.TEACHER);
         // final Login login = Login.readUserLoginIdentification(person.getUser());
         // login.openLoginIfNecessary(RoleType.TEACHER);
+        UserLoginPeriod.createOpenPeriod(person.getUser());
         new EmployeeContract(person, new YearMonthDay().minusYears(2), new YearMonthDay().plusYears(2), Bennu.getInstance()
                 .getInstitutionUnit(), AccountabilityTypeEnum.WORKING_CONTRACT, true);
         new EmployeeContract(person, new YearMonthDay().minusYears(2), new YearMonthDay().plusYears(2), Bennu.getInstance()
@@ -1103,6 +1105,7 @@ public class CreateTestData {
 //        person.addPersonRoleByRoleType(RoleType.STUDENT);
         // final Login login = Login.readUserLoginIdentification(person.getUser());
         // login.openLoginIfNecessary(RoleType.STUDENT);
+        UserLoginPeriod.createOpenPeriod(person.getUser());
         createStudentEnrolments(studentCurricularPlan);
         new DegreeCurricularPlanServiceAgreement(student.getPerson(), degreeCurricularPlan.getServiceAgreementTemplate());
         final ExecutionYear executionYear = ExecutionYear.readCurrentExecutionYear();
