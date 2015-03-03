@@ -39,6 +39,14 @@
 	<bean:message key="label.person.findPerson" />
 </h2>
 
+<style>
+.bcintable {
+	padding : 0px 0px;
+	margin-bottom : 0px;
+}
+
+</style>
+
 
 <fr:edit id="searchForm" name="bean"
 	action="/findPersonIST.do?method=findPerson">
@@ -133,7 +141,7 @@
 	</p>
 
 	<logic:iterate id="personalInfo" name="personListFinded"
-		indexId="personIndex" type="org.fenixedu.academic.domain.Person">
+		indexId="personIndex" type="pt.ist.fenix.ui.struts.action.messaging.PersonBean">
 		<bean:define id="personID" name="personalInfo" property="externalId" />
 		<% 
 			String username = personalInfo.getUser() !=null ? personalInfo.getUser().getUsername() : null;
@@ -225,21 +233,23 @@
 							</tr>
 						</logic:present>
 					</logic:present>
-
-					<%-- <bean:define id="personSpaces" name="personalInfo"
-						property="activePersonSpaces"></bean:define>
-					<logic:notEmpty name="personSpaces">
-						<tr>
-							<td class="ppleft2"><bean:message key="label.person.rooms" />:</td>
-							<td><fr:view name="personSpaces">
-									<fr:layout name="list">
-										<fr:property name="classes" value="mvert05 ulindent0 nobullet" />
-										<fr:property name="eachSchema" value="FindPersonSpaceSchema" />
-										<fr:property name="eachLayout" value="values" />
-									</fr:layout>
-								</fr:view></td>
-						</tr>
-					</logic:notEmpty> --%>
+ 					<bean:define id="personSpaces" name="personalInfo"
+ 						property="activePersonSpaces"></bean:define>
+ 					<logic:notEmpty name="personSpaces">
+ 						<tr>
+ 							<td class="ppleft2"><bean:message key="label.person.rooms" />:</td>
+ 							<td>
+ 								<logic:iterate id="space" name="personSpaces">
+	 								<p><ol class="breadcrumb bcintable">
+	 									<bean:define id="thePath" name="space" property="path"/>
+		 								<logic:iterate id="spaceWay" name="thePath">
+		 									<li><a href="<%= request.getContextPath() %>/spaces-view/view/${spaceWay.externalId}">${spaceWay.name}</a></li>
+		 								</logic:iterate>
+	 								</ol></p>
+ 								</logic:iterate>
+ 							</td>
+ 						</tr>
+ 					</logic:notEmpty>
 
 					<logic:notEmpty name="personalInfo" property="teacher">
 						<logic:notEmpty name="personalInfo"
@@ -266,6 +276,7 @@
 					</fr:view>
 
 					<logic:present name="personalInfo" property="homepage">
+						<logic:equal name="personalInfo" property="homepage.published" value="true">
 						<tr>
 							<td class="ppleft2"><bean:message key="label.homepage" />
 							</td>
@@ -274,6 +285,7 @@
 									${personalInfo.homepage.fullUrl}
 								</html:link></td>
 						</tr>
+						</logic:equal>
 					</logic:present>
 
 					<logic:present name="personalInfo" property="student">

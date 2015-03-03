@@ -18,6 +18,10 @@
  */
 package pt.ist.fenix.ui.struts.action.messaging;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,7 +31,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.Department;
-import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accessControl.ActiveTeachersGroup;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
@@ -101,11 +104,16 @@ public class FindPersonISTAction extends FenixDispatchAction {
 
         SearchPersonPredicate predicate = new SearchPerson.SearchPersonPredicate(searchParameters);
 
-        CollectionPager<Person> result = SearchPerson.runSearchPerson(searchParameters, predicate);
+        List<PersonBean> resultList =
+                SearchPerson.runSearchPerson(searchParameters, predicate).getCollection().stream().map(p -> new PersonBean(p))
+                        .collect(Collectors.toList());
 
-        if (result == null) {
-            addErrorMessage(request, "impossibleFindPerson", "error.manager.implossible.findPerson");
-            return mapping.findForward("findPerson");
+        CollectionPager<PersonBean> result = null;
+
+        if (resultList.isEmpty()) {
+            result = new CollectionPager<PersonBean>(new ArrayList<PersonBean>(), 25);
+        } else {
+            result = new CollectionPager<PersonBean>(resultList, 25);
         }
 
         if (result.getCollection().isEmpty()) {
