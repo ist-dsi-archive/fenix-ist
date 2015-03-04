@@ -35,6 +35,7 @@ import org.fenixedu.academic.domain.organizationalStructure.DepartmentUnit;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.Site;
 import org.fenixedu.cms.domain.component.ComponentType;
+import org.fenixedu.cms.exceptions.ResourceNotFoundException;
 import org.fenixedu.cms.rendering.TemplateContext;
 
 import pt.ist.fenix.domain.unit.UnitSite;
@@ -51,6 +52,9 @@ public class CompetenceCourseComponent extends UnitSiteComponent {
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
         CompetenceCourse competenceCourse = FenixFramework.getDomainObject(globalContext.getRequestContext()[1]);
+        if (competenceCourse == null) {
+            throw new ResourceNotFoundException();
+        }
         ExecutionSemester semester = executionSemester(competenceCourse, globalContext.getRequestContext());
         globalContext.put("competenceCourse", wrap(competenceCourse, semester));
         globalContext.put("executionSemesterUrls", executionSemesterUrls(competenceCourse, page));
