@@ -107,7 +107,7 @@ public class PresentationComponent extends HomepageSiteComponent {
                 getSortedFilteredContacts(owner.getWebAddresses()).stream().map(WebAddress.class::cast)
                         .filter(addr -> !addr.getUrl().equals(page.getSite().getFullUrl())).collect(Collectors.toList()));
 
-        if (site.getShowCurrentExecutionCourses() && owner.getTeacher() != null
+        if (site.getShowCurrentExecutionCourses() && owner.getTeacher() != null && owner.getEmployee() != null
                 && owner.getEmployee().getCurrentWorkingContract() != null) {
             global.put("teachingCourses", owner.getTeacher().getCurrentExecutionCourses());
         }
