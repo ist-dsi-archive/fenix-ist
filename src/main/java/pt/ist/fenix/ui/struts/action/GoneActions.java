@@ -66,4 +66,28 @@ public class GoneActions extends Action {
     @Mapping(path = "/department/events", module = "publico")
     public static class OldDepartmentEventsDA extends GoneActions {
     }
+
+    @Mapping(path = "/viewClassTimeTableWithClassNameAndDegreeInitialsAction", module = "publico")
+    public static class OldClassTimeTableDA extends GoneActions {
+    }
+
+    @Mapping(path = "/department/announcements", module = "publico")
+    public static class OldDepartmentAnnouncementsDA extends GoneActions {
+    }
+
+    @Mapping(path = "/department/announcementsRSS", module = "publico")
+    public static class OldDepartmentAnnouncementsRSSDA extends GoneActions {
+    }
+
+    @Mapping(path = "/department/eventsRSS", module = "publico")
+    public static class OldDepartmentEventsRSSDA extends GoneActions {
+    }
+
+    @Mapping(path = "/researchSite/viewResearchUnitSite", module = "publico")
+    public static class OldResearchUnitSiteDA extends GoneActions {
+    }
+
+    @Mapping(path = "/searchScormContent", module = "publico")
+    public static class OldSearchScormContentDA extends GoneActions {
+    }
 }
