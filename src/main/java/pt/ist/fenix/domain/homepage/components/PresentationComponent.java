@@ -74,7 +74,8 @@ public class PresentationComponent extends HomepageSiteComponent {
         if (site.getShowResearchUnitHomepage()) {
             List<ResearchUnit> researchUnits = ResearchUnit.getWorkingResearchUnits(owner);
             if (researchUnits.isEmpty()) {
-                if (owner.getTeacher() != null && owner.getEmployee().getCurrentWorkingContract() != null) {
+                if (owner.getTeacher() != null && owner.getEmployee() != null
+                        && owner.getEmployee().getCurrentWorkingContract() != null) {
                     global.put("researchUnitName", site.getResearchUnitName());
                     global.put("researchUnitHomepage", site.getResearchUnitHomepage());
                 }
