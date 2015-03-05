@@ -41,10 +41,14 @@ public class LegacySummaryRSSAction extends Action {
         DomainObject obj = FenixFramework.getDomainObject(request.getParameter("id"));
         if (obj instanceof ExecutionCourse && FenixFramework.isDomainObjectValid(obj)) {
             ExecutionCourse course = (ExecutionCourse) obj;
-            Category cat = course.getSite().categoryForSlug("summary");
-            response.setHeader("Location", cat.getRssUrl());
-            response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            return null;
+            if (course.getSite() != null) {
+                Category cat = course.getSite().categoryForSlug("summary");
+                if (cat != null) {
+                    response.setHeader("Location", cat.getRssUrl());
+                    response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                    return null;
+                }
+            }
         }
         response.sendError(404);
         return null;
