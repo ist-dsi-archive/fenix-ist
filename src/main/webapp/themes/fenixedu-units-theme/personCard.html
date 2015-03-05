@@ -38,14 +38,22 @@
 
             <div class="person-card row">
                 <div class="col-md-3 person-photo text-center">
-                    <a href="{{ person.homepageWebAddress }}">
+                    {% if person.homepageWebAddress is not empty %}
+                        <a href="{{ person.homepageWebAddress }}">
+                            <img class="img-circle" alt="{{ person.presentationName }}" src="{{ person.user.profile.avatarUrl }}"/>
+                        </a>
+                    {% else %}
                         <img class="img-circle" alt="{{ person.presentationName }}" src="{{ person.user.profile.avatarUrl }}"/>
-                    </a>
+                    {% endif %}
                 </div>
 
                 <div class="col-md-9 person-details text-left">
                     <br/>
-                    <p><a href="{{ person.homepageWebAddress }}">{{ person.presentationName }}</a></p>
+                    {% if person.homepageWebAddress is not empty %}
+                        <a href="{{ person.homepageWebAddress }}">{{ person.presentationName }}</a></p>
+                    {% else %}
+                        <p>{{ person.presentationName }}</p>
+                    {% endif %}
                     {% if person.getDefaultEmailAddressValue is not empty %}
                         <p><a href="mailto:{{ person.getDefaultEmailAddressValue }}">{{ person.getDefaultEmailAddressValue }}</a></p>
                     {% endif %}
