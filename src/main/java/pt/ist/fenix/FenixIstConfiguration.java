@@ -91,6 +91,15 @@ public class FenixIstConfiguration {
         @ConfigurationProperty(key = "store.quota.warning.email",
                 description = "The email address to send notifications about the AFS store quotas.")
         public String getStoreQuotaWarningEmail();
+
+        @ConfigurationProperty(key = "api.parking.url", description = "The url to get parking information")
+        public String getApiParkingUrl();
+
+        @ConfigurationProperty(key = "api.parking.username", description = "The username for parking information")
+        public String getApiParkingUsername();
+
+        @ConfigurationProperty(key = "api.parking.password", description = "The password for parking information")
+        public String getApiParkingPassword();
     }
 
     public static boolean barraLogin() {
