@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -52,8 +53,10 @@ import org.fenixedu.idcards.ui.candidacydocfiller.CGDPdfFiller;
 import pt.ist.fenix.FenixIstConfiguration;
 import pt.ist.fenix.dto.PersonInformationDTO;
 import pt.ist.fenix.dto.PersonInformationFromUniqueCardDTO;
+import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -166,5 +169,39 @@ public class LdapSyncServices extends BennuRestResource {
         if (!authorized) {
             throw new WebApplicationException(Status.UNAUTHORIZED);
         }
+    }
+
+    /***
+     * <p>
+     * Set user institutional email address.
+     * </p>
+     * 
+     * <p>
+     * Request example :
+     * <p>
+     * 
+     * <pre>
+     * curl -X POST -H '__username__: user' -H '__password__: pass' --data "email=user1@fenixedu.org" /api/fenix-ist/ldapSync/setEmail/user1
+     * </pre>
+     * 
+     * @param username the username to set the email to
+     * @param email the new email value
+     * @return {@link Status.OK} if successful, {@link Status.NOT_FOUND} otherwise
+     */
+    @POST
+    @Path("/setEmail/{username}")
+    public Response userEmail(@PathParam("username") String username, @FormParam("email") String email) {
+        checkAccessControl();
+        return Response.status(setEmail(username, email)).build();
+    }
+
+    @Atomic
+    public Status setEmail(String username, String email) {
+        final User foundUser = User.findByUsername(username);
+        if (Strings.isNullOrEmpty(email) || foundUser == null || foundUser.getPerson() == null) {
+            return Status.NOT_FOUND;
+        }
+        foundUser.getPerson().setInstitutionalEmailAddressValue(email);
+        return Status.OK;
     }
 }
