@@ -15,6 +15,11 @@ public class FenixParticipantLabelService implements ParticipantLabelService {
     @Override
     public String getInstitutionRole(ThesisProposalParticipant participant) {
         User user = participant.getUser();
+
+        if (user == null) {
+            return null;
+        }
+
         Teacher teacher = user.getPerson().getTeacher();
 
         if (teacher != null && teacher.getTeacherAuthorization().isPresent()) {
